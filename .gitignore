@@ -97,3 +97,6 @@ venv/
 *.jpg
 *.png
 *.jpe
+
+static
+statics
