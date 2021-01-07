@@ -1,0 +1,53 @@
+version: '3.3'
+
+services:
+  thebackend_nginx:
+    image: nginx:latest
+    container_name: thebackend_nginx
+    restart: always
+    ports:
+      - 800:800
+    volumes:
+      - ./static/:/static/
+      - ./media/:/media/
+      - /var/log/thebackend/nginx/:/var/log/nginx/
+      - ./deploy/config/nginx:/etc/nginx/conf.d
+    depends_on:
+      - thebackend_web
+  thebackend_web:
+    build: .
+    container_name: thebackend_web
+    restart: always
+    depends_on:
+      - rabbitmq
+    environment:
+      DJANGO_SETTINGS_MODULE: "thebackend.settings.production"
+    command: >
+      sh -c "
+        ./manage.py migrate;
+        ./manage.py compilemessages;
+        ./manage.py collectstatic --noinput;
+        gunicorn --bind=0.0.0.0:8000 --timeout=90 --preload thebackend.wsgi:application;
+      "
+    volumes:
+      - ./static/:/static/
+      - ./media/:/media/
+      - /var/log/thebackend:/var/log/thebackend
+    ports:
+      - 172.17.0.1:8787:8000
+      - 8000:8000
+  rabbitmq:
+    container_name: thebackend_rabbitmq
+    image: rabbitmq:3-management
+    environment:
+      - RABBITMQ_DEFAULT_USER=aic
+      - RABBITMQ_DEFAULT_PASS=shitWasHereBe4me
+  celery:
+    container_name: thebackend_celery
+    build: .
+    command: ["celery", "-A", "thebackend", "worker", "-l", "info", "-E", "--concurrency=10"]
+    depends_on:
+      - rabbitmq
+    volumes:
+      - ./static/:/static/
+      - ./media/:/media/
