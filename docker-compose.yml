@@ -3,49 +3,49 @@ version: '3.3'
 services:
   thebackend_nginx:
     image: nginx:latest
-    container_name: thebackend_nginx
+    container_name: AIC21_Backend_nginx
     restart: always
     ports:
       - 800:800
     volumes:
       - ./static/:/static/
       - ./media/:/media/
-      - /var/log/thebackend/nginx/:/var/log/nginx/
+      - /var/log/AIC21_Backend/nginx/:/var/log/nginx/
       - ./deploy/config/nginx:/etc/nginx/conf.d
     depends_on:
-      - thebackend_web
-  thebackend_web:
+      - AIC21_Backend_web
+  AIC21_Backend_web:
     build: .
-    container_name: thebackend_web
+    container_name: AIC21_Backend_web
     restart: always
     depends_on:
       - rabbitmq
     environment:
-      DJANGO_SETTINGS_MODULE: "thebackend.settings.production"
+      DJANGO_SETTINGS_MODULE: "AIC21_Backend.settings.production"
     command: >
       sh -c "
         ./manage.py migrate;
         ./manage.py compilemessages;
         ./manage.py collectstatic --noinput;
-        gunicorn --bind=0.0.0.0:8000 --timeout=90 --preload thebackend.wsgi:application;
+        gunicorn --bind=0.0.0.0:8000 --timeout=90 --preload AIC21_Backend.wsgi:application;
       "
     volumes:
       - ./static/:/static/
       - ./media/:/media/
-      - /var/log/thebackend:/var/log/thebackend
+      - /var/log/AIC21_Backend:/var/log/AIC21_Backend
     ports:
       - 172.17.0.1:8787:8000
       - 8000:8000
   rabbitmq:
-    container_name: thebackend_rabbitmq
+    container_name: AIC21_Backend_rabbitmq
     image: rabbitmq:3-management
     environment:
       - RABBITMQ_DEFAULT_USER=aic
       - RABBITMQ_DEFAULT_PASS=shitWasHereBe4me
   celery:
-    container_name: thebackend_celery
+    container_name: AIC21_Backend_celery
     build: .
-    command: ["celery", "-A", "thebackend", "worker", "-l", "info", "-E", "--concurrency=10"]
+    command: ["celery", "-A", "AIC21_Backend", "worker", "-l", "info", "-E", "--concurrency=10"]
     depends_on:
       - rabbitmq
     volumes:
