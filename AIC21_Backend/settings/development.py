@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'apps.uploads',
     'apps.faq',
     'apps.staff',
+    'apps.accounts'
 ]
 
 MIDDLEWARE = [
