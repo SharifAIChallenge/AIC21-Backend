@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.utils.translation import gettext, gettext_lazy as _
 
-from .models import User
+from .models import User, Profile
 
 
 # Register your models here.
@@ -18,3 +18,8 @@ class UserAdmin(DjangoUserAdmin):
         }),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
     )
+
+
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    pass

@@ -29,7 +29,7 @@ urlpatterns = [
     path('api/go/', include('apps.go.urls')),
     path('api/faq/', include('apps.faq.urls')),
     path('api/staff/', include('apps.staff.urls')),
-
+    path('api/accounts/', include('apps.accounts.urls')),
 ]
 
 if settings.DEBUG:
