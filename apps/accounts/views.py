@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.hashers import make_password
 from rest_framework import status, permissions
 
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -8,12 +9,13 @@ from rest_framework.generics import GenericAPIView
 from .models import Profile, User
 from .serializer import (
     UserSerializer, ProfileSerializer, EmailSerializer,
-    UserViewSerializer
+    UserViewSerializer, ChangePasswordSerializer
 )
 from rest_framework.response import Response
 
 __all__ = ('LoginAPIView', 'SignUpAPIView', 'ActivateAPIView', 'LogoutAPIView',
-           'ResendActivationEmailAPIView', 'ProfileAPIView')
+           'ResendActivationEmailAPIView', 'ProfileAPIView',
+           'ChangePasswordAPIView')
 
 LoginAPIView = ObtainAuthToken
 
@@ -83,5 +85,23 @@ class ProfileAPIView(GenericAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
-        return Response(self.get_serializer(user).data,
-                        status=status.HTTP_200_OK)
+        return Response(
+            data=self.get_serializer(user).data,
+            status=status.HTTP_200_OK
+        )
+
+
+class ChangePasswordAPIView(GenericAPIView):
+    queryset = User.objects.all()
+    serializer_class = ChangePasswordSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(
+            data={'detail': _('password changed successfully')},
+            status=200
+        )
