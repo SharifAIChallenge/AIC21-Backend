@@ -4,7 +4,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.validators import UniqueValidator
 
-from .models import User, Profile
+from .models import User, Profile, ResetPasswordToken
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -51,6 +51,21 @@ class UserSerializer(serializers.ModelSerializer):
 
         return user
 
+
+class ResetPasswordConfirmSerializer(serializers.ModelSerializer):
+    new_password1 = serializers.CharField(max_length=100)
+    new_password2 = serializers.CharField(max_length=100)
+
+    class Meta:
+        model = ResetPasswordToken
+        fields = ['new_password1', 'new_password2', 'uid', 'token']
+
+    def validate(self, data):
+        if data['new_password1'] != data['new_password2']:
+            raise serializers.ValidationError('passwords don\'t match!')
+        return data
+
+
 class ChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(style={'input_type': 'password'})
     new_password1 = serializers.CharField(style={'input_type': 'password'})
@@ -59,7 +74,8 @@ class ChangePasswordSerializer(serializers.Serializer):
     def validate(self, data):
         if data['new_password1'] != data['new_password2']:
             raise serializers.ValidationError(_('passwords don\'t match!'))
-        if not self.context['request'].user.check_password(data['old_password']):
+        if not self.context['request'].user.check_password(
+                data['old_password']):
             raise serializers.ValidationError(_('invalid old password'))
         return data
 
@@ -71,6 +87,7 @@ class ChangePasswordSerializer(serializers.Serializer):
         user.save()
 
         return user
+
 
 class EmailSerializer(serializers.Serializer):
     email = serializers.EmailField()
