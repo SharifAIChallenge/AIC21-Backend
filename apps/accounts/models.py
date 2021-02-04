@@ -16,11 +16,6 @@ from apps.core.utils import send_email
 
 
 class User(AbstractUser):
-    birth_date = models.CharField(
-        max_length=128,
-        blank=True,
-        null=True
-    )
 
     def send_activation_email(self):
         activate_user_token = ActivateUserToken(
@@ -89,6 +84,11 @@ class Profile(models.Model):
     university = models.CharField(max_length=50)
     province = models.CharField(max_length=128)
     major = models.CharField(max_length=50)
+    birth_date = models.CharField(
+        max_length=128,
+        blank=True,
+        null=True
+    )
 
     def __str__(self):
         return f'username: {self.user.username},' \

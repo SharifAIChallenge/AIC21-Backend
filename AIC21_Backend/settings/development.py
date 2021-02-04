@@ -15,7 +15,6 @@ from celery.schedules import crontab
 from decouple import config
 from .martor import *
 
-
 BASE_DIR = os.path.dirname(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -163,10 +162,15 @@ INFRA_IP = config("INFRA_IP")
 INFRA_AUTH_TOKEN = config("INFRA_AUTH_TOKEN")
 INFRA_API_SCHEMA_ADDRESS = config("INFRA_API_SCHEMA_ADDRESS")
 
-EMAIL_SERVER = config('EMAIL_SERVER')
+EMAIL_HOST = config('EMAIL_HOST')
 EMAIL_PORT = config('EMAIL_PORT')
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_PASSWORD = config('EMAIL_PASSWORD')
+EMAIL_USE_TLS = config('EMAIL_USE_TLS')
+EMAIL_BACKEND = config('EMAIL_BACKEND')
+
+print(EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER,
+      EMAIL_PASSWORD, EMAIL_USE_TLS, EMAIL_BACKEND, sep='\n==========\n')
 
 DOMAIN = config('DOMAIN', 'localhost:8000')
 
