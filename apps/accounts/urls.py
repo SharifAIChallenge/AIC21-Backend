@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 
 from .views import (
     LoginAPIView, SignUpAPIView, ActivateAPIView, LogoutAPIView,
@@ -20,4 +20,5 @@ urlpatterns = [
          name='reset password'),
     path('password/reset/confirm', view=ResetPasswordConfirmAPIView.as_view(),
          name='confirm password'),
+    path('accounts/', include('allauth.urls')),
 ]
