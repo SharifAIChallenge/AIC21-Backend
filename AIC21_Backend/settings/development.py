@@ -13,6 +13,7 @@ import os
 from celery.schedules import crontab
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 from decouple import config
+from .martor import *
 
 BASE_DIR = os.path.dirname(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -50,6 +51,8 @@ INSTALLED_APPS = [
     'apps.uploads',
     'apps.faq',
     'apps.staff',
+    'apps.accounts',
+    'apps.core'
 ]
 
 MIDDLEWARE = [
@@ -153,12 +156,22 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 100,
 }
 
-from .martor import *
-
-# os.environ['HTTPS'] = "on"
-
 TEAM_SUBMISSION_TIME_DELTA = 1
 
 INFRA_IP = config("INFRA_IP")
 INFRA_AUTH_TOKEN = config("INFRA_AUTH_TOKEN")
 INFRA_API_SCHEMA_ADDRESS = config("INFRA_API_SCHEMA_ADDRESS")
+
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_PORT = config('EMAIL_PORT')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_PASSWORD = config('EMAIL_PASSWORD')
+EMAIL_USE_TLS = config('EMAIL_USE_TLS')
+EMAIL_BACKEND = config('EMAIL_BACKEND')
+
+print(EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER,
+      EMAIL_PASSWORD, EMAIL_USE_TLS, EMAIL_BACKEND, sep='\n==========\n')
+
+DOMAIN = config('DOMAIN', 'localhost:8000')
+
+AUTH_USER_MODEL = 'accounts.User'
