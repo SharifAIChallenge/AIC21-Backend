@@ -11,3 +11,4 @@ router.register('/<int:pk>', PastView)
 
 urlpatterns = []
 urlpatterns += router.urls
+
