@@ -52,7 +52,8 @@ INSTALLED_APPS = [
     'apps.faq',
     'apps.staff',
     'apps.accounts',
-    'apps.core'
+    'apps.core',
+    'apps.rule',
 ]
 
 MIDDLEWARE = [
