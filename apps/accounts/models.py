@@ -13,6 +13,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 from apps.core.utils import send_email
+import os
 
 
 class User(AbstractUser):
@@ -73,6 +74,8 @@ class User(AbstractUser):
 
 
 class Profile(models.Model):
+    IMAGE_MAX_SIZE = 1024 * 1024
+
     user = models.OneToOneField(User,
                                 on_delete=models.CASCADE,
                                 related_name='profile'
@@ -89,6 +92,11 @@ class Profile(models.Model):
         blank=True,
         null=True
     )
+
+    def get_avatar_directory(self, filename):
+        return os.path.join(self.name, 'image', filename)
+
+    image = models.ImageField(null=True, blank=True)
 
     def __str__(self):
         return f'username: {self.user.username},' \

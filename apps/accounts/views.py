@@ -7,6 +7,7 @@ from rest_framework import status, permissions
 
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.generics import GenericAPIView
+from rest_framework.parsers import FormParser , MultiPartParser
 
 from .models import Profile, User, ResetPasswordToken
 from .serializer import (
@@ -74,6 +75,7 @@ class ProfileAPIView(GenericAPIView):
     queryset = User.objects.all()
     serializer_class = UserViewSerializer
     permission_classes = [permissions.IsAuthenticated]
+    parser_classes = (MultiPartParser, FormParser)
 
     def get(self, request):
         user = request.user

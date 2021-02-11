@@ -12,6 +12,14 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = Profile
         exclude = ['user', 'id']
 
+    def validate(self, attrs):
+        image = attrs.get('image')
+
+        if image and image.size > Profile.IMAGE_MAX_SIZE:
+            raise serializers.ValidationError('Maximum file size reached')
+
+        return attrs
+
 
 class UserSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer()
