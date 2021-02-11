@@ -15,9 +15,9 @@ class Migration(migrations.Migration):
             name='Rule',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title_en', models.CharField(max_length=50)),
+                ('title_en', models.CharField(max_length=50, blank=True)),
                 ('title_fa', models.CharField(max_length=50)),
-                ('text_en', models.TextField(max_length=10000)),
+                ('text_en', models.TextField(max_length=10000, blank=True)),
                 ('text_fa', models.TextField(max_length=10000)),
                 ('order', models.IntegerField(default=0)),
             ],

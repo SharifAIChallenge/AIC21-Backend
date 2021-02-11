@@ -1,6 +1,6 @@
 from django.urls import path
-from apps.rule.views import RuleView
+from apps.rule.views import RuleAPIView
 
 urlpatterns = [
-    path('', RuleView.as_view()),
+    path('', view=RuleAPIView.as_view(), name="rules"),
 ]
