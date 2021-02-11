@@ -1,14 +1,8 @@
 from django.urls import path
-from rest_framework.authtoken.views import obtain_auth_token
-from rest_framework.routers import DefaultRouter
+from apps.past.views import PastListAPIView, PastInstanceAPIView
 
-from apps.past.views import PastView
-
-
-router = DefaultRouter()
-router.register('', PastView)
-router.register('/<int:pk>', PastView)
-
-urlpatterns = []
-urlpatterns += router.urls
+urlpatterns = [
+    path('', view=PastListAPIView.as_view(), name="all_past_ai"),
+    path('<int:past_id>', view=PastInstanceAPIView.as_view(), name="single_past_ai")
+]
 
