@@ -1,8 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 class Ticket(models.Model):
-    author = models.ForeignKey(User,on_delete=models.CASCADE,related_name='ticket')
+    author = models.ForeignKey(User, on_delete=models.CASCADE,
+                               related_name='ticket')
     date = models.DateTimeField(auto_now_add=True)
     image = models.ImageField()
     title = models.CharField(max_length=50)
@@ -21,5 +23,4 @@ class Reply(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return '%s' % (self.user)
-
+        return '%s' % self.user
