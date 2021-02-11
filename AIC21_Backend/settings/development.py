@@ -92,11 +92,16 @@ WSGI_APPLICATION = 'AIC21_Backend.wsgi.application'
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": config('DB_NAME_STG'),
+        "USER": config('DB_USER_STG'),
+        "PASSWORD": config('DB_PASSWORD_STG'),
+        "HOST": config('DB_HOST_STG'),
+        "PORT": config('DB_PORT_STG'),
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
