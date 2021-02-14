@@ -8,7 +8,7 @@ variables:
 
 workflow:
   rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
+    - if: '$CI_COMMIT_BRANCH == "main"'
       when: always
     - if: '$CI_COMMIT_BRANCH == "staging"'
       when: always
@@ -31,7 +31,7 @@ deploy-production:
   stage: deploy-production
   image: kroniak/ssh-client:latest
   rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
+    - if: '$CI_COMMIT_BRANCH == "main"'
       when: on_success
     - when: never
   before_script:
