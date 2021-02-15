@@ -30,13 +30,6 @@ class Ticket(UUIDModel, TimeStampedModel):
         on_delete=models.CASCADE,
         related_name='tickets'
     )
-    date = models.DateTimeField(
-        auto_now_add=True
-    )
-    image = models.ImageField(
-        blank=True,
-        null=True
-    )
 
     tag = models.ForeignKey(
         to='ticket.Tag',
@@ -80,9 +73,6 @@ class Reply(UUIDModel, TimeStampedModel):
     )
     text = models.TextField()
 
-    date = models.DateTimeField(
-        auto_now_add=True
-    )
     status = models.CharField(
         max_length=32,
         default=ReplyStatus.PENDING,

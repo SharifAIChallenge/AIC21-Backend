@@ -15,13 +15,22 @@ class ReplySerializer(serializers.ModelSerializer):
 
 
 class TicketSerializer(serializers.ModelSerializer):
-    replies = ReplySerializer(many=True)
+    replies = ReplySerializer(many=True, read_only=True)
     num_replies = serializers.SerializerMethodField()
+
+    @staticmethod
+    def get_num_replies(obj):
+        return obj.replies.count()
 
     class Meta:
         model = Ticket
-        fields = ['replies', 'num_replies', 'date', 'image',
-                  'title', 'author', 'text']
+        fields = ('replies', 'num_replies', 'created', 'tag',
+                  'title', 'text', 'html')
+        read_only_fields = ('created', 'replies', 'num_replies')
 
-    def get_num_replies(self, obj):
-        return obj.replies.count()
+    def create(self, validated_data):
+        validated_data['author'] = self.context['request'].user
+
+        ticket = Ticket.objects.create(**validated_data)
+
+        return ticket
