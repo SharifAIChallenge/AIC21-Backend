@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'apps.core',
     'apps.rule',
     'apps.past',
+    'apps.team',
 ]
 
 MIDDLEWARE = [

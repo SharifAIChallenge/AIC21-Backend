@@ -32,6 +32,7 @@ urlpatterns = [
     path('api/accounts/', include('apps.accounts.urls')),
     path('api/rules/', include('apps.rule.urls')),
     path('api/past/', include('apps.past.urls')),
+    path('api/team/', include('apps.team.urls')),
 ]
 
 if settings.DEBUG:
