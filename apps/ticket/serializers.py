@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.conf import settings
 
-from apps.ticket.models import *
+from apps.ticket.models import Ticket, Reply
 
 
 class ReplySerializer(serializers.ModelSerializer):
