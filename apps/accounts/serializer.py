@@ -22,7 +22,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    profile = ProfileSerializer()
+    profile = ProfileSerializer(read_only=True)
 
     email = serializers.EmailField(
         validators=[UniqueValidator(queryset=User.objects.all())]
@@ -53,9 +53,7 @@ class UserSerializer(serializers.ModelSerializer):
             email=validated_data.get('email'),
             password=validated_data.get('password')
         )
-        validated_data['profile']['user'] = user
-
-        profile = Profile.objects.create(**validated_data.get('profile'))
+        profile = Profile.objects.create(user=user)
 
         return user
 

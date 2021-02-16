@@ -4,10 +4,11 @@ from django.utils.http import urlsafe_base64_decode
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.hashers import make_password
 from rest_framework import status, permissions
+from apps.core.utils import send_to_telegram
 
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.generics import GenericAPIView
-from rest_framework.parsers import FormParser , MultiPartParser
+from rest_framework.parsers import FormParser, MultiPartParser
 
 from .models import Profile, User, ResetPasswordToken
 from .serializer import (
@@ -33,6 +34,7 @@ class SignUpAPIView(GenericAPIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         user.send_activation_email()
+
         return Response(
             data={'detail': _('Check your email for confirmation link')},
             status=200
@@ -73,24 +75,24 @@ class ResendActivationEmailAPIView(GenericAPIView):
 
 class ProfileAPIView(GenericAPIView):
     queryset = User.objects.all()
-    serializer_class = UserViewSerializer
+    serializer_class = ProfileSerializer
     permission_classes = [permissions.IsAuthenticated]
     parser_classes = (MultiPartParser, FormParser)
 
     def get(self, request):
         user = request.user
-        data = self.get_serializer(user).data
-        return Response(data={'user': data}, status=status.HTTP_200_OK)
+        data = self.get_serializer(user.profile).data
+        return Response(data={'data': data}, status=status.HTTP_200_OK)
 
     def put(self, request):
         user = request.user
-        serializer = self.get_serializer(instance=user, data=request.data,
-                                         partial=True)
+        serializer = ProfileSerializer(instance=user.profile, data=request.data,
+                                       partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
         return Response(
-            data=self.get_serializer(user).data,
+            data={'data': serializer.data},
             status=status.HTTP_200_OK
         )
 
