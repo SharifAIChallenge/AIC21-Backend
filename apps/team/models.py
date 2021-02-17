@@ -1,18 +1,13 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 import os
+from model_utils.models import UUIDModel, TimeStampedModel
 
-# Create your models here.
 
-
-# TODO : Create a TimeStampable for created_at and updated_at fields
-class Team(models.Model): 
+class Team(UUIDModel,TimeStampedModel):
     name = models.CharField(max_length=128, unique=True)
     image = models.ImageField(upload_to="teams/images/", null=True, blank=True) # TODO : Should read path from setting parameters
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True) 
     creator_email = models.CharField(max_length=254)
-
     def __str__(self):
         return '%s' % self.name 
 
@@ -38,7 +33,7 @@ class InvitationStatusTypes:
 
 User = get_user_model()
 
-class Invitation(models.Model):
+class Invitation(UUIDModel,TimeStampedModel):
     source = models.ForeignKey(User, related_name='invites', on_delete=models.CASCADE)
     target = models.ForeignKey(User, related_name='invitations', on_delete=models.CASCADE)
     type = models.CharField(max_length=50, choices=InvitationTypes.TYPES)
@@ -47,5 +42,4 @@ class Invitation(models.Model):
         choices=InvitationStatusTypes.TYPES,
         default=InvitationStatusTypes.PENDING
     )
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True) 
+
