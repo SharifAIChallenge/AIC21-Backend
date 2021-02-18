@@ -32,7 +32,6 @@ urlpatterns = [
     path('api/faq/', include('apps.faq.urls')),
     path('api/staff/', include('apps.staff.urls')),
     path('api/accounts/', include('apps.accounts.urls')),
-    path('api/rules/', include('apps.rule.urls')),
     path('api/past/', include('apps.past.urls')),
     path('api/ticket/',include('apps.ticket.urls'))
 ]

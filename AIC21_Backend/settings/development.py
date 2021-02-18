@@ -54,7 +54,6 @@ INSTALLED_APPS = [
     'apps.ticket',
     'apps.accounts',
     'apps.core',
-    'apps.rule',
     'apps.past',
 ]
 
