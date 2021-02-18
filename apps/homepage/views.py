@@ -5,10 +5,10 @@ from rest_framework.generics import GenericAPIView
 from apps.staff.models import Staff
 from apps.staff.serializers import StaffSerializer
 from .models import Intro, TimelineEvent, Prize, Stat, Sponsor, WhyThisEvent, \
-    Quote
+    Quote, Motto, Media, SocialMedia
 from .serializers import IntroSerializer, TimelineEventSerializer, \
     PrizeSerializer, StatSerializer, \
-    SponsorSerializer, WhyThisEventSerializer, QuoteSerializer
+    SponsorSerializer, WhyThisEventSerializer, QuoteSerializer, MottoSerializer, MediaSerializer, SocialMediaSerializer
 
 
 class HomepageView(GenericAPIView):
@@ -30,6 +30,11 @@ class HomepageView(GenericAPIView):
 
             'staffs': StaffSerializer(Staff.objects.all().order_by('?')[:5],
                                       many=True).data,
+            'Motto': MottoSerializer(Motto.objects.all(), many=True).data,
+
+            'Media': MediaSerializer(Media.objects.all(), many=True).data,
+
+            'SocialMedia': SocialMediaSerializer(SocialMedia.objects.all(), many=True).data,
         }
         return Response(data)
 
