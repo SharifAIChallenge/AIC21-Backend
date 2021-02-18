@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'martor',
     'corsheaders',
     'apps.blog',
-    'apps.resources.apps.ResourcesConfig',
     'apps.homepage',
     'apps.notification',
     'apps.go',
@@ -54,8 +53,9 @@ INSTALLED_APPS = [
     'apps.ticket',
     'apps.accounts',
     'apps.core',
-    'apps.rule',
     'apps.past',
+    'apps.resources',
+    'apps.gamedoc'
     'apps.team',
 ]
 
