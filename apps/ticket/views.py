@@ -21,6 +21,16 @@ class TicketAPIView(GenericAPIView):
             status=status.HTTP_200_OK
         )
 
+    def put(self, request, ticket_id):
+        ticket = get_object_or_404(Ticket, id=ticket_id)
+        serializer = self.get_serializer(instance=ticket, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(
+            data={"detail": "Your change has been submitted"},
+            status=status.HTTP_200_OK
+        )
+
 
 class UserTicketsListAPIView(GenericAPIView):
     serializer_class = TicketSerializer
@@ -75,3 +85,26 @@ class ReplyListAPIView(GenericAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save(ticket_id=ticket_id)
         return Response({"detail": "Your Reply has been submitted"})
+
+
+class ReplyAPIView(GenericAPIView):
+    serializer_class = ReplySerializer
+
+    def get(self, request, ticket_id, reply_id):
+        reply = get_object_or_404(Reply,id=reply_id)
+        data = self.get_serializer(instance=reply).data
+
+        return Response(
+            data={'data': data},
+            status=status.HTTP_200_OK
+        )
+
+    def put(self, request, ticket_id, reply_id):
+        reply = get_object_or_404(Reply, id=reply_id)
+        serializer = self.get_serializer(instance=reply, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(
+            data={"detail": "Your change has been submitted"},
+            status=status.HTTP_200_OK
+        )

@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'martor',
     'corsheaders',
     'apps.blog',
-    'apps.resources.apps.ResourcesConfig',
     'apps.homepage',
     'apps.notification',
     'apps.go',
@@ -55,6 +54,8 @@ INSTALLED_APPS = [
     'apps.accounts',
     'apps.core',
     'apps.past',
+    'apps.resources',
+    'apps.gamedoc'
 ]
 
 MIDDLEWARE = [

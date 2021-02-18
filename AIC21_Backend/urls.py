@@ -24,7 +24,6 @@ urlpatterns = [
     path('api/admin/', admin.site.urls),
     path('api/', include('apps.homepage.urls')),
     path('api/martor/', include('martor.urls')),
-    path('api/resources/', include('apps.resources.urls')),
     path('api/blog/', include('apps.blog.urls')),
     path('api/subscribe/', include('apps.notification.urls')),
     path('go/', include('apps.go.urls')),
@@ -33,6 +32,8 @@ urlpatterns = [
     path('api/staff/', include('apps.staff.urls')),
     path('api/accounts/', include('apps.accounts.urls')),
     path('api/past/', include('apps.past.urls')),
+    path('api/gamedoc/', include('apps.gamedoc.urls')),
+    path('api/resources/', include('apps.resources.urls')),
     path('api/ticket/',include('apps.ticket.urls'))
 ]
 
