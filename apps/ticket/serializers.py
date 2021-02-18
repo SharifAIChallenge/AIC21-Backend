@@ -7,10 +7,10 @@ from apps.ticket.models import Ticket, Reply
 class ReplySerializer(serializers.ModelSerializer):
     class Meta:
         model = Reply
-        fields = ['user', 'text', 'date']
+        fields = ['user','text', 'created']
 
     def create(self, validated_data):
-        validated_data['user'] = self.request.user
+        validated_data['user'] = self.context['request'].user
         return Reply.objects.create(**validated_data)
 
 
@@ -24,13 +24,11 @@ class TicketSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ticket
-        fields = ('replies', 'num_replies', 'created', 'tag',
+        fields = ('replies', 'num_replies', 'created', 'tag','id',
                   'title', 'text', 'html')
         read_only_fields = ('created', 'replies', 'num_replies')
 
     def create(self, validated_data):
         validated_data['author'] = self.context['request'].user
-
         ticket = Ticket.objects.create(**validated_data)
-
         return ticket

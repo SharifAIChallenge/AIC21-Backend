@@ -18,7 +18,7 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = ['user', 'text', 'date']
 
     def create(self, validated_data):
-        validated_data['user'] = self.request.user
+        validated_data['user'] = self.context['request'].user
         return Comment.objects.create(**validated_data)
 
 
