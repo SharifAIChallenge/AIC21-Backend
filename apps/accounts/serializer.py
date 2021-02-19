@@ -14,7 +14,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    profile = ProfileSerializer()
+    profile = ProfileSerializer(read_only=True)
 
     email = serializers.EmailField(
         validators=[UniqueValidator(queryset=User.objects.all())]
