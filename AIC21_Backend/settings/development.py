@@ -44,17 +44,18 @@ INSTALLED_APPS = [
     'martor',
     'corsheaders',
     'apps.blog',
-    'apps.resources.apps.ResourcesConfig',
     'apps.homepage',
     'apps.notification',
     'apps.go',
     'apps.uploads',
     'apps.faq',
     'apps.staff',
+    'apps.ticket',
     'apps.accounts',
     'apps.core',
-    'apps.rule',
     'apps.past',
+    'apps.resources',
+    'apps.gamedoc'
 ]
 
 MIDDLEWARE = [
@@ -170,9 +171,6 @@ EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_PASSWORD = config('EMAIL_PASSWORD')
 EMAIL_USE_TLS = config('EMAIL_USE_TLS')
 EMAIL_BACKEND = config('EMAIL_BACKEND')
-
-print(EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER,
-      EMAIL_PASSWORD, EMAIL_USE_TLS, EMAIL_BACKEND, sep='\n==========\n')
 
 DOMAIN = config('DOMAIN', 'localhost:8000')
 

@@ -9,3 +9,6 @@ ENV PIP_NO_CACHE_DIR 1
 RUN pip install -r ./requirements.txt
 
 ADD ./ ./
+
+CMD ["sh", "-c","./manage.py migrate; ./manage.py compilemessages; ./manage.py collectstatic --noinput; gunicorn --bind=0.0.0.0:8000 --timeout=90 --preload AIC21_Backend.wsgi:application;"]
+

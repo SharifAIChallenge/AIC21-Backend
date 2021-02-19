@@ -53,8 +53,8 @@ class CommentListView(GenericAPIView):
         data = CommentSerializer(comments, many=True).data
         return Response(data)
 
-    def post(self, request):
+    def post(self, request,post_id):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        serializer.save(post_id=post_id)
         return Response({"detail": _("Your comment has been submitted")})
