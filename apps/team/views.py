@@ -25,3 +25,13 @@ class TeamAPIView(GenericAPIView):
             },
             status=status.HTTP_200_OK
         )
+
+class TeamLeaveAPIView(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        current_user = request.user
+        current_user.team = None
+        current_user.save()
+
+        return Response(data={"message": "You left the team"}, status=status.HTTP_200_OK)
