@@ -1,3 +1,4 @@
+from django.http import Http404
 from django.shortcuts import render
 
 # Create your views here.
@@ -5,13 +6,15 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import TeamPostSerializer
+
+from .models import Team
+from .serializers import TeamSerializer, TeamInfoSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
 
 
 class TeamAPIView(GenericAPIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = TeamPostSerializer
+    serializer_class = TeamSerializer
     parser_classes = [MultiPartParser, FormParser]
 
     def post(self, request):
@@ -35,3 +38,16 @@ class TeamLeaveAPIView(GenericAPIView):
         current_user.save()
 
         return Response(data={"message": "You left the team"}, status=status.HTTP_200_OK)
+
+
+class TeamInfoAPIView(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = TeamInfoSerializer
+    queryset = Team.objects.all()
+
+    def get(self, req, team_id):
+        try:
+            data = self.get_serializer(self.get_queryset().get(pk=team_id)).data
+            return Response(data)
+        except Team.DoesNotExist:
+            raise Http404

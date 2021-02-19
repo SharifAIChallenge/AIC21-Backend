@@ -1,8 +1,9 @@
 from rest_framework import serializers
 from .models import Team
+from ..accounts.models import User
 
 
-class TeamPostSerializer(serializers.ModelSerializer):
+class TeamSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Team
@@ -23,3 +24,18 @@ class TeamPostSerializer(serializers.ModelSerializer):
         current_user.team = team
         current_user.save()
         return team
+
+
+class MemberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email']
+
+
+class TeamInfoSerializer(serializers.ModelSerializer):
+    members = MemberSerializer(many=True, read_only=True)
+    creator = MemberSerializer(read_only=True)
+
+    class Meta:
+        model = Team
+        fields = ['name', 'image', 'creator', 'members']
