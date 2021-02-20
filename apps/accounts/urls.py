@@ -20,5 +20,4 @@ urlpatterns = [
          name='reset password'),
     path('password/reset/confirm', view=ResetPasswordConfirmAPIView.as_view(),
          name='confirm password'),
-    path('accounts/', include('allauth.urls')),
 ]
