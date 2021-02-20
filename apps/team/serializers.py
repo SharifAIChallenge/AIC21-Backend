@@ -1,13 +1,14 @@
 from rest_framework import serializers
-from .models import Team
+from rest_framework.fields import CharField
+
+from .models import Team, Invitation
 from ..accounts.models import User
 
 
 class TeamSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Team
-        fields = ['name', 'image','id']
+        fields = ['name', 'image', 'id']
 
     def validate(self, data):
         user = self.context['request'].user
@@ -39,3 +40,44 @@ class TeamInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Team
         fields = ['name', 'image', 'creator', 'members']
+
+
+class UserToTeamInvitationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Invitation
+        fields = ['team', 'status']
+
+    def create(self, data):
+        data['type'] = 'user_to_team'
+        invitation = Invitation.objects.create(**data)
+        return invitation
+
+
+class TeamToUserInvitationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Invitation
+        fields = ['target_user', 'status']
+        extra_kwargs = {'target_user': {'required': True}}
+
+
+    def create(self, data):
+        current_user = self.context['request'].user
+        data['team'] = current_user.team
+        data['type'] = 'team_to_user'
+        invitation = Invitation.objects.create(**data)
+        return invitation
+
+
+class UserPendingInvitationSerializer(serializers.ModelSerializer):
+    team = TeamInfoSerializer(read_only=True)
+
+    def validate(self, data):
+        try:
+            data['status'] != None
+        except:
+            raise serializers.ValidationError('status field is required')
+        return data
+
+    class Meta:
+        model = Invitation
+        fields = ['team', 'status', 'id']
