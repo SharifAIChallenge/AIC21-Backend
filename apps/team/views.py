@@ -2,7 +2,7 @@ from django.http import Http404
 from django.shortcuts import render
 
 # Create your views here.
-from rest_framework.generics import GenericAPIView
+from rest_framework.generics import GenericAPIView, get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
@@ -12,10 +12,19 @@ from .serializers import TeamSerializer, TeamInfoSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
 
 
-class TeamAPIView(GenericAPIView):
+class TeamListAPIView(GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = TeamSerializer
     parser_classes = [MultiPartParser, FormParser]
+    queryset = Team.objects.all()
+
+    def get(self, request):
+        teams = self.get_queryset()
+        data = self.get_serializer(instance=teams, many=True).data
+        return Response(
+            data={'data': data},
+            status=status.HTTP_200_OK
+        )
 
     def post(self, request):
         team = self.get_serializer(data=request.data)
@@ -28,6 +37,7 @@ class TeamAPIView(GenericAPIView):
             },
             status=status.HTTP_200_OK
         )
+
 
 class TeamLeaveAPIView(GenericAPIView):
     permission_classes = [IsAuthenticated]
@@ -46,8 +56,24 @@ class TeamInfoAPIView(GenericAPIView):
     queryset = Team.objects.all()
 
     def get(self, req, team_id):
-        try:
-            data = self.get_serializer(self.get_queryset().get(pk=team_id)).data
-            return Response(data)
-        except Team.DoesNotExist:
-            raise Http404
+        team = get_object_or_404(Team, id=team_id)
+        data = self.get_serializer(instance=team).data
+        return Response(
+            data={'data': data},
+            status=status.HTTP_200_OK
+        )
+
+
+class IncompleteTeamInfoListAPIView(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = TeamInfoSerializer
+    queryset = Team.objects.all()
+
+    def get(self, request):
+        teams = self.get_queryset()
+        teams = filter(lambda team:not team.is_complete(),teams)
+        data = self.get_serializer(instance=teams, many=True).data
+        return Response(
+            data={'data': data},
+            status=status.HTTP_200_OK
+        )
