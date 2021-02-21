@@ -14,6 +14,10 @@ class Team(UUIDModel, TimeStampedModel):
     def is_complete(self):
         return self.members.count() == MAX_MEMBERS
 
+    def reject_all_pending_invitations(self):
+        invitations = self.invitations.filter(status="pending")
+        invitations.update(status="rejected")
+
     def __str__(self):
         return '%s' % self.name
 
@@ -39,7 +43,7 @@ class InvitationStatusTypes:
 
 
 class Invitation(UUIDModel, TimeStampedModel):
-    target_user = models.ForeignKey('accounts.User', related_name='invitations', on_delete=models.CASCADE,null=True,blank=True)
+    user = models.ForeignKey('accounts.User', related_name='invitations', on_delete=models.CASCADE)
     team = models.ForeignKey(Team, related_name='invitations', on_delete=models.CASCADE)
     type = models.CharField(max_length=50, choices=InvitationTypes.TYPES)
     status = models.CharField(

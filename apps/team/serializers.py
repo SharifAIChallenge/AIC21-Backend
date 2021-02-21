@@ -8,7 +8,7 @@ from ..accounts.models import User
 class TeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = Team
-        fields = ['name', 'image', 'id']
+        fields = ['name', 'image']
 
     def validate(self, data):
         user = self.context['request'].user
@@ -39,7 +39,7 @@ class TeamInfoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Team
-        fields = ['name', 'image', 'creator', 'members']
+        fields = ['name', 'image', 'creator', 'members', 'id']
 
 
 class UserToTeamInvitationSerializer(serializers.ModelSerializer):
@@ -49,6 +49,8 @@ class UserToTeamInvitationSerializer(serializers.ModelSerializer):
 
     def create(self, data):
         data['type'] = 'user_to_team'
+        current_user = self.context['request'].user
+        data['user'] = current_user
         invitation = Invitation.objects.create(**data)
         return invitation
 
@@ -56,9 +58,8 @@ class UserToTeamInvitationSerializer(serializers.ModelSerializer):
 class TeamToUserInvitationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Invitation
-        fields = ['target_user', 'status']
-        extra_kwargs = {'target_user': {'required': True}}
-
+        fields = ['user', 'status']
+        extra_kwargs = {'user': {'required': True}}
 
     def create(self, data):
         current_user = self.context['request'].user
@@ -72,7 +73,7 @@ class UserPendingInvitationSerializer(serializers.ModelSerializer):
     team = TeamInfoSerializer(read_only=True)
 
     def validate(self, data):
-        #todo: find better way to check status required
+        # todo: find better way to check status required
         try:
             data['status'] != None
         except:
@@ -82,3 +83,19 @@ class UserPendingInvitationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Invitation
         fields = ['team', 'status', 'id']
+
+
+class TeamPendingInvitationSerializer(serializers.ModelSerializer):
+    user = MemberSerializer(read_only=True)
+
+    def validate(self, data):
+        # todo: find better way to check status required
+        try:
+            data['status'] != None
+        except:
+            raise serializers.ValidationError('status field is required')
+        return data
+
+    class Meta:
+        model = Invitation
+        fields = ['user', 'status', 'id']
