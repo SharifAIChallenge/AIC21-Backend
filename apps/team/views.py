@@ -12,22 +12,23 @@ from apps.accounts.models import User
 from .models import Team, Invitation
 from .serializers import TeamSerializer, TeamInfoSerializer, UserToTeamInvitationSerializer, \
     TeamToUserInvitationSerializer, UserPendingInvitationSerializer, TeamPendingInvitationSerializer
+from .exceptions import NoTeamException
+from .models import Team
+from .permissions import HasTeam, NoTeam
 from rest_framework.parsers import MultiPartParser, FormParser
 
 
-class TeamListAPIView(GenericAPIView):
+class TeamAPIView(GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = TeamSerializer
     parser_classes = [MultiPartParser, FormParser]
     queryset = Team.objects.all()
 
     def get(self, request):
-        teams = self.get_queryset()
-        data = self.get_serializer(instance=teams, many=True).data
-        return Response(
-            data={'data': data},
-            status=status.HTTP_200_OK
-        )
+        team = request.user.team
+        data = self.get_serializer(team).data
+
+        return Response(data)
 
     def post(self, request):
         team = self.get_serializer(data=request.data)
@@ -35,15 +36,25 @@ class TeamListAPIView(GenericAPIView):
         team.save()
 
         return Response(
-            data={"message": "Team created successfully"},
+            data={
+                "data": team.data
+            },
             status=status.HTTP_200_OK
         )
 
+    def put(self, request):
+        team = self.get_serializer(data=request.data, instance=request.user.team, partial=True)
+        team.is_valid(raise_exception=True)
+        team.save()
 
-class TeamLeaveAPIView(GenericAPIView):
-    permission_classes = [IsAuthenticated]
+        return Response(
+            data={
+                "data": team.data
+            },
+            status=status.HTTP_200_OK
+        )
 
-    def post(self, request):
+    def delete(self, request):
         current_user = request.user
         current_user.team = None
         current_user.save()
@@ -53,6 +64,13 @@ class TeamLeaveAPIView(GenericAPIView):
             status=status.HTTP_200_OK
         )
 
+    def get_permissions(self):
+        new_permissions = self.permission_classes
+        if self.request.method in ['PUT', 'GET']:
+            new_permissions += [HasTeam]
+        if self.request.method == 'POST':
+            new_permissions += [NoTeam]
+        return [permission() for permission in new_permissions]
 
 class TeamInfoAPIView(GenericAPIView):
     permission_classes = [IsAuthenticated]

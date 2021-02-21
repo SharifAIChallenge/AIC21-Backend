@@ -1,21 +1,22 @@
 from rest_framework import serializers
 from rest_framework.fields import CharField
-
 from .models import Team, Invitation
 from ..accounts.models import User
 
 
+class MemberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email']
+
+
 class TeamSerializer(serializers.ModelSerializer):
+    members = MemberSerializer(many=True, read_only=True)
+    creator = MemberSerializer(read_only=True)
+
     class Meta:
         model = Team
-        fields = ['name', 'image']
-
-    def validate(self, data):
-        user = self.context['request'].user
-        if user.team is not None:
-            raise serializers.ValidationError('You have to leave your current team first, then you can create a team')
-
-        return data
+        fields = ['name', 'image', 'members', 'creator']
 
     def create(self, data):
         current_user = self.context['request'].user
@@ -25,12 +26,6 @@ class TeamSerializer(serializers.ModelSerializer):
         current_user.team = team
         current_user.save()
         return team
-
-
-class MemberSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['first_name', 'last_name', 'email']
 
 
 class TeamInfoSerializer(serializers.ModelSerializer):

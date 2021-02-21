@@ -1,14 +1,13 @@
 from django.urls import path
 
-from apps.team.views import TeamListAPIView, TeamLeaveAPIView, TeamInfoAPIView, IncompleteTeamInfoListAPIView, \
+from apps.team.views import TeamAPIView, TeamInfoAPIView, IncompleteTeamInfoListAPIView, \
     UserPendingInvitationListAPIView, TeamSentInvitationListAPIView, UserAnswerInvitationAPIView, \
     UserSentInvitationListAPIView, TeamPendingInvitationListAPIView, TeamAnswerInvitationAPIView
 
 app_name = 'team'
 
 urlpatterns = [
-    path('', view=TeamListAPIView.as_view(), name="teams_list"),
-    path("leave", view=TeamLeaveAPIView.as_view(), name="leave_team"),
+    path('', view=TeamAPIView.as_view(), name="team_operations"),
     path('incomplete', view=IncompleteTeamInfoListAPIView.as_view(), name="get_incomplete_teams"),
     path('invitations/user_pending', view=UserPendingInvitationListAPIView.as_view(),
          name="get_user_pending_invitations"),
