@@ -2,7 +2,7 @@ from django.http import Http404
 from django.shortcuts import render
 
 # Create your views here.
-from rest_framework.exceptions import bad_request, PermissionDenied
+from rest_framework.exceptions import  PermissionDenied, ValidationError
 from rest_framework.generics import GenericAPIView, get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -106,10 +106,12 @@ class UserAnswerInvitationAPIView(GenericAPIView):
         invitation = self.get_queryset().get(id=invitation_id)
         serializer = self.get_serializer(instance=invitation, data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.validate(serializer.data, invitation,request.user)
+        self.validate(request.data, invitation,request.user)
         serializer.save()
         if serializer.data['status'] == 'accepted':
-            invitation.target_user.team = invitation.team
+            target_user = invitation.target_user
+            target_user.team = invitation.team
+            target_user.save()
 
         return Response(
             data={"detail": f"Invitation is {request.data['status']}"},
@@ -122,7 +124,7 @@ class UserAnswerInvitationAPIView(GenericAPIView):
         elif data['status'] == 'rejected' or data['status'] == 'pending':
             return
         elif invitation.team.is_complete():
-            raise bad_request("the team is completed, your invitation is outdated")
+            raise ValidationError("the team is completed, your invitation is outdated")
 
 
 
@@ -151,8 +153,10 @@ class TeamSentInvitationListAPIView(GenericAPIView):
 
     def validate(self, data, user):
         if user.team is None:
-            raise bad_request('You have to be in a team to invite other players')
+            raise ValidationError("You have to be in a team to invite other players")
         if user.team.is_complete():
-            raise bad_request('Your team is full, you can not invite anymore player')
+            raise ValidationError('Your team is full, you can not invite anymore player')
         if Invitation.objects.filter(team=user.team, target_user=data['target_user'], status='pending').exists():
-            raise bad_request('You have a pending invitation for this player')
+            raise ValidationError("You have a pending invitation for this player")
+
+# class UserSentInvitationListAPIView

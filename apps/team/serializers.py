@@ -72,6 +72,7 @@ class UserPendingInvitationSerializer(serializers.ModelSerializer):
     team = TeamInfoSerializer(read_only=True)
 
     def validate(self, data):
+        #todo: find better way to check status required
         try:
             data['status'] != None
         except:
