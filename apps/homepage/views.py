@@ -8,7 +8,8 @@ from .models import Intro, TimelineEvent, Prize, Stat, Sponsor, WhyThisEvent, \
     Quote, Motto, Media, SocialMedia
 from .serializers import IntroSerializer, TimelineEventSerializer, \
     PrizeSerializer, StatSerializer, \
-    SponsorSerializer, WhyThisEventSerializer, QuoteSerializer, MottoSerializer, MediaSerializer, SocialMediaSerializer
+    SponsorSerializer, WhyThisEventSerializer, QuoteSerializer, MottoSerializer, MediaSerializer, SocialMediaSerializer, \
+    Quote, Rule
 
 
 class HomepageView(GenericAPIView):
@@ -46,3 +47,12 @@ class TermsOfUseView(GenericAPIView):
             'term': Intro.objects.first().term_of_use
         }
         return Response(data)
+
+
+class RuleAPIView(GenericAPIView):
+    serializer_class = RuleSerializer
+    queryset = Rule.objects.all().order_by('order')
+
+    def get(self, request):
+        rules = self.get_serializer(self.get_queryset(), many=True)
+        return Response(data={"data": rules.data}, status=status.HTTP_200_OK)

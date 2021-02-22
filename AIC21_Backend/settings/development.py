@@ -53,7 +53,6 @@ INSTALLED_APPS = [
     'apps.ticket',
     'apps.accounts',
     'apps.core',
-    'apps.rule',
     'apps.past',
     'apps.resources',
     'apps.gamedoc'
@@ -176,3 +175,10 @@ EMAIL_BACKEND = config('EMAIL_BACKEND')
 DOMAIN = config('DOMAIN', 'localhost:8000')
 
 AUTH_USER_MODEL = 'accounts.User'
+
+CORS_ORIGIN_ALLOW_ALL = False
+
+CORS_ORIGIN_WHITELIST = (
+    'stg.aichallenge.ir',
+    'aichallenge.ir',
+)

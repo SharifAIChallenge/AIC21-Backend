@@ -4,7 +4,8 @@ from django.db import models
 
 from martor.widgets import AdminMartorWidget
 
-from .models import Intro, TimelineEvent, Prize, Stat, Sponsor, WhyThisEvent, Quote, Motto, Media, SocialMedia
+from .models import Intro, TimelineEvent, Prize, Stat, Sponsor, WhyThisEvent, Quote, Motto, Media, SocialMedia, Rule
+
 
 
 @admin.register(Intro)
@@ -56,6 +57,7 @@ class QuoteAdmin(ModelAdmin):
     }
 
 
+
 @admin.register(Motto)
 class MottoEventAdmin(ModelAdmin):
     formfield_overrides = {
@@ -75,3 +77,10 @@ class SocialMediaEventAdmin(ModelAdmin):
     formfield_overrides = {
         models.TextField: {'widget': AdminMartorWidget},
     }
+
+@admin.register(Rule)
+class RuleAdmin(ModelAdmin):
+    formfield_overrides = {
+        models.TextField: {'widget': AdminMartorWidget},
+    }
+    pass
