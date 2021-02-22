@@ -1,7 +1,7 @@
 from rest_framework.serializers import ModelSerializer, Serializer
 from rest_framework import serializers
 
-from .models import Intro, TimelineEvent, Prize, Stat, Sponsor, WhyThisEvent, Quote, Motto, Media, SocialMedia
+from .models import Intro, TimelineEvent, Prize, Stats, Sponsor, WhyThisEvent, Quote, Motto, Media, SocialMedia, Rule
 
 
 class IntroSerializer(ModelSerializer):
@@ -24,7 +24,7 @@ class PrizeSerializer(ModelSerializer):
 
 class StatSerializer(ModelSerializer):
     class Meta:
-        model = Stat
+        model = Stats
         exclude = ['id']
 
 
@@ -62,3 +62,9 @@ class SocialMediaSerializer(ModelSerializer):
     class Meta:
         model = SocialMedia
         exclude = ['id']
+
+
+class RuleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rule
+        fields = ['title_en', 'title_fa', 'text_en', 'text_fa', 'order']
