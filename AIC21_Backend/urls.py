@@ -35,7 +35,9 @@ urlpatterns = [
     path('api/team/', include('apps.team.urls')),
     path('api/gamedoc/', include('apps.gamedoc.urls')),
     path('api/resources/', include('apps.resources.urls')),
-    path('api/ticket/',include('apps.ticket.urls'))
+    path('api/ticket/', include('apps.ticket.urls')),
+    path('api/rules/', include('apps.rule.urls')),
+    path('api/courses/', include('apps.course.urls')),
 ]
 
 if settings.DEBUG:
