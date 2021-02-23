@@ -7,6 +7,7 @@ from rest_framework import status, permissions
 
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.generics import GenericAPIView
+from rest_framework.permissions import IsAuthenticated
 
 from .models import Profile, User, ResetPasswordToken
 from .serializer import (
@@ -142,3 +143,16 @@ class ResetPasswordConfirmAPIView(GenericAPIView):
         user.save()
         return Response(data={'detail': _('Successfully Changed Password')},
                         status=200)
+
+
+class UserWithoutTeamAPIView(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserViewSerializer
+    queryset = User.objects.all().filter(team=None)
+
+    def get(self, request):
+        result = self.get_serializer(self.get_queryset(), many=True).data
+
+        return Response({
+            "data": result,
+        }, status= status.HTTP_200_OK)
