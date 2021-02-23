@@ -181,6 +181,8 @@ AUTH_USER_MODEL = 'accounts.User'
 CORS_ORIGIN_ALLOW_ALL = False
 
 CORS_ORIGIN_WHITELIST = (
-    'stg.aichallenge.ir',
-    'aichallenge.ir',
+    'https://stg.aichallenge.ir',
+    'http://stg.aichallenge.ir',
+    'https://aichallenge.ir',
+    'http://aichallenge.ir'
 )
