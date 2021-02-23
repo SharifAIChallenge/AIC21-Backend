@@ -72,6 +72,26 @@ class TeamAPIView(GenericAPIView):
             new_permissions += [NoTeam]
         return [permission() for permission in new_permissions]
 
+
+class TeamSearchAPIView(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = TeamSerializer
+    queryset = Team.objects.all()
+
+    def get(self, request):
+        term = request.GET.get('s')
+        if term is None or term == '':
+            return Response(data={"message": "Provide search parameter"}, status=status.HTTP_400_BAD_REQUEST)
+
+        results = self.get_serializer(self.get_queryset().filter(name__icontains=term), many=True)
+
+        return Response(
+            data={
+                "data": results.data
+            },
+            status=status.HTTP_200_OK
+        )
+
 class TeamInfoAPIView(GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = TeamInfoSerializer
