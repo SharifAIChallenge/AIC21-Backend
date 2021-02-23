@@ -91,7 +91,7 @@ class ReplyAPIView(GenericAPIView):
     serializer_class = ReplySerializer
 
     def get(self, request, ticket_id, reply_id):
-        reply = get_object_or_404(Reply,id=reply_id)
+        reply = get_object_or_404(Reply, id=reply_id)
         data = self.get_serializer(instance=reply).data
 
         return Response(
