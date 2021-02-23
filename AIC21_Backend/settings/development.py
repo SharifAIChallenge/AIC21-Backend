@@ -56,7 +56,6 @@ INSTALLED_APPS = [
     'apps.past',
     'apps.resources',
     'apps.gamedoc',
-    'apps.rule',
     'apps.course',
     'apps.team',
 ]
