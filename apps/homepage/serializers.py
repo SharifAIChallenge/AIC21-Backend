@@ -1,7 +1,8 @@
 from rest_framework.serializers import ModelSerializer, Serializer
 from rest_framework import serializers
 
-from .models import Intro, TimelineEvent, Prize, Stat, Sponsor, WhyThisEvent, Quote, Motto, Media, SocialMedia, Rule
+from .models import Intro, TimelineEvent, Prize, Stats, Sponsor, WhyThisEvent, \
+    Quote, Motto, Media, SocialMedia, Rule
 
 
 class IntroSerializer(ModelSerializer):
@@ -24,7 +25,7 @@ class PrizeSerializer(ModelSerializer):
 
 class StatSerializer(ModelSerializer):
     class Meta:
-        model = Stat
+        model = Stats
         exclude = ['id']
 
 

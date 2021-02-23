@@ -48,7 +48,7 @@ class Prize(models.Model):
         return self.title_en
 
 
-class Stat(models.Model):
+class Stats(models.Model):
     title_en = models.CharField(max_length=100)
     title_fa = models.CharField(max_length=100)
     stat_en = models.CharField(max_length=100)
@@ -84,7 +84,6 @@ class Quote(models.Model):
     comment_fa = models.TextField()
 
 
-
 class Motto(models.Model):
     motto = models.CharField(max_length=128)
     pre_text = models.CharField(max_length=256)
@@ -99,6 +98,7 @@ class SocialMedia(models.Model):
     name = models.CharField(max_length=64)
     url = models.URLField(max_length=256)
     icon = models.FileField()
+
 
 class Rule(models.Model):
     title_en = models.CharField(max_length=50, blank=True)
