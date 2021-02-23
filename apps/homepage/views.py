@@ -4,12 +4,14 @@ from rest_framework.generics import GenericAPIView
 
 from apps.staff.models import Staff
 from apps.staff.serializers import StaffSerializer
-from .models import Intro, TimelineEvent, Prize, Stat, Sponsor, WhyThisEvent, \
-    Quote, Motto, Media, SocialMedia
+from .models import Intro, TimelineEvent, Prize, Stats, Sponsor, WhyThisEvent, \
+    Quote, Motto, Media, SocialMedia, Rule
+
 from .serializers import IntroSerializer, TimelineEventSerializer, \
     PrizeSerializer, StatSerializer, \
-    SponsorSerializer, WhyThisEventSerializer, QuoteSerializer, MottoSerializer, MediaSerializer, SocialMediaSerializer, \
-    Quote, RuleSerializer, Rule
+    SponsorSerializer, WhyThisEventSerializer, QuoteSerializer, \
+    MottoSerializer, MediaSerializer, SocialMediaSerializer, \
+    RuleSerializer
 
 
 class TimelineView(GenericAPIView):
@@ -28,7 +30,7 @@ class PrizesView(GenericAPIView):
     def get(self, request):
         data = {
             'data': PrizeSerializer(Prize.objects.all().order_by('id'),
-                                      many=True).data
+                                    many=True).data
         }
         return Response(data)
 
@@ -38,7 +40,7 @@ class SponsorsView(GenericAPIView):
     def get(self, request):
         data = {
             'data': SponsorSerializer(Sponsor.objects.all(),
-                                          many=True).data
+                                      many=True).data
         }
         return Response(data)
 
@@ -48,7 +50,7 @@ class WhyView(GenericAPIView):
     def get(self, request):
         data = {
             'data': WhyThisEventSerializer(WhyThisEvent.objects.all(),
-                                          many=True).data
+                                           many=True).data
         }
         return Response(data)
 
@@ -67,7 +69,7 @@ class StaffsView(GenericAPIView):
     def get(self, request):
         data = {
             'data': StaffSerializer(Staff.objects.all().order_by('?')[:5],
-                                      many=True).data
+                                    many=True).data
         }
         return Response(data)
 
@@ -85,7 +87,7 @@ class StatView(GenericAPIView):
 
     def get(self, request):
         data = {
-            'data': StatSerializer(Stat.objects.all(), many=True).data
+            'data': StatSerializer(Stats.objects.all(), many=True).data
         }
         return Response(data)
 
@@ -94,7 +96,8 @@ class SocialsView(GenericAPIView):
 
     def get(self, request):
         data = {
-            'socials': SocialMediaSerializer(SocialMedia.objects.all(), many=True).data
+            'socials': SocialMediaSerializer(SocialMedia.objects.all(),
+                                             many=True).data
         }
         return Response(data)
 

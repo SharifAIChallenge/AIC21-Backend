@@ -55,7 +55,9 @@ INSTALLED_APPS = [
     'apps.core',
     'apps.past',
     'apps.resources',
-    'apps.gamedoc'
+    'apps.gamedoc',
+    'apps.course',
+    'apps.team',
 ]
 
 MIDDLEWARE = [
@@ -180,5 +182,7 @@ CORS_ORIGIN_ALLOW_ALL = False
 
 CORS_ORIGIN_WHITELIST = (
     'https://stg.aichallenge.ir',
+    'http://stg.aichallenge.ir',
     'https://aichallenge.ir',
+    'http://aichallenge.ir'
 )
