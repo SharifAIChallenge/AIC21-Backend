@@ -5,11 +5,12 @@ from rest_framework.generics import GenericAPIView
 from apps.staff.models import Staff
 from apps.staff.serializers import StaffSerializer
 from .models import Intro, TimelineEvent, Prize, Stat, Sponsor, WhyThisEvent, \
-    Quote, Motto, Media, SocialMedia
+    Quote, Motto, Media, SocialMedia, Rule
 from .serializers import IntroSerializer, TimelineEventSerializer, \
     PrizeSerializer, StatSerializer, \
-    SponsorSerializer, WhyThisEventSerializer, QuoteSerializer, MottoSerializer, MediaSerializer, SocialMediaSerializer, \
-    Quote, Rule
+    SponsorSerializer, WhyThisEventSerializer, QuoteSerializer, \
+    MottoSerializer, MediaSerializer, SocialMediaSerializer, \
+    RuleSerializer
 
 
 class HomepageView(GenericAPIView):
@@ -35,7 +36,8 @@ class HomepageView(GenericAPIView):
 
             'Media': MediaSerializer(Media.objects.all(), many=True).data,
 
-            'SocialMedia': SocialMediaSerializer(SocialMedia.objects.all(), many=True).data,
+            'SocialMedia': SocialMediaSerializer(SocialMedia.objects.all(),
+                                                 many=True).data,
         }
         return Response(data)
 
