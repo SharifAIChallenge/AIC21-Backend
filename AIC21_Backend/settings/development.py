@@ -55,7 +55,8 @@ INSTALLED_APPS = [
     'apps.core',
     'apps.past',
     'apps.resources',
-    'apps.gamedoc'
+    'apps.gamedoc',
+    'apps.team',
 ]
 
 MIDDLEWARE = [
