@@ -53,6 +53,7 @@ class Stats(models.Model):
     title_fa = models.CharField(max_length=100)
     stat_en = models.CharField(max_length=100)
     stat_fa = models.CharField(max_length=100)
+    icon = models.CharField(max_length=128)
 
     def __str__(self):
         return self.title_en
@@ -68,7 +69,7 @@ class Sponsor(models.Model):
     def upload_path(self, filename):
         return f'sponsor/{self.grade}/{self.name_en}/{filename}'
 
-    image = models.FileField()
+    image = models.FileField(upload_to=upload_path)
 
 
 class WhyThisEvent(models.Model):
@@ -97,7 +98,7 @@ class Media(models.Model):
 class SocialMedia(models.Model):
     name = models.CharField(max_length=64)
     url = models.URLField(max_length=256)
-    icon = models.FileField()
+    icon = models.CharField(max_length=128)
 
 
 class Rule(models.Model):
