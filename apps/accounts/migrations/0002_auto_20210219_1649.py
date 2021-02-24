@@ -13,11 +13,11 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='user',
-            name='team',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='members', to='team.team'),
-        ),
+        # migrations.AddField(
+        #     model_name='user',
+        #     name='team',
+        #     field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='members', to='team.team'),
+        # ),
         # migrations.AddField(
         #     model_name='user',
         #     name='user_permissions',
