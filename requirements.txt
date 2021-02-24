@@ -13,4 +13,5 @@ django-decouple==2.1
 Pillow==8.1.0
 django-allauth==0.44.0
 google-auth==1.26.1
+djangorestframework-simplejwt==4.6.0
 dj-rest-auth==2.1.3
