@@ -184,5 +184,9 @@ CORS_ORIGIN_WHITELIST = (
     'https://stg.aichallenge.ir',
     'http://stg.aichallenge.ir',
     'https://aichallenge.ir',
-    'http://aichallenge.ir'
+    'http://aichallenge.ir',
+    'https://api-stg.aichallenge.ir',
+    'http://api-stg.aichallenge.ir',
+    'https://api.aichallenge.ir',
+    'http://api.aichallenge.ir',
 )
