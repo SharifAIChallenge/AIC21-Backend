@@ -42,12 +42,13 @@ class Prize(models.Model):
     title_fa = models.CharField(max_length=100)
     prize_en = models.CharField(max_length=100)
     prize_fa = models.CharField(max_length=100)
+    team_name = models.CharField(max_length=128)
 
     def __str__(self):
         return self.title_en
 
 
-class Stat(models.Model):
+class Stats(models.Model):
     title_en = models.CharField(max_length=100)
     title_fa = models.CharField(max_length=100)
     stat_en = models.CharField(max_length=100)
@@ -62,6 +63,7 @@ class Sponsor(models.Model):
     name_fa = models.CharField(max_length=200)
     url = models.CharField(max_length=500)
     grade = models.CharField(max_length=20, choices=SponsorGradeTypes.TYPES)
+    description = models.TextField()
 
     def upload_path(self, filename):
         return f'sponsor/{self.grade}/{self.name_en}/{filename}'
@@ -80,3 +82,30 @@ class Quote(models.Model):
     name_fa = models.CharField(max_length=200)
     comment_en = models.TextField()
     comment_fa = models.TextField()
+
+
+class Motto(models.Model):
+    motto = models.CharField(max_length=128)
+    pre_text = models.CharField(max_length=256)
+
+
+class Media(models.Model):
+    title = models.CharField(max_length=128)
+    file = models.FileField()
+
+
+class SocialMedia(models.Model):
+    name = models.CharField(max_length=64)
+    url = models.URLField(max_length=256)
+    icon = models.FileField()
+
+
+class Rule(models.Model):
+    title_en = models.CharField(max_length=50, blank=True)
+    title_fa = models.CharField(max_length=50)
+    text_en = models.TextField(max_length=10000, blank=True)
+    text_fa = models.TextField(max_length=10000)
+    order = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f'{self.title_fa}'

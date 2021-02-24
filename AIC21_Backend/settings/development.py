@@ -47,17 +47,19 @@ INSTALLED_APPS = [
     'martor',
     'corsheaders',
     'apps.blog',
-    'apps.resources.apps.ResourcesConfig',
     'apps.homepage',
     'apps.notification',
     'apps.go',
     'apps.uploads',
     'apps.faq',
     'apps.staff',
+    'apps.ticket',
     'apps.accounts',
     'apps.core',
-    'apps.rule',
     'apps.past',
+    'apps.resources',
+    'apps.gamedoc',
+    'apps.course',
     'apps.team',
     "dj_rest_auth",
     "allauth",
@@ -219,10 +221,19 @@ EMAIL_PASSWORD = config('EMAIL_PASSWORD')
 EMAIL_USE_TLS = config('EMAIL_USE_TLS')
 EMAIL_BACKEND = config('EMAIL_BACKEND')
 
-print(EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER,
-      EMAIL_PASSWORD, EMAIL_USE_TLS, EMAIL_BACKEND, sep='\n==========\n')
-
 DOMAIN = config('DOMAIN', 'localhost:8000')
 
 AUTH_USER_MODEL = 'accounts.User'
 
+CORS_ORIGIN_ALLOW_ALL = False
+
+CORS_ORIGIN_WHITELIST = (
+    'https://stg.aichallenge.ir',
+    'http://stg.aichallenge.ir',
+    'https://aichallenge.ir',
+    'http://aichallenge.ir',
+    'https://api-stg.aichallenge.ir',
+    'http://api-stg.aichallenge.ir',
+    'https://api.aichallenge.ir',
+    'http://api.aichallenge.ir',
+)
