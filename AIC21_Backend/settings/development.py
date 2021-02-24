@@ -59,7 +59,6 @@ INSTALLED_APPS = [
     'apps.rule',
     'apps.past',
     'apps.team',
-    'apps.core',
     "dj_rest_auth",
     "allauth",
     "allauth.account",
