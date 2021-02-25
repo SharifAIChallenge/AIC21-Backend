@@ -6,7 +6,7 @@ from apps.homepage.serializers import SubscribeSerializer
 from apps.staff.models import Staff
 from apps.staff.serializers import StaffSerializer
 from .models import Intro, TimelineEvent, Prize, Stats, Sponsor, WhyThisEvent, \
-    Quote, Motto, Media, SocialMedia, Rule
+    Quote, Motto, Media, SocialMedia, Rule, GoogleAddEventToCalender
 
 from .serializers import IntroSerializer, TimelineEventSerializer, \
     PrizeSerializer, StatSerializer, \
@@ -21,7 +21,8 @@ class TimelineView(GenericAPIView):
         data = {
             'data': TimelineEventSerializer(
                 TimelineEvent.objects.all().order_by('id').order_by('order'),
-                many=True).data
+                many=True).data,
+            'calendar': GoogleAddEventToCalender.objects.all().last().url
         }
         return Response(data)
 

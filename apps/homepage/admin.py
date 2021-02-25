@@ -4,7 +4,7 @@ from django.db import models
 
 from martor.widgets import AdminMartorWidget
 from .models import Intro, TimelineEvent, Prize, Stats, Sponsor, WhyThisEvent, \
-    Quote, Motto, Media, SocialMedia, Rule
+    Quote, Motto, Media, SocialMedia, Rule, GoogleAddEventToCalender
 
 
 @admin.register(Intro)
@@ -83,3 +83,9 @@ class RuleAdmin(ModelAdmin):
         models.TextField: {'widget': AdminMartorWidget},
     }
     pass
+
+
+@admin.register(GoogleAddEventToCalender)
+class GoogleAddEventToCalender(ModelAdmin):
+    list_display = ('id', 'url',)
+    list_editable = ('url',)
