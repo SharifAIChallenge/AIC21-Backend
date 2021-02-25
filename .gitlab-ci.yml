@@ -6,6 +6,14 @@ variables:
   IMAGE_TAG: $CI_PIPELINE_ID-$CI_COMMIT_SHORT_SHA
   IMAGE_URL: $SSC_REGISTRY_URL/$CI_PROJECT_PATH:$CI_PIPELINE_ID-$CI_COMMIT_SHORT_SHA
 
+workflow:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      when: always
+    - if: '$CI_COMMIT_BRANCH == "staging"'
+      when: always
+    - when: never
+  
 var-check:
   stage: publish-image
   image:
@@ -15,18 +23,13 @@ var-check:
   before_script:
     - echo "service == $SERVICE_NAME"
     - echo "reg ====== $SSC_REGISTRY_URL"
+    - echo "image tag == $IMAGE_TAG"
+    - echo "image url == $IMAGE_URL"
   script:
    - echo "ip ======== $SWARM_MANAGER_SERVER"
+  
 
-workflow:
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main"'
-      when: always
-    - if: '$CI_COMMIT_BRANCH == "staging"'
-      when: always
-    - when: never
-
-build-push-image: # ali is so go
+build-push-image:
   stage: publish-image
   image:
     name: $SSC_REGISTRY_URL/kaniko:debug
@@ -44,6 +47,8 @@ deploy-production:
   image: kroniak/ssh-client:latest
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH == "staging"'
       when: on_success
     - when: never
   before_script:
