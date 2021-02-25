@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     'apps.gamedoc',
     'apps.course',
     'apps.team',
+    'apps.challenge',
     "dj_rest_auth",
     "allauth",
     "allauth.account",
@@ -237,3 +238,8 @@ CORS_ORIGIN_WHITELIST = (
     'https://api.aichallenge.ir',
     'http://api.aichallenge.ir',
 )
+
+UPLOAD_PATHS = {
+    'MAP': 'maps/',
+    'MATCH_LOGS': 'match/logs/',
+}
