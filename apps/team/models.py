@@ -1,9 +1,19 @@
-from django.db import models
 import os
-from django.utils.translation import ugettext_lazy as _, ugettext
+import logging
+
+from django.contrib.auth import get_user_model
+from django.db import models
+from django.utils.translation import ugettext_lazy as _
+
 from model_utils.models import UUIDModel, TimeStampedModel
 
+from .tasks import handle_submission
+
 MAX_MEMBERS = 3
+
+User = get_user_model()
+
+logger = logging.getLogger(__name__)
 
 
 class Team(UUIDModel, TimeStampedModel):
@@ -43,9 +53,6 @@ class InvitationStatusTypes:
         (ACCEPTED, 'Accepted'),
         (REJECTED, 'Rejected')
     )
-
-
-User = get_user_model()
 
 
 class Invitation(UUIDModel, TimeStampedModel):
