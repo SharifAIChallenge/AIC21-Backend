@@ -59,8 +59,8 @@ INSTALLED_APPS = [
     'apps.past',
     'apps.resources',
     'apps.gamedoc',
-    'apps.course',
     'apps.team',
+    'apps.course',
     'apps.challenge',
     "dj_rest_auth",
     "allauth",
@@ -220,6 +220,7 @@ EMAIL_PORT = config('EMAIL_PORT')
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_PASSWORD = config('EMAIL_PASSWORD')
 EMAIL_USE_TLS = config('EMAIL_USE_TLS')
+EMAIL_USE_SSL = config('EMAIL_USE_SSL')
 EMAIL_BACKEND = config('EMAIL_BACKEND')
 
 DOMAIN = config('DOMAIN', 'localhost:8000')
