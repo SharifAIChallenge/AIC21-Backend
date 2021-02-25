@@ -1,4 +1,4 @@
-FROM python:3.8
+FROM reg.aichallenge.ir/python:3.8
 
 RUN apt update && apt install -y vim curl gettext
 
