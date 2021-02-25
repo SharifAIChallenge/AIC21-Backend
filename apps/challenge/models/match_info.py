@@ -7,6 +7,6 @@ class MatchInfo(TimeStampedModel):
     team2_score = models.PositiveIntegerField()
     # TODO : Team1 Code
     # TODO : Team2 Code
-    match_duration = models.DurationField()
+    match_duration = models.PositiveSmallIntegerField()
     match = models.OneToOneField(to='challenge.Match', on_delete=models.CASCADE, related_name='match_info')
     map = models.ForeignKey(to='challenge.Map', on_delete=models.CASCADE, related_name='match_info')
