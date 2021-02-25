@@ -3,9 +3,8 @@ from django.contrib.admin import ModelAdmin
 from django.db import models
 
 from martor.widgets import AdminMartorWidget
-
-from .models import Intro, TimelineEvent, Prize, Stat, Sponsor, WhyThisEvent, \
-    Quote, Rule
+from .models import Intro, TimelineEvent, Prize, Stats, Sponsor, WhyThisEvent, \
+    Quote, Motto, Media, SocialMedia, Rule
 
 
 @admin.register(Intro)
@@ -29,8 +28,8 @@ class PrizeAdmin(ModelAdmin):
     }
 
 
-@admin.register(Stat)
-class StatAdmin(ModelAdmin):
+@admin.register(Stats)
+class StatsAdmin(ModelAdmin):
     formfield_overrides = {
         models.TextField: {'widget': AdminMartorWidget},
     }
@@ -52,6 +51,27 @@ class WhyThisEventAdmin(ModelAdmin):
 
 @admin.register(Quote)
 class QuoteAdmin(ModelAdmin):
+    formfield_overrides = {
+        models.TextField: {'widget': AdminMartorWidget},
+    }
+
+
+@admin.register(Motto)
+class MottoEventAdmin(ModelAdmin):
+    formfield_overrides = {
+        models.TextField: {'widget': AdminMartorWidget},
+    }
+
+
+@admin.register(Media)
+class MediaEventAdmin(ModelAdmin):
+    formfield_overrides = {
+        models.TextField: {'widget': AdminMartorWidget},
+    }
+
+
+@admin.register(SocialMedia)
+class SocialMediaEventAdmin(ModelAdmin):
     formfield_overrides = {
         models.TextField: {'widget': AdminMartorWidget},
     }
