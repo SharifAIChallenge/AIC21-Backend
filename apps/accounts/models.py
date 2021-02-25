@@ -17,7 +17,7 @@ from apps.core.utils import send_email
 
 class User(AbstractUser):
     team = models.ForeignKey(to='team.Team',
-                             on_delete=models.CASCADE,
+                             on_delete=models.SET_NULL,
                              related_name='members', null=True, blank=True)
 
     def send_activation_email(self):

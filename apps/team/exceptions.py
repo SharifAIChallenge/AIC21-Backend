@@ -4,7 +4,7 @@ from rest_framework import status
 
 class NoTeamException(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
-    default_detail = "You don't have team"
+    default_detail = "user does not have a team"
     default_code = "no_team"
 
 
@@ -16,7 +16,7 @@ class TeamIsFullException(APIException):
 
 class HasTeamException(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
-    default_detail = "You don't have team"
+    default_detail = "user has a team"
     default_code = "has_team"
 
 
