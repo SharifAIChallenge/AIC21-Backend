@@ -6,3 +6,4 @@ from .scoreboard import Scoreboard
 from .scoreboard_row import ScoreboardRow
 from .request import Request
 from .clan import Clan
+from .clan_team import ClanTeam
