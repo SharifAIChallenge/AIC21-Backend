@@ -19,7 +19,7 @@ class LobbyQueueSerializer(serializers.ModelSerializer):
 
     def create(self, data):
         data['team'] = self.context['request'].user.team
-        team = LobbyQueue.objects.create(**data)
+        lobby_q = LobbyQueue.objects.create(**data)
 
-        return team
+        return lobby_q
 

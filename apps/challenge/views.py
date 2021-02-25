@@ -26,7 +26,9 @@ class LobbyAPIView(GenericAPIView):
                 'remaining_space': max(0, population - lobby_q.get_lobby_size())
             })
 
-        return Response(data=result, status=status.HTTP_200_OK)
+        return Response(data={
+            'data': result
+        }, status=status.HTTP_200_OK)
 
 
     def post(self, request):
