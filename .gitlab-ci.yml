@@ -23,6 +23,8 @@ var-check:
   before_script:
     - echo "service == $SERVICE_NAME"
     - echo "reg ====== $SSC_REGISTRY_URL"
+    - echo "image tag == $IMAGE_TAG"
+    - echo "image url == $IMAGE_URL"
   script:
    - echo "ip ======== $SWARM_MANAGER_SERVER"
   
