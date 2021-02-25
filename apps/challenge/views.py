@@ -100,3 +100,25 @@ class LobbyAPIView(GenericAPIView):
         LobbyService.run_tournament_after_team_join(lobby_q)
 
         return Response(data="OK", status=status.HTTP_200_OK)
+
+
+class ScoreboardAPIView(GenericAPIView):
+    def get(self, request):
+        pass
+
+
+class TournamentAPIView(GenericAPIView):
+    def get(self, request):
+        pass
+
+
+class ClanAPIView(GenericAPIView):
+    def get(self, request):
+        pass
+
+    def post(self, request):
+        pass
+
+    def put(self, request):
+        pass
+

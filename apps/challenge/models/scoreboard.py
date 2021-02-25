@@ -7,3 +7,6 @@ class Scoreboard(TimeStampedModel):
                                       on_delete=models.CASCADE,
                                       related_name='scoreboard')
     freeze = models.BooleanField(default=False)
+
+    def add_scoreboard_row(self, team):
+        pass  # TODO

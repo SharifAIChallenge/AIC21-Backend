@@ -23,3 +23,6 @@ class Tournament(TimeStampedModel):
     start_time = models.DateTimeField(blank=True, null=True)
     end_time = models.DateTimeField(blank=True, null=True)
     is_hidden = models.BooleanField(default=False)
+
+    def init_tournament(self, team_list):
+        pass
