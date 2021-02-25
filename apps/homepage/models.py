@@ -25,11 +25,14 @@ class Intro(models.Model):
 
 
 class TimelineEvent(models.Model):
-    date = models.DateTimeField()
+    date = models.DateTimeField(null=True, blank=True)
     title_en = models.CharField(max_length=100)
     title_fa = models.CharField(max_length=100)
     text_en = models.TextField()
     text_fa = models.TextField()
+
+    day = models.CharField(max_length=32, null=True, blank=True)
+    month = models.CharField(max_length=32, null=True, blank=True)
 
     order = models.PositiveSmallIntegerField(default=1)
 
@@ -110,3 +113,7 @@ class Rule(models.Model):
 
     def __str__(self):
         return f'{self.title_fa}'
+
+
+class Subscribe(models.Model):
+    email = models.EmailField(unique=True)
