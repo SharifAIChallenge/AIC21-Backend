@@ -53,7 +53,7 @@ deploy-production:
     - eval "$(ssh-agent -s)"
     - ssh-add ~/.ssh/id_rsa
     - declare -A NAME_PREFIX
-    - NAME_PREFIX=([main]=prd [staging]=[stg])
+    - NAME_PREFIX=([main]=prd [staging]=stg)
     - FINAL_SERVICE_NAME=${NAME_PREFIX[$CI_COMMIT_BRANCH]}_$SERVICE_NAME
   script:
     - ssh -o "StrictHostKeyChecking=no" root@$SWARM_MANAGER_SERVER -p$SWARM_MANAGER_SERVER_SSH_PORT -t "docker service update --image $IMAGE_URL $FINAL_SERVICE_NAME"
