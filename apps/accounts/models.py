@@ -40,6 +40,10 @@ class User(AbstractUser):
             receipts=[self.email]
         )
 
+    def reject_all_pending_invites(self):
+        invitations = self.invitations.filter(status="pending")
+        invitations.update(status="rejected")
+
     def send_password_confirm_email(self):
         uid = urlsafe_base64_encode(force_bytes(self.id))
         ResetPasswordToken.objects.filter(uid=uid).delete()

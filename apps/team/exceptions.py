@@ -3,6 +3,24 @@ from rest_framework import status
 
 
 class NoTeamException(APIException):
-    status_code = status.HTTP_404_NOT_FOUND
+    status_code = status.HTTP_400_BAD_REQUEST
     default_detail = "You don't have team"
     default_code = "no_team"
+
+
+class TeamIsFullException(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = "team is full"
+    default_code = "team_full"
+
+
+class HasTeamException(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = "You don't have team"
+    default_code = "has_team"
+
+
+class DuplicatePendingInviteException(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = "you have a sent an invitation already"
+    default_code = "pending_invite"

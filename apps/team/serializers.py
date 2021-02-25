@@ -1,5 +1,9 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from rest_framework.fields import CharField
+
+from .exceptions import NoTeamException, TeamIsFullException, HasTeamException,DuplicatePendingInviteException
 from .models import Team, Invitation
 from ..accounts.models import User
 
@@ -62,6 +66,18 @@ class TeamToUserInvitationSerializer(serializers.ModelSerializer):
         data['type'] = 'team_to_user'
         invitation = Invitation.objects.create(**data)
         return invitation
+
+    def validate(self, data):
+        request = self.context['request']
+        target_user = get_object_or_404(User, id=data['user'])
+        if request.user.team is None:
+            raise NoTeamException()
+        elif request.user.team.is_complete():
+            raise TeamIsFullException()
+        elif target_user.team is not None:
+            raise HasTeamException()
+        elif Invitation.objects.filter(team=request.user.team, user=data['user'], status='pending').exists():
+            raise DuplicatePendingInviteException()
 
 
 class UserPendingInvitationSerializer(serializers.ModelSerializer):
