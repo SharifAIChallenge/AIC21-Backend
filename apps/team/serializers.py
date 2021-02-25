@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework.fields import CharField
-from .models import Team, Invitation
+from .models import Team, Invitation, Submission
 from ..accounts.models import User
 
 
@@ -94,3 +94,28 @@ class TeamPendingInvitationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Invitation
         fields = ['user', 'status', 'id']
+
+
+class SubmissionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Submission
+        fields = ['language', 'file']
+        read_only_fields = (
+            'id', 'is_final', 'submit_time',
+            'user', 'download_link', 'status'
+        )
+
+    def validate(self, attrs):
+        user = self.context['request'].user
+
+        attrs['user'] = user
+        attrs['team'] = user.team
+        if attrs['file'].size > Submission.FILE_SIZE_LIMIT:
+            raise serializers.ValidationError('File size limit exceeded')
+
+        return attrs
+
+    def save(self, **kwargs):
+        instance = super().save(**kwargs)
+        instance.handle()
+        return instance
