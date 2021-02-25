@@ -13,5 +13,6 @@ urlpatterns = [
     path('intro', IntroView.as_view()),
     path('quotes', QuotesView.as_view()),
     path('terms', TermsOfUseView.as_view()),
-    path('rules', RuleAPIView.as_view(), name='rules-list')
+    path('rules', RuleAPIView.as_view(), name='rules-list'),
+    path('media', MediaView.as_view(), name='medias'),
 ]
