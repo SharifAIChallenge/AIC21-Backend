@@ -4,6 +4,7 @@ from rest_framework.generics import GenericAPIView
 
 from apps.staff.models import Staff
 from apps.staff.serializers import StaffSerializer
+from apps.team.serializers import SubmissionSerializer
 from .models import Intro, TimelineEvent, Prize, Stats, Sponsor, WhyThisEvent, \
     Quote, Motto, Media, SocialMedia, Rule
 
@@ -136,3 +137,18 @@ class RuleAPIView(GenericAPIView):
     def get(self, request):
         rules = self.get_serializer(self.get_queryset(), many=True)
         return Response(data={"data": rules.data}, status=status.HTTP_200_OK)
+
+
+class SubscribeAPIView(GenericAPIView):
+    serializer_class = SubmissionSerializer
+
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(True)
+
+        serializer.save()
+
+        return Response(
+            data={'details': 'Subscribed'},
+            status=status.HTTP_200_OK
+        )

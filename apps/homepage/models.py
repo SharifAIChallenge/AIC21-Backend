@@ -114,5 +114,6 @@ class Rule(models.Model):
     def __str__(self):
         return f'{self.title_fa}'
 
-# class Subscribe(models.Model):
-#     email = models.EmailField()
+
+class Subscribe(models.Model):
+    email = models.EmailField(unique=True)
