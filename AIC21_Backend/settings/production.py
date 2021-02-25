@@ -89,10 +89,10 @@ LOG_ROOT = config('LOG_ROOT')
 TIME_ZONE = 'Iran'
 
 STATIC_URL = '/static/'
-STATIC_ROOT = '/static'
+STATIC_ROOT = BASE_DIR + '/static/'
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = '/media'
+MEDIA_ROOT = BASE_DIR + '/media/'
 
 CSRF_COOKIE_HTTPONLY = True
 
