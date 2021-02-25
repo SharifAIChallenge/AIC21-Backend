@@ -12,9 +12,15 @@ class LobbyTypes:
 
 
 class LobbyQueue(TimeStampedModel):
-    team = models.OneToOneField(to='team.Team', on_delete=models.CASCADE, related_name='lobby_queue')
+    team = models.OneToOneField(to='team.Team', on_delete=models.CASCADE,
+                                related_name='lobby_queue')
     game_type = models.CharField(
         max_length=50,
         choices=LobbyTypes.TYPES,
         default=LobbyTypes.FRIENDLY_MATCH
     )
+
+    def get_lobby_population(self, game_type):
+        return LobbyQueue.objects.filter(
+            game_type=game_type
+        ).count()
