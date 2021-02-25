@@ -243,4 +243,5 @@ CORS_ORIGIN_WHITELIST = (
 UPLOAD_PATHS = {
     'MAP': 'maps/',
     'MATCH_LOGS': 'match/logs/',
+    'CLAN_IMAGE': 'clan/images/',
 }

@@ -23,7 +23,7 @@ class Match(TimeStampedModel):
         default=MatchStatusTypes.RUNNING
     )
     winner = models.ForeignKey(to='team.Team', on_delete=models.CASCADE, related_name='won_matches')
-    log = models.FileField(upload_to=settings.UPLOAD_PATHS['MATCH_LOGS'], null=True, blank=True)  # TODO : Should read path from setting parameters
+    log = models.FileField(upload_to=settings.UPLOAD_PATHS['MATCH_LOGS'], null=True, blank=True)
     tournament = models.ForeignKey(to='challenge.Tournament', on_delete=models.CASCADE, related_name='matches')
     is_freeze = models.BooleanField(default=True)
 

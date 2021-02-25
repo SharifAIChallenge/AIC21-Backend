@@ -5,3 +5,4 @@ from .tournament import Tournament
 from .scoreboard import Scoreboard
 from .scoreboard_row import ScoreboardRow
 from .request import Request
+from .clan import Clan
