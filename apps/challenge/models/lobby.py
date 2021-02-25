@@ -20,8 +20,7 @@ class LobbyQueue(TimeStampedModel):
         default=LobbyTypes.FRIENDLY_MATCH
     )
 
-    @staticmethod
-    def get_lobby_population(game_type):
+    def get_lobby_population(self):
         return LobbyQueue.objects.filter(
-            game_type=game_type
+            game_type=self.game_type
         ).count()
