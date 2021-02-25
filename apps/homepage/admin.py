@@ -89,3 +89,4 @@ class RuleAdmin(ModelAdmin):
 class GoogleAddEventToCalender(ModelAdmin):
     list_display = ('id', 'url',)
     list_editable = ('url',)
+    sortable_by = ('id', 'url')
