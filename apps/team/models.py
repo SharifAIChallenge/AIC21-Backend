@@ -1,23 +1,28 @@
 from django.db import models
-from django.contrib.auth import get_user_model
 import os
 from django.utils.translation import ugettext_lazy as _, ugettext
+from model_utils.models import UUIDModel, TimeStampedModel
+
+MAX_MEMBERS = 3
 
 
-# Create your models here.
-
-
-# TODO : Create a TimeStampable for created_at and updated_at fields
-class Team(models.Model):
+class Team(UUIDModel, TimeStampedModel):
     name = models.CharField(max_length=128, unique=True)
     image = models.ImageField(upload_to="teams/images/", null=True,
                               blank=True)  # TODO : Should read path from setting parameters
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    creator_email = models.CharField(max_length=254)
+    creator = models.ForeignKey(to='accounts.User', on_delete=models.CASCADE,
+                                related_name='created_teams')
 
-    def __str__(self):
-        return '%s' % self.name
+    def is_complete(self):
+        return self.members.count() == MAX_MEMBERS
+
+    def reject_all_pending_invitations(self):
+        invitations = self.invitations.filter(status="pending")
+        invitations.update(status="rejected")
+
+
+def __str__(self):
+    return '%s' % self.name
 
 
 class InvitationTypes:
@@ -43,11 +48,11 @@ class InvitationStatusTypes:
 User = get_user_model()
 
 
-class Invitation(models.Model):
-    source = models.ForeignKey(User, related_name='invites',
-                               on_delete=models.CASCADE)
-    target = models.ForeignKey(User, related_name='invitations',
-                               on_delete=models.CASCADE)
+class Invitation(UUIDModel, TimeStampedModel):
+    user = models.ForeignKey('accounts.User', related_name='invitations',
+                             on_delete=models.CASCADE)
+    team = models.ForeignKey(Team, related_name='invitations',
+                             on_delete=models.CASCADE)
     type = models.CharField(max_length=50, choices=InvitationTypes.TYPES)
     status = models.CharField(
         max_length=50,
@@ -62,13 +67,11 @@ class SubmissionLanguagesTypes:
     CPP = 'cpp'
     JAVA = 'java'
     PYTHON3 = 'py3'
-    GO = 'go'
 
     TYPES = (
         (CPP, _('C++')),
         (JAVA, _('Java')),
         (PYTHON3, _('Python 3')),
-        (GO, _('Go'))
     )
 
 

@@ -1,7 +1,8 @@
 from rest_framework.serializers import ModelSerializer, Serializer
 from rest_framework import serializers
 
-from .models import Intro, TimelineEvent, Prize, Stat, Sponsor, WhyThisEvent, Quote
+from .models import Intro, TimelineEvent, Prize, Stat, Sponsor, WhyThisEvent, \
+    Quote, Rule
 
 
 class IntroSerializer(ModelSerializer):
@@ -44,3 +45,9 @@ class QuoteSerializer(ModelSerializer):
     class Meta:
         model = Quote
         fields = '__all__'
+
+
+class RuleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rule
+        fields = ['title_en', 'title_fa', 'text_en', 'text_fa', 'order']

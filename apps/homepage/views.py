@@ -5,9 +5,9 @@ from rest_framework.generics import GenericAPIView
 from apps.staff.models import Staff
 from apps.staff.serializers import StaffSerializer
 from .models import Intro, TimelineEvent, Prize, Stat, Sponsor, WhyThisEvent, \
-    Quote
+    Quote, Rule
 from .serializers import IntroSerializer, TimelineEventSerializer, \
-    PrizeSerializer, StatSerializer, \
+    PrizeSerializer, StatSerializer, RuleSerializer, \
     SponsorSerializer, WhyThisEventSerializer, QuoteSerializer
 
 
@@ -41,3 +41,12 @@ class TermsOfUseView(GenericAPIView):
             'term': Intro.objects.first().term_of_use
         }
         return Response(data)
+
+
+class RuleAPIView(GenericAPIView):
+    serializer_class = RuleSerializer
+    queryset = Rule.objects.all().order_by('order')
+
+    def get(self, request):
+        rules = self.get_serializer(self.get_queryset(), many=True)
+        return Response(data={"data": rules.data}, status=status.HTTP_200_OK)
