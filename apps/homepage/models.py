@@ -117,3 +117,7 @@ class Rule(models.Model):
 
 class Subscribe(models.Model):
     email = models.EmailField(unique=True)
+
+
+class GoogleAddEventToCalender(models.Model):
+    url = models.CharField(max_length=512)
