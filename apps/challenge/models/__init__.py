@@ -7,7 +7,7 @@ from .scoreboard_row import ScoreboardRow
 from .request import Request
 from .clan import Clan
 from .clan_team import ClanTeam
-from .clanwar import Clanwar
+from .clanwar import ClanWar
 from .lobby import LobbyQueue
 from .level_based_tournament import LevelBasedTournament
 from .level import Level
