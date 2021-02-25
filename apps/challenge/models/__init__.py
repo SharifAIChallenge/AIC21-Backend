@@ -4,7 +4,7 @@ from .map import Map
 from .tournament import Tournament
 from .scoreboard import Scoreboard
 from .scoreboard_row import ScoreboardRow
-from .request import Request
+from .request import Request, RequestStatusTypes, RequestTypes
 from .clan import Clan
 from .clan_team import ClanTeam
 from .clanwar import ClanWar
