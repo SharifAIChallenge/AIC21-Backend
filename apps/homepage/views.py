@@ -2,9 +2,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.generics import GenericAPIView
 
+from apps.homepage.serializers import SubscribeSerializer
 from apps.staff.models import Staff
 from apps.staff.serializers import StaffSerializer
-from apps.team.serializers import SubmissionSerializer
 from .models import Intro, TimelineEvent, Prize, Stats, Sponsor, WhyThisEvent, \
     Quote, Motto, Media, SocialMedia, Rule
 
@@ -140,11 +140,11 @@ class RuleAPIView(GenericAPIView):
 
 
 class SubscribeAPIView(GenericAPIView):
-    serializer_class = SubmissionSerializer
+    serializer_class = SubscribeSerializer
 
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(True)
+        serializer.is_valid(raise_exception=True)
 
         serializer.save()
 
