@@ -13,11 +13,12 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 from apps.core.utils import send_email
-from apps.team.models import Team
 
 
 class User(AbstractUser):
-    team = models.ForeignKey(to=Team, on_delete=models.CASCADE, related_name='members', null=True, blank=True)
+    team = models.ForeignKey(to='team.Team',
+                             on_delete=models.CASCADE,
+                             related_name='members', null=True, blank=True)
 
     def send_activation_email(self):
         activate_user_token = ActivateUserToken(

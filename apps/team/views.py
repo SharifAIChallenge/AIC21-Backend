@@ -1,20 +1,20 @@
-from django.http import Http404
-from django.shortcuts import render
-
+from django.utils.translation import gettext_lazy as _
 # Create your views here.
 from rest_framework.exceptions import PermissionDenied, ValidationError
-from rest_framework.generics import GenericAPIView, get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-
-from apps.accounts.models import User
-from .models import Team, Invitation
-from .serializers import TeamSerializer, TeamInfoSerializer, UserToTeamInvitationSerializer, \
-    TeamToUserInvitationSerializer, UserPendingInvitationSerializer, TeamPendingInvitationSerializer
-from .models import Team
-from .permissions import HasTeam, NoTeam
 from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.generics import GenericAPIView, get_object_or_404
+
+from .models import Team, Invitation, Submission
+from .permissions import HasTeam, NoTeam
+from .serializers import (TeamSerializer, TeamInfoSerializer,
+                          UserToTeamInvitationSerializer,
+                          TeamToUserInvitationSerializer,
+                          UserPendingInvitationSerializer,
+                          TeamPendingInvitationSerializer,
+                          SubmissionSerializer, )
 
 
 class TeamAPIView(GenericAPIView):
@@ -26,6 +26,7 @@ class TeamAPIView(GenericAPIView):
     def get(self, request):
         team = request.user.team
         data = self.get_serializer(team).data
+
         return Response(data)
 
     def post(self, request):
@@ -41,7 +42,8 @@ class TeamAPIView(GenericAPIView):
         )
 
     def put(self, request):
-        team = self.get_serializer(data=request.data, instance=request.user.team, partial=True)
+        team = self.get_serializer(data=request.data,
+                                   instance=request.user.team, partial=True)
         team.is_valid(raise_exception=True)
         team.save()
 
@@ -69,6 +71,28 @@ class TeamAPIView(GenericAPIView):
         if self.request.method == 'POST':
             new_permissions += [NoTeam]
         return [permission() for permission in new_permissions]
+
+
+class TeamSearchAPIView(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = TeamSerializer
+    queryset = Team.objects.all()
+
+    def get(self, request):
+        term = request.GET.get('s')
+        if term is None or term == '':
+            return Response(data={"message": "Provide search parameter"},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        results = self.get_serializer(
+            self.get_queryset().filter(name__icontains=term), many=True)
+
+        return Response(
+            data={
+                "data": results.data
+            },
+            status=status.HTTP_200_OK
+        )
 
 
 class TeamInfoAPIView(GenericAPIView):
@@ -106,7 +130,9 @@ class UserPendingInvitationListAPIView(GenericAPIView):
     queryset = Invitation.objects.all()
 
     def get(self, request):
-        invitations = self.get_queryset().filter(user=request.user, status='pending', type='team_to_user')
+        invitations = self.get_queryset().filter(user=request.user,
+                                                 status='pending',
+                                                 type='team_to_user')
         data = self.get_serializer(instance=invitations, many=True).data
         return Response(
             data={'data': data},
@@ -120,7 +146,9 @@ class TeamPendingInvitationListAPIView(GenericAPIView):
     queryset = Invitation.objects.all()
 
     def get(self, request):
-        invitations = self.get_queryset().filter(team=request.user.team, status='pending', type='user_to_team')
+        invitations = self.get_queryset().filter(team=request.user.team,
+                                                 status='pending',
+                                                 type='user_to_team')
         data = self.get_serializer(instance=invitations, many=True).data
         return Response(
             data={'data': data},
@@ -135,7 +163,8 @@ class UserAnswerInvitationAPIView(GenericAPIView):
 
     def put(self, request, invitation_id):
         invitation = self.get_queryset().get(id=invitation_id)
-        serializer = self.get_serializer(instance=invitation, data=request.data)
+        serializer = self.get_serializer(instance=invitation,
+                                         data=request.data)
         serializer.is_valid(raise_exception=True)
         self.validate(request, invitation)
         serializer.save()
@@ -148,7 +177,6 @@ class UserAnswerInvitationAPIView(GenericAPIView):
                 invitation.team.reject_all_pending_invitations()
             user.reject_all_pending_invites()
 
-
         return Response(
             data={"detail": f"Invitation is {request.data['status']}"},
             status=status.HTTP_200_OK
@@ -157,10 +185,12 @@ class UserAnswerInvitationAPIView(GenericAPIView):
     def validate(self, request, invitation):
         if request.user != invitation.user:
             raise PermissionDenied('this is not your invitation to change')
-        elif request.data['status'] == 'rejected' or request.data['status'] == 'pending':
+        elif request.data['status'] == 'rejected' or request.data[
+            'status'] == 'pending':
             return True
         elif invitation.team.is_complete():
-            raise ValidationError("the team is completed, your invitation is outdated")
+            raise ValidationError(
+                "the team is completed, your invitation is outdated")
 
 
 class TeamAnswerInvitationAPIView(GenericAPIView):
@@ -170,7 +200,8 @@ class TeamAnswerInvitationAPIView(GenericAPIView):
 
     def put(self, request, invitation_id):
         invitation = self.get_queryset().get(id=invitation_id)
-        serializer = self.get_serializer(instance=invitation, data=request.data)
+        serializer = self.get_serializer(instance=invitation,
+                                         data=request.data)
         serializer.is_valid(raise_exception=True)
         self.validate(request, invitation)
         serializer.save()
@@ -189,7 +220,8 @@ class TeamAnswerInvitationAPIView(GenericAPIView):
     def validate(self, request, invitation):
         if request.user.team != invitation.team:
             raise PermissionDenied('this is not your invitation to change')
-        elif request.data['status'] == 'rejected' or request.data['status'] == 'pending':
+        elif request.data['status'] == 'rejected' or request.data[
+            'status'] == 'pending':
             return True
         elif invitation.team.is_complete():
             raise ValidationError("your team is complete")
@@ -201,7 +233,8 @@ class TeamSentInvitationListAPIView(GenericAPIView):
     queryset = Invitation.objects.all()
 
     def get(self, request):
-        invitations = self.get_queryset().filter(team=request.user.team, status='team_to_user')
+        invitations = self.get_queryset().filter(team=request.user.team,
+                                                 status='team_to_user')
         data = self.get_serializer(instance=invitations, many=True).data
         return Response(
             data={'data': data},
@@ -219,15 +252,14 @@ class TeamSentInvitationListAPIView(GenericAPIView):
         )
 
 
-
-
 class UserSentInvitationListAPIView(GenericAPIView):
     permission_classes = [IsAuthenticated, ]
     serializer_class = UserToTeamInvitationSerializer
     queryset = Invitation.objects.all()
 
     def get(self, request):
-        invitations = self.get_queryset().filter(user=request.user, type='user_to_team')
+        invitations = self.get_queryset().filter(user=request.user,
+                                                 type='user_to_team')
         data = self.get_serializer(instance=invitations, many=True).data
         return Response(
             data={'data': data},
@@ -247,9 +279,60 @@ class UserSentInvitationListAPIView(GenericAPIView):
     def validate(self, request):
         team = Team.objects.get(id=request.data['team'])
         if request.user.team is not None:
-            raise ValidationError("you should leave your team before joining another team")
+            raise ValidationError(
+                "you should leave your team before joining another team")
         elif team.is_complete():
             raise ValidationError('this team is full, you can not join them')
-        elif self.get_queryset().filter(team=team, user=request.user, status='pending').exists():
-            raise ValidationError("You have a pending invitation sent for this team")
+        elif self.get_queryset().filter(team=team, user=request.user,
+                                        status='pending').exists():
+            raise ValidationError(
+                "You have a pending invitation sent for this team")
         return
+
+
+class SubmissionsListAPIView(GenericAPIView):
+    queryset = Submission.objects.all()
+    serializer_class = SubmissionSerializer
+    permission_classes = (HasTeam,)
+
+    def get(self, request):
+        data = self.get_serializer(
+            self.get_queryset().filter(team=request.user.team),
+            many=True).data
+        return Response(data={'submissions': data}, status=status.HTTP_200_OK)
+
+
+class SubmissionAPIView(GenericAPIView):
+    queryset = Submission.objects.all()
+    serializer_class = SubmissionSerializer
+    permission_classes = (HasTeam,)
+
+    def get(self, request):
+        data = self.get_serializer(
+            self.get_queryset().filter(team=request.user.team),
+            many=True).data
+        return Response(data={'submissions': data}, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        submission = self.get_serializer(data=request.data,
+                                         context={'request': request})
+        if submission.is_valid(raise_exception=True):
+            submission = submission.save()
+            return Response(
+                data={'details': _(
+                    'Submission information successfully submitted'),
+                    'submission_id': submission.id},
+                status=status.HTTP_200_OK)
+        return Response(data={'errors': [_('Something Went Wrong')]},
+                        status=status.HTTP_406_NOT_ACCEPTABLE)
+
+    def put(self, request, submission_id):
+        submission = get_object_or_404(Submission, id=submission_id)
+        try:
+            submission.set_final()
+            return Response(
+                data={'details': 'Final submission changed successfully'},
+                status=status.HTTP_200_OK)
+        except ValueError as e:
+            return Response(data={'errors': [str(e)]},
+                            status=status.HTTP_406_NOT_ACCEPTABLE)
