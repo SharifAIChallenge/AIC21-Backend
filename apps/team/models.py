@@ -7,6 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from model_utils.models import UUIDModel, TimeStampedModel
 
+from apps.infra_gateway import functions
 from .tasks import handle_submission
 
 MAX_MEMBERS = 3
@@ -20,7 +21,8 @@ class Team(UUIDModel, TimeStampedModel):
     name = models.CharField(max_length=128, unique=True)
     image = models.ImageField(upload_to="teams/images/", null=True,
                               blank=True)  # TODO : Should read path from setting parameters
-    creator = models.ForeignKey(to='accounts.User', on_delete=models.CASCADE,
+    creator = models.ForeignKey(to='accounts.User',
+                                on_delete=models.RESTRICT,
                                 related_name='created_teams')
 
     def is_complete(self):
@@ -66,8 +68,6 @@ class Invitation(UUIDModel, TimeStampedModel):
         choices=InvitationStatusTypes.TYPES,
         default=InvitationStatusTypes.PENDING
     )
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
 
 class SubmissionLanguagesTypes:
@@ -127,12 +127,14 @@ class Submission(models.Model):
 
     def __str__(self):
         return "id: " + str(
-            self.id) + ' team: ' + self.team.name + " user: " + self.user.username
+            self.id) + ' team: ' + self.team.name + " user: " + \
+               self.user.username
 
     def set_final(self):
         """
             Use this method instead of changing the is_final attribute directly
-            This makes sure that only one instance of TeamSubmission has is_final flag set to True
+            This makes sure that only one instance of TeamSubmission has
+            is_final flag set to True.
         """
         if self.status != 'compiled':
             raise ValueError(_('This submission is not compiled yet.'))
@@ -145,14 +147,12 @@ class Submission(models.Model):
         handle_submission.delay(self.id)
 
     def upload(self):
-        from . import functions
 
         self.infra_token = functions.upload_file(self.file)
         self.status = SubmissionStatusTypes.UPLOADED
         self.save()
 
     def compile(self):
-        from . import functions
         result = functions.compile_submissions([self])
         if result[0]['success']:
             self.status = SubmissionStatusTypes.COMPILING

@@ -16,8 +16,7 @@ from .serializers import (TeamSerializer, TeamInfoSerializer,
                           TeamToUserInvitationSerializer,
                           UserPendingInvitationSerializer,
                           TeamPendingInvitationSerializer,
-                          SubmissionSerializer,
-                          SubmissionPostSerializer)
+                          SubmissionSerializer,)
 
 
 class TeamAPIView(GenericAPIView):
