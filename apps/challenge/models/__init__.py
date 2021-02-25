@@ -4,3 +4,4 @@ from .map import Map
 from .tournament import Tournament
 from .scoreboard import Scoreboard
 from .scoreboard_row import ScoreboardRow
+from .request import Request
