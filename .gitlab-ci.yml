@@ -13,8 +13,21 @@ workflow:
     - if: '$CI_COMMIT_BRANCH == "staging"'
       when: always
     - when: never
+  
+var-check:
+  stage: publish-image
+  image:
+    name: reg.aichallenge.ir/alpine:latest
+    entrypoint: [""]
 
-build-push-image: # ali is so go
+  before_script:
+    - echo "service == $SERVICE_NAME"
+    - echo "reg ====== $SSC_REGISTRY_URL"
+  script:
+   - echo "ip ======== $SWARM_MANAGER_SERVER"
+  
+
+build-push-image:
   stage: publish-image
   image:
     name: $SSC_REGISTRY_URL/kaniko:debug
