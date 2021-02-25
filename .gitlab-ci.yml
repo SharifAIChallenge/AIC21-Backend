@@ -32,6 +32,8 @@ deploy-production:
   image: kroniak/ssh-client:latest
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
+      when: on_success- 
+    - if: '$CI_COMMIT_BRANCH == "staging"'
       when: on_success
     - when: never
   before_script:
