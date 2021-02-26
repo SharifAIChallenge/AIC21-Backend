@@ -7,7 +7,8 @@ from . import models as staff_models
 
 @admin.register(staff_models.Staff)
 class StaffAdmin(admin.ModelAdmin):
-    list_display = ['id', 'group_title', 'team_title', 'first_name_en', 'last_name_en']
+    list_display = ['id', 'group_title', 'team_title',
+                    'first_name_fa', 'last_name_fa']
     list_editable = ['group_title', 'team_title']
     list_display_links = ['id', 'first_name_en', 'last_name_en']
     search_fields = ['group_title', 'team_title', 'first_name_en', 'last_name_en']
