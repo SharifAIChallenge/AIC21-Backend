@@ -11,7 +11,7 @@ class StaffAdmin(admin.ModelAdmin):
                     'first_name_fa', 'last_name_fa']
     list_editable = ['group_title', 'team_title', 'first_name_fa',
                      'last_name_fa']
-    list_display_links = ['id', 'first_name_en', 'last_name_en']
+    list_display_links = ['id', ]
     search_fields = ['group_title', 'team_title', 'first_name_en', 'last_name_en']
     sortable_by = ['id', 'group_title', 'team_title', 'first_name_en', 'last_name_en']
     list_filter = ['group_title', 'team_title']
