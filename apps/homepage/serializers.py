@@ -61,7 +61,7 @@ class MediaSerializer(ModelSerializer):
     @staticmethod
     def _get_file(obj: Media):
         url = obj.file.url
-        if settings.DOMAIN in url:
+        if settings.DOMAIN not in url:
             return settings.DOMAIN + url
         return url
 
