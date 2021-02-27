@@ -11,4 +11,4 @@ DATABASES = {
     }
 }
 
-DOMAIN = 'https://api-stg.aichallenge.ir'
+DOMAIN = 'https://stg.aichallenge.ir'

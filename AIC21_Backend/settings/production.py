@@ -113,4 +113,4 @@ CELERY_BROKER_URL = "ampq://aic:shitWasHereBeforeMe@rabbitmq:5672//"
 FILE_UPLOAD_MAX_MEMORY_SIZE = 26214400
 DATA_UPLOAD_MAX_MEMORY_SIZE = 26214400
 
-DOMAIN = 'https://api.aichallenge.ir'
+DOMAIN = 'https://aichallenge.ir'
