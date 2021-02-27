@@ -20,7 +20,7 @@ class TimelineView(GenericAPIView):
     def get(self, request):
         url = ''
         if GoogleAddEventToCalender.objects.all().last():
-            url = GoogleAddEventToCalender.objects.all().last()
+            url = GoogleAddEventToCalender.objects.all().last().url
         data = {
             'data': TimelineEventSerializer(
                 TimelineEvent.objects.all().order_by('id').order_by('order'),
