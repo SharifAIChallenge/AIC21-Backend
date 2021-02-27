@@ -10,3 +10,5 @@ DATABASES = {
         "PORT": config('DB_PORT'),
     }
 }
+
+DOMAIN = 'api-stg.aichallenge.ir'

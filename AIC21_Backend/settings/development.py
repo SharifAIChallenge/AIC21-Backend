@@ -222,7 +222,7 @@ EMAIL_USE_TLS = config('EMAIL_USE_TLS')
 EMAIL_USE_SSL = config('EMAIL_USE_SSL')
 EMAIL_BACKEND = config('EMAIL_BACKEND')
 
-DOMAIN = config('DOMAIN', 'localhost:8000')
+# DOMAIN = config('DOMAIN', 'localhost:8000')
 
 AUTH_USER_MODEL = 'accounts.User'
 

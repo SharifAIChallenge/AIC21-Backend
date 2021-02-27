@@ -1,3 +1,5 @@
+from django.conf import settings
+
 from rest_framework.serializers import ModelSerializer, Serializer
 from rest_framework import serializers
 
@@ -54,9 +56,18 @@ class MottoSerializer(ModelSerializer):
 
 
 class MediaSerializer(ModelSerializer):
+    file = serializers.SerializerMethodField('_get_file')
+
+    @staticmethod
+    def _get_file(obj: Media):
+        url = obj.file.url
+        if settings.DOMAIN in url:
+            return settings.DOMAIN + url
+        return url
+
     class Meta:
         model = Media
-        exclude = ['id']
+        exclude = ['title', 'file']
 
 
 class SocialMediaSerializer(ModelSerializer):
