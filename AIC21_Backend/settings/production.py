@@ -10,7 +10,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
-WSGI_APPLICATION = 'thebackend.wsgi.application'
+WSGI_APPLICATION = 'AIC21_Backend.wsgi.application'
 
 DATABASES = {
     "default": {
@@ -23,7 +23,7 @@ DATABASES = {
     }
 }
 
-LOG_ROOT = config('LOG_ROOT')
+# LOG_ROOT = config('LOG_ROOT')
 
 # LOGGING = {
 #     'version': 1.0,
