@@ -67,7 +67,7 @@ class MediaSerializer(ModelSerializer):
 
     class Meta:
         model = Media
-        exclude = ['title', 'file']
+        fields = ['title', 'file']
 
 
 class SocialMediaSerializer(ModelSerializer):
