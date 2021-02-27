@@ -18,11 +18,14 @@ from .serializers import IntroSerializer, TimelineEventSerializer, \
 class TimelineView(GenericAPIView):
 
     def get(self, request):
+        url = ''
+        if GoogleAddEventToCalender.objects.all().last():
+            url = GoogleAddEventToCalender.objects.all().last()
         data = {
             'data': TimelineEventSerializer(
                 TimelineEvent.objects.all().order_by('id').order_by('order'),
                 many=True).data,
-            'calendar': GoogleAddEventToCalender.objects.all().last().url
+            'calendar': url
         }
         return Response(data)
 
