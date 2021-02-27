@@ -73,7 +73,7 @@ class StaffsView(GenericAPIView):
 
     def get(self, request):
         data = {
-            'data': StaffSerializer(Staff.objects.all().order_by('?')[:5],
+            'data': StaffSerializer(Staff.objects.all().order_by('?')[:8],
                                     many=True).data
         }
         return Response(data)
