@@ -99,4 +99,4 @@ class UserViewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['profile', 'email']
+        fields = ['profile', 'email','id']
