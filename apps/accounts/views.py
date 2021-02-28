@@ -8,7 +8,11 @@ from apps.core.utils import send_to_telegram
 
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.generics import GenericAPIView
+
 from rest_framework.parsers import FormParser, MultiPartParser
+
+from rest_framework.permissions import IsAuthenticated
+
 
 from .models import Profile, User, ResetPasswordToken
 from .serializer import (
@@ -17,10 +21,28 @@ from .serializer import (
     ResetPasswordConfirmSerializer)
 from rest_framework.response import Response
 
+from google.oauth2 import id_token
+from google.auth.transport import requests
+
 __all__ = ('LoginAPIView', 'SignUpAPIView', 'ActivateAPIView', 'LogoutAPIView',
            'ResendActivationEmailAPIView', 'ProfileAPIView',
            'ChangePasswordAPIView', 'ResetPasswordAPIView',
            'ResetPasswordConfirmAPIView')
+
+CLIENT_ID = '864043474548-9is9rd8jbf3bbq4tdrhsfdjnivasj7l6.apps.googleusercontent.com'
+
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from dj_rest_auth.registration.views import SocialLoginView
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+from django.conf import settings
+
+
+class GoogleLogin(SocialLoginView):
+    authentication_classes = []  # disable authentication
+    adapter_class = GoogleOAuth2Adapter
+    callback_url = "http://localhost:3000"
+    client_class = OAuth2Client
+
 
 LoginAPIView = ObtainAuthToken
 
@@ -146,3 +168,16 @@ class ResetPasswordConfirmAPIView(GenericAPIView):
         user.save()
         return Response(data={'detail': _('Successfully Changed Password')},
                         status=200)
+
+
+class UserWithoutTeamAPIView(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserViewSerializer
+    queryset = User.objects.all().filter(team=None)
+
+    def get(self, request):
+        result = self.get_serializer(self.get_queryset(), many=True).data
+
+        return Response({
+            "data": result,
+        }, status= status.HTTP_200_OK)

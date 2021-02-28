@@ -17,6 +17,9 @@ import os
 
 
 class User(AbstractUser):
+    team = models.ForeignKey(to='team.Team',
+                             on_delete=models.SET_NULL,
+                             related_name='members', null=True, blank=True)
 
     def send_activation_email(self):
         activate_user_token = ActivateUserToken(
@@ -38,6 +41,10 @@ class User(AbstractUser):
             template_name='accounts/email/user_activate_email.html',
             receipts=[self.email]
         )
+
+    def reject_all_pending_invites(self):
+        invitations = self.invitations.filter(status="pending")
+        invitations.update(status="rejected")
 
     def send_password_confirm_email(self):
         uid = urlsafe_base64_encode(force_bytes(self.id))

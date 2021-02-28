@@ -1,46 +1,88 @@
+from django.conf import settings
+
 from rest_framework.serializers import ModelSerializer, Serializer
 from rest_framework import serializers
 
-from .models import Intro, TimelineEvent, Prize, Stat, Sponsor, WhyThisEvent, Quote
+from .models import Intro, TimelineEvent, Prize, Stats, Sponsor, WhyThisEvent, \
+    Quote, Motto, Media, SocialMedia, Rule, Subscribe
 
 
 class IntroSerializer(ModelSerializer):
     class Meta:
         model = Intro
-        fields = '__all__'
+        exclude = ['id']
 
 
 class TimelineEventSerializer(ModelSerializer):
     class Meta:
         model = TimelineEvent
-        fields = '__all__'
+        exclude = ['id']
 
 
 class PrizeSerializer(ModelSerializer):
     class Meta:
         model = Prize
-        fields = '__all__'
+        exclude = ['id']
 
 
 class StatSerializer(ModelSerializer):
     class Meta:
-        model = Stat
-        fields = '__all__'
+        model = Stats
+        exclude = ['id']
 
 
 class SponsorSerializer(ModelSerializer):
     class Meta:
         model = Sponsor
-        fields = '__all__'
+        exclude = ['id']
 
 
 class WhyThisEventSerializer(ModelSerializer):
     class Meta:
         model = WhyThisEvent
-        fields = '__all__'
+        exclude = ['id']
 
 
 class QuoteSerializer(ModelSerializer):
     class Meta:
         model = Quote
-        fields = '__all__'
+        exclude = ['id']
+
+
+class MottoSerializer(ModelSerializer):
+    class Meta:
+        model = Motto
+        exclude = ['id']
+
+
+class MediaSerializer(ModelSerializer):
+    file = serializers.SerializerMethodField('_get_file')
+
+    @staticmethod
+    def _get_file(obj: Media):
+        url = obj.file.url
+        if settings.DOMAIN not in url:
+            return settings.DOMAIN + url
+        return url
+
+    class Meta:
+        model = Media
+        fields = ['title', 'file']
+
+
+class SocialMediaSerializer(ModelSerializer):
+    class Meta:
+        model = SocialMedia
+        exclude = ['id']
+
+
+class RuleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rule
+        fields = ['title_en', 'title_fa', 'text_en', 'text_fa', 'order']
+
+
+class SubscribeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subscribe
+        fields = ('email',)

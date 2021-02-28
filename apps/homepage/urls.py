@@ -1,7 +1,19 @@
-from .views import HomepageView, TermsOfUseView
+from .views import *
 from django.urls import include, path
 
 urlpatterns = [
-    path('', HomepageView.as_view()),
-    path('terms', TermsOfUseView.as_view())
+    path('timeline', TimelineView.as_view()),
+    path('prizes', PrizesView.as_view()),
+    path('Sponsers', SponsorsView.as_view()),
+    path('why', WhyView.as_view()),
+    path('staffs', StaffsView.as_view()),
+    path('stat', StatView.as_view()),
+    path('socials', SocialsView.as_view()),
+    path('motto', MottoView.as_view()),
+    path('intro', IntroView.as_view()),
+    path('quotes', QuotesView.as_view()),
+    path('terms', TermsOfUseView.as_view()),
+    path('rules', RuleAPIView.as_view(), name='rules-list'),
+    path('media', MediaView.as_view(), name='medias'),
+    path('subscribe', SubscribeAPIView.as_view(), name='subscribe')
 ]

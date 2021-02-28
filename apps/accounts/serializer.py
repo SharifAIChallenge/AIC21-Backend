@@ -55,6 +55,7 @@ class UserSerializer(serializers.ModelSerializer):
         )
         profile = Profile.objects.create(user=user)
 
+
         return user
 
 
@@ -104,4 +105,4 @@ class UserViewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['profile', 'email']
+        fields = ['profile', 'email','id']
