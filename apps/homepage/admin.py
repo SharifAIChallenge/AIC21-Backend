@@ -3,6 +3,8 @@ from django.contrib.admin import ModelAdmin
 from django.db import models
 
 from martor.widgets import AdminMartorWidget
+
+from apps.homepage.models import Subscribe
 from .models import Intro, TimelineEvent, Prize, Stats, Sponsor, WhyThisEvent, \
     Quote, Motto, Media, SocialMedia, Rule, GoogleAddEventToCalender
 
@@ -90,3 +92,9 @@ class GoogleAddEventToCalender(ModelAdmin):
     list_display = ('id', 'url',)
     list_editable = ('url',)
     sortable_by = ('id', 'url')
+
+
+@admin.register(Subscribe)
+class SubscribeAdmin(ModelAdmin):
+    list_display = ('id', 'email')
+    list_display_links = ('id',)
