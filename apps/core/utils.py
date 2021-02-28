@@ -28,5 +28,4 @@ def send_email(subject, template_name, context,
     if file_content:
         email.attach(filename=file_name, content=file_content,
                      mimetype=mime_type)
-
     email.send()
