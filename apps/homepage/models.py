@@ -89,7 +89,7 @@ class Quote(models.Model):
 
 
 class Motto(models.Model):
-    motto = models.CharField(max_length=128)
+    motto = models.CharField(max_length=2048)
     pre_text = models.CharField(max_length=2048)
 
 

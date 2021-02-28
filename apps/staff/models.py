@@ -5,7 +5,7 @@ from django.db import models
 
 class Staff(models.Model):
     group_title = models.CharField(max_length=128)
-    team_title = models.CharField(max_length=256, default='_')
+    team_title = models.CharField(max_length=256, blank=True, null=True)
     first_name_en = models.CharField(max_length=128, null=True, blank=True)
     first_name_fa = models.CharField(max_length=128)
     last_name_en = models.CharField(max_length=128, null=True, blank=True)
