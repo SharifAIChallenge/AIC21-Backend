@@ -102,6 +102,7 @@ class TeamInfoAPIView(GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = TeamInfoSerializer
     queryset = Team.objects.all()
+    parser_classes = (MultiPartParser, FormParser)
 
     def get(self, req, team_id):
         team = get_object_or_404(Team, id=team_id)
@@ -116,6 +117,7 @@ class IncompleteTeamInfoListAPIView(GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = TeamInfoSerializer
     queryset = Team.objects.all()
+    parser_classes = (MultiPartParser, FormParser)
 
     def get(self, request):
         teams = self.get_queryset()
@@ -189,13 +191,14 @@ class UserAnswerInvitationAPIView(GenericAPIView):
         context['invitation_id'] = self.kwargs['invitation_id']
         return context
 
+
 class TeamAnswerInvitationAPIView(GenericAPIView):
     permission_classes = [IsAuthenticated, HasTeam]
     serializer_class = TeamPendingInvitationSerializer
     queryset = Invitation.objects.all()
 
     def put(self, request, invitation_id):
-        invitation = get_object_or_404(Invitation,id=invitation_id)
+        invitation = get_object_or_404(Invitation, id=invitation_id)
         serializer = self.get_serializer(instance=invitation,
                                          data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -218,6 +221,7 @@ class TeamAnswerInvitationAPIView(GenericAPIView):
         context = super().get_serializer_context()
         context['invitation_id'] = self.kwargs['invitation_id']
         return context
+
 
 class TeamSentInvitationListAPIView(GenericAPIView):
     permission_classes = [IsAuthenticated, HasTeam, ]

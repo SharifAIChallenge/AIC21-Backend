@@ -51,10 +51,10 @@ class UserSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(
             username=validated_data.get('email'),
             email=validated_data.get('email'),
-            password=validated_data.get('password')
+            password=validated_data.get('password'),
+            is_active=False
         )
         profile = Profile.objects.create(user=user)
-
 
         return user
 
@@ -105,4 +105,4 @@ class UserViewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['profile', 'email','id']
+        fields = ['profile', 'email', 'id']
