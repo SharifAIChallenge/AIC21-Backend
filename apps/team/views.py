@@ -1,6 +1,5 @@
-from django.utils.translation import ugettext_lazy as _
-
-from rest_framework import status, parsers
+from django.utils.translation import gettext_lazy as _
+# Create your views here.
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -8,7 +7,6 @@ from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.generics import GenericAPIView, get_object_or_404
 
-from apps.accounts.models import User
 from .models import Team, Invitation, Submission
 from .permissions import HasTeam, NoTeam
 from .serializers import (TeamSerializer, TeamInfoSerializer,
@@ -16,7 +14,7 @@ from .serializers import (TeamSerializer, TeamInfoSerializer,
                           TeamToUserInvitationSerializer,
                           UserPendingInvitationSerializer,
                           TeamPendingInvitationSerializer,
-                          SubmissionSerializer,)
+                          SubmissionSerializer, )
 
 
 class TeamAPIView(GenericAPIView):
@@ -58,6 +56,9 @@ class TeamAPIView(GenericAPIView):
 
     def delete(self, request):
         current_user = request.user
+
+        if current_user.team.member_count() == 1:
+            current_user.team.delete()
         current_user.team = None
         current_user.save()
 
@@ -67,7 +68,7 @@ class TeamAPIView(GenericAPIView):
         )
 
     def get_permissions(self):
-        new_permissions = self.permission_classes
+        new_permissions = self.permission_classes.copy()
         if self.request.method in ['PUT', 'GET']:
             new_permissions += [HasTeam]
         if self.request.method == 'POST':
@@ -101,6 +102,7 @@ class TeamInfoAPIView(GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = TeamInfoSerializer
     queryset = Team.objects.all()
+    parser_classes = (MultiPartParser, FormParser)
 
     def get(self, req, team_id):
         team = get_object_or_404(Team, id=team_id)
@@ -115,6 +117,7 @@ class IncompleteTeamInfoListAPIView(GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = TeamInfoSerializer
     queryset = Team.objects.all()
+    parser_classes = (MultiPartParser, FormParser)
 
     def get(self, request):
         teams = self.get_queryset()
@@ -127,7 +130,7 @@ class IncompleteTeamInfoListAPIView(GenericAPIView):
 
 
 class UserPendingInvitationListAPIView(GenericAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, ]
     serializer_class = UserPendingInvitationSerializer
     queryset = Invitation.objects.all()
 
@@ -143,7 +146,7 @@ class UserPendingInvitationListAPIView(GenericAPIView):
 
 
 class TeamPendingInvitationListAPIView(GenericAPIView):
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = [IsAuthenticated, HasTeam, ]
     serializer_class = TeamPendingInvitationSerializer
     queryset = Invitation.objects.all()
 
@@ -159,82 +162,75 @@ class TeamPendingInvitationListAPIView(GenericAPIView):
 
 
 class UserAnswerInvitationAPIView(GenericAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, NoTeam]
     serializer_class = UserPendingInvitationSerializer
     queryset = Invitation.objects.all()
 
     def put(self, request, invitation_id):
-        invitation = self.get_queryset().get(id=invitation_id)
+        invitation = get_object_or_404(Invitation, id=invitation_id)
         serializer = self.get_serializer(instance=invitation,
                                          data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.validate(request, invitation)
         serializer.save()
-        if serializer.data['status'] == 'accepted':
+        if request.query_params.get('answer') == '1':
             user = invitation.user
             user.team = invitation.team
+            invitation.save()
             user.save()
             if (invitation.team.is_complete()):
                 invitation.team.reject_all_pending_invitations()
+            user.reject_all_pending_invites()
 
         return Response(
-            data={"detail": f"Invitation is {request.data['status']}"},
+            data={"detail": f"Invitation is {serializer.data['status']}"},
             status=status.HTTP_200_OK
         )
 
-    def validate(self, request, invitation):
-        if request.user != invitation.user:
-            raise PermissionDenied('this is not your invitation to change')
-        elif request.data['status'] == 'rejected' or request.data[
-            'status'] == 'pending':
-            return True
-        elif invitation.team.is_complete():
-            raise ValidationError(
-                "the team is completed, your invitation is outdated")
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['invitation_id'] = self.kwargs['invitation_id']
+        return context
 
 
 class TeamAnswerInvitationAPIView(GenericAPIView):
-    permission_classes = [IsAuthenticated]
-    serializer_class = UserPendingInvitationSerializer
+    permission_classes = [IsAuthenticated, HasTeam]
+    serializer_class = TeamPendingInvitationSerializer
     queryset = Invitation.objects.all()
 
     def put(self, request, invitation_id):
-        invitation = self.get_queryset().get(id=invitation_id)
+        invitation = get_object_or_404(Invitation, id=invitation_id)
         serializer = self.get_serializer(instance=invitation,
                                          data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.validate(request, invitation)
         serializer.save()
-        if serializer.data['status'] == 'accepted':
+        if request.query_params.get('answer') == '1':
+            print()
             user = invitation.user
             user.team = invitation.team
             user.save()
-            if (invitation.team.is_complete()):
+            if invitation.team.is_complete():
                 invitation.team.reject_all_pending_invitations()
+            user.reject_all_pending_invites()
 
         return Response(
-            data={"detail": f"Invitation is {request.data['status']}"},
+            data={"detail": f"Invitation is {serializer.data['status']}"},
             status=status.HTTP_200_OK
         )
 
-    def validate(self, request, invitation):
-        if request.user.team != invitation.team:
-            raise PermissionDenied('this is not your invitation to change')
-        elif request.data['status'] == 'rejected' or request.data[
-            'status'] == 'pending':
-            return True
-        elif invitation.team.is_complete():
-            raise ValidationError("your team is complete")
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['invitation_id'] = self.kwargs['invitation_id']
+        return context
 
 
 class TeamSentInvitationListAPIView(GenericAPIView):
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = [IsAuthenticated, HasTeam, ]
     serializer_class = TeamToUserInvitationSerializer
     queryset = Invitation.objects.all()
 
     def get(self, request):
         invitations = self.get_queryset().filter(team=request.user.team,
-                                                 status='team_to_user')
+                                                 type='team_to_user')
         data = self.get_serializer(instance=invitations, many=True).data
         return Response(
             data={'data': data},
@@ -244,32 +240,15 @@ class TeamSentInvitationListAPIView(GenericAPIView):
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.validate(request)
-        invitation = serializer.save()
+        serializer.save()
         return Response(
             data={"message": "your invitation sent"},
             status=status.HTTP_200_OK
         )
 
-    def validate(self, request):
-        target_user = get_object_or_404(User, id=request.data['user'])
-        if request.user.team is None:
-            raise ValidationError(
-                "You have to be in a team to invite other players")
-        elif request.user.team.is_complete():
-            raise ValidationError(
-                'Your team is full, you can not invite anymore player')
-        elif target_user.team is not None:
-            raise ValidationError('This Player is already in a team')
-        elif Invitation.objects.filter(team=request.user.team,
-                                       user=request.data['user'],
-                                       status='pending').exists():
-            raise ValidationError(
-                "You have a pending invitation sent for this player")
-
 
 class UserSentInvitationListAPIView(GenericAPIView):
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = [IsAuthenticated, NoTeam]
     serializer_class = UserToTeamInvitationSerializer
     queryset = Invitation.objects.all()
 
@@ -285,25 +264,11 @@ class UserSentInvitationListAPIView(GenericAPIView):
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.validate(request)
         serializer.save()
         return Response(
             data={"message": "your invitation sent"},
             status=status.HTTP_200_OK
         )
-
-    def validate(self, request):
-        team = Team.objects.get(id=request.data['team'])
-        if request.user.team is not None:
-            raise ValidationError(
-                "you should leave your team before joining another team")
-        elif team.is_complete():
-            raise ValidationError('this team is full, you can not join them')
-        elif self.get_queryset().filter(team=team, user=request.user,
-                                        status='pending').exists():
-            raise ValidationError(
-                "You have a pending invitation sent for this team")
-        return
 
 
 class SubmissionsListAPIView(GenericAPIView):

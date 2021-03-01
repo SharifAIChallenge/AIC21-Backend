@@ -1,4 +1,6 @@
 from django.conf import settings
+import telegram
+import json
 
 
 def send_email(subject, template_name, context,
@@ -28,5 +30,16 @@ def send_email(subject, template_name, context,
     if file_content:
         email.attach(filename=file_name, content=file_content,
                      mimetype=mime_type)
-
     email.send()
+
+
+def send_to_telegram(dict):
+
+    # todo set proxy after deploy
+    # REQUEST_KWARGS = {
+    #     # "USERNAME:PASSWORD@" is optional, if you need authentication:
+    #     'proxy_url': 'http://127.0.0.1:12733/',
+    # }
+    bot = telegram.Bot(token='1603176620:AAEEjAyO6MUyYG1ycudQusoI3YkZulZW6rQ')
+    bot.send_message("@ai_challange_alert", json.dumps(dict, indent=4))
+

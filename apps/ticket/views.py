@@ -2,6 +2,7 @@ from rest_framework.generics import GenericAPIView, get_object_or_404
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.response import Response
+from apps.core.utils import send_to_telegram
 
 from apps.ticket import paginations
 from .models import Ticket, Reply
@@ -42,8 +43,7 @@ class UserTicketsListAPIView(GenericAPIView):
         serializer.is_valid(raise_exception=True)
         ticket = serializer.save()
 
-        send_ticket_to_telegram = SendTicketToTelegramChannel(ticket=ticket)
-        send_ticket_to_telegram.run()
+        send_to_telegram(serializer.data)
 
         return Response(
             data={"detail": "Your ticket has been submitted"},

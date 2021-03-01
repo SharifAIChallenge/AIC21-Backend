@@ -13,8 +13,46 @@ workflow:
     - if: '$CI_COMMIT_BRANCH == "staging"'
       when: always
     - when: never
+  
+var-check:
+  stage: publish-image
+  image:
+    name: reg.aichallenge.ir/alpine:latest
+    entrypoint: [""]
 
-build-push-image: # ali is so go
+  before_script:
+    - echo "service == $SERVICE_NAME"
+    - echo "reg ====== $SSC_REGISTRY_URL"
+    - echo "image tag == $IMAGE_TAG"
+    - echo "image url == $IMAGE_URL"
+  script:
+   - echo "ip ======== $SWARM_MANAGER_SERVER"
+  
+
+workflow:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      when: always
+    - if: '$CI_COMMIT_BRANCH == "staging"'
+      when: always
+    - when: never
+  
+var-check:
+  stage: publish-image
+  image:
+    name: reg.aichallenge.ir/alpine:latest
+    entrypoint: [""]
+
+  before_script:
+    - echo "service == $SERVICE_NAME"
+    - echo "reg ====== $SSC_REGISTRY_URL"
+    - echo "image tag == $IMAGE_TAG"
+    - echo "image url == $IMAGE_URL"
+  script:
+   - echo "ip ======== $SWARM_MANAGER_SERVER"
+  
+
+build-push-image:
   stage: publish-image
   image:
     name: $SSC_REGISTRY_URL/kaniko:debug
@@ -33,6 +71,8 @@ deploy-production:
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
       when: on_success
+    - if: '$CI_COMMIT_BRANCH == "staging"'
+      when: on_success
     - when: never
   before_script:
     - mkdir -p ~/.ssh
@@ -40,6 +80,9 @@ deploy-production:
     - chmod 700 ~/.ssh/id_rsa
     - eval "$(ssh-agent -s)"
     - ssh-add ~/.ssh/id_rsa
+    - declare -A NAME_PREFIX
+    - NAME_PREFIX=([main]=prd [staging]=stg)
+    - FINAL_SERVICE_NAME=${NAME_PREFIX[$CI_COMMIT_BRANCH]}_$SERVICE_NAME
   script:
-    - ssh -o "StrictHostKeyChecking=no" root@$SWARM_MANAGER_SERVER -p$SWARM_MANAGER_SERVER_SSH_PORT -t "docker service update --image $IMAGE_URL $SERVICE_NAME"
+    - ssh -o "StrictHostKeyChecking=no" root@$SWARM_MANAGER_SERVER -p$SWARM_MANAGER_SERVER_SSH_PORT -t "docker service update --image $IMAGE_URL $FINAL_SERVICE_NAME"
 

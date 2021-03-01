@@ -13,11 +13,12 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 from apps.core.utils import send_email
+import os
 
 
 class User(AbstractUser):
     team = models.ForeignKey(to='team.Team',
-                             on_delete=models.CASCADE,
+                             on_delete=models.SET_NULL,
                              related_name='members', null=True, blank=True)
 
     def send_activation_email(self):
@@ -40,6 +41,10 @@ class User(AbstractUser):
             template_name='accounts/email/user_activate_email.html',
             receipts=[self.email]
         )
+
+    def reject_all_pending_invites(self):
+        invitations = self.invitations.filter(status="pending")
+        invitations.update(status="rejected")
 
     def send_password_confirm_email(self):
         uid = urlsafe_base64_encode(force_bytes(self.id))
@@ -76,22 +81,41 @@ class User(AbstractUser):
 
 
 class Profile(models.Model):
+    IMAGE_MAX_SIZE = 1024 * 1024
+
     user = models.OneToOneField(User,
                                 on_delete=models.CASCADE,
                                 related_name='profile'
                                 )
-    firstname_fa = models.TextField(max_length=30)
-    firstname_en = models.TextField(max_length=30)
-    lastname_fa = models.TextField(max_length=30)
-    lastname_en = models.TextField(max_length=30)
-    university = models.CharField(max_length=50)
-    province = models.CharField(max_length=128)
-    major = models.CharField(max_length=50)
+    firstname_fa = models.CharField(max_length=64,
+                                    blank=True,
+                                    null=True)
+    firstname_en = models.CharField(max_length=64,
+                                    blank=True,
+                                    null=True)
+    lastname_fa = models.CharField(max_length=64,
+                                   blank=True,
+                                   null=True)
+    lastname_en = models.CharField(max_length=64,
+                                   blank=True,
+                                   null=True)
+    university = models.CharField(max_length=128,
+                                  blank=True,
+                                  null=True)
+    province = models.CharField(max_length=64,
+                                blank=True,
+                                null=True)
+    major = models.CharField(max_length=64,
+                             blank=True,
+                             null=True)
     birth_date = models.CharField(
         max_length=128,
         blank=True,
         null=True
     )
+
+    image = models.ImageField(null=True, blank=True)
+    resume = models.FileField(upload_to="resume", null=True, blank=True)
 
     def __str__(self):
         return f'username: {self.user.username},' \

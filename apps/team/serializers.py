@@ -1,5 +1,9 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-from rest_framework.fields import CharField
+from rest_framework.exceptions import PermissionDenied
+
+from .exceptions import NoTeamException, TeamIsFullException, HasTeamException, \
+    DuplicatePendingInviteException
 from .models import Team, Invitation, Submission
 from ..accounts.models import User
 
@@ -27,6 +31,14 @@ class TeamSerializer(serializers.ModelSerializer):
         current_user.save()
         return team
 
+    def validate(self, attrs):
+        image = attrs.get('image')
+
+        if image and image.size > Team.IMAGE_MAX_SIZE:
+            raise serializers.ValidationError('Maximum file size reached')
+
+        return attrs
+
 
 class TeamInfoSerializer(serializers.ModelSerializer):
     members = MemberSerializer(many=True, read_only=True)
@@ -49,6 +61,17 @@ class UserToTeamInvitationSerializer(serializers.ModelSerializer):
         invitation = Invitation.objects.create(**data)
         return invitation
 
+    def validate(self, data):
+        request = self.context['request']
+
+        team = data['team']
+        if team.is_complete():
+            raise TeamIsFullException()
+        elif Invitation.objects.filter(team=team, user=request.user,
+                                       status='pending').exists():
+            raise DuplicatePendingInviteException()
+        return data
+
 
 class TeamToUserInvitationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -63,16 +86,36 @@ class TeamToUserInvitationSerializer(serializers.ModelSerializer):
         invitation = Invitation.objects.create(**data)
         return invitation
 
+    def validate(self, data):
+        request = self.context['request']
+        target_user = get_object_or_404(User, id=request.data['user'])
+        if request.user.team.is_complete():
+            raise TeamIsFullException()
+        elif target_user.team is not None:
+            raise HasTeamException()
+        elif Invitation.objects.filter(team=request.user.team, user=target_user,
+                                       status='pending').exists():
+            raise DuplicatePendingInviteException()
+        return data
+
 
 class UserPendingInvitationSerializer(serializers.ModelSerializer):
     team = TeamInfoSerializer(read_only=True)
 
     def validate(self, data):
-        # todo: find better way to check status required
-        try:
-            data['status'] != None
-        except:
-            raise serializers.ValidationError('status field is required')
+        request = self.context['request']
+        invitation = get_object_or_404(Invitation,
+                                       id=self.context['invitation_id'])
+        answer = request.query_params.get('answer', "0")
+
+        if request.user != invitation.user:
+            raise PermissionDenied('this is not your invitation to change')
+        elif answer == '1':
+            if invitation.team.is_complete():
+                raise TeamIsFullException()
+            data['status'] = 'accepted'
+        elif answer == '0':
+            data['status'] = 'rejected'
         return data
 
     class Meta:
@@ -84,11 +127,18 @@ class TeamPendingInvitationSerializer(serializers.ModelSerializer):
     user = MemberSerializer(read_only=True)
 
     def validate(self, data):
-        # todo: find better way to check status required
-        try:
-            data['status'] != None
-        except:
-            raise serializers.ValidationError('status field is required')
+        request = self.context['request']
+        invitation = get_object_or_404(Invitation,
+                                       id=self.context['invitation_id'])
+        answer = request.query_params.get('answer', 0)
+        if request.user.team != invitation.team:
+            raise PermissionDenied('this is not your invitation to change')
+        elif answer == '1':
+            if invitation.team.is_complete():
+                raise TeamIsFullException()
+            data['status'] = 'accepted'
+        elif answer == '0':
+            data['status'] = 'rejected'
         return data
 
     class Meta:

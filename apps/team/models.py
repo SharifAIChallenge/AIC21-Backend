@@ -18,10 +18,12 @@ logger = logging.getLogger(__name__)
 
 
 class Team(UUIDModel, TimeStampedModel):
+    IMAGE_MAX_SIZE = 1024 * 1024
+
     name = models.CharField(max_length=128, unique=True)
     image = models.ImageField(upload_to="teams/images/", null=True,
                               blank=True)  # TODO : Should read path from setting parameters
-    creator = models.ForeignKey(to='accounts.User',
+    creator = models.ForeignKey(to=User,
                                 on_delete=models.RESTRICT,
                                 related_name='created_teams')
 
@@ -32,6 +34,8 @@ class Team(UUIDModel, TimeStampedModel):
         invitations = self.invitations.filter(status="pending")
         invitations.update(status="rejected")
 
+    def member_count(self):
+        return self.members.count()
 
 def __str__(self):
     return '%s' % self.name
@@ -58,7 +62,7 @@ class InvitationStatusTypes:
 
 
 class Invitation(UUIDModel, TimeStampedModel):
-    user = models.ForeignKey('accounts.User', related_name='invitations',
+    user = models.ForeignKey(User, related_name='invitations',
                              on_delete=models.CASCADE)
     team = models.ForeignKey(Team, related_name='invitations',
                              on_delete=models.CASCADE)
