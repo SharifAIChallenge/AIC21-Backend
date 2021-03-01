@@ -12,6 +12,14 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = Profile
         exclude = ['user', 'id']
 
+    def validate(self, attrs):
+        image = attrs.get('image')
+
+        if image and image.size > Profile.IMAGE_MAX_SIZE:
+            raise serializers.ValidationError('Maximum file size reached')
+
+        return attrs
+
 
 class UserSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer(read_only=True)
@@ -45,10 +53,8 @@ class UserSerializer(serializers.ModelSerializer):
             email=validated_data.get('email'),
             password=validated_data.get('password')
         )
-        validated_data['profile'] = dict()
-        validated_data['profile']['user'] = user
+        profile = Profile.objects.create(user=user)
 
-        profile = Profile.objects.create(**validated_data.get('profile'))
 
         return user
 
