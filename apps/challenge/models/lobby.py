@@ -9,19 +9,25 @@ class LobbyTypes:
         (FRIENDLY_MATCH, 'Friendly match'),
         (LEVEL_BASED_TOURNAMENT, 'Level based tournament'),
     )
+    TYPES_ARR = list(dict(TYPES).keys())
 
 
 class LobbyQueue(TimeStampedModel):
-    team = models.OneToOneField(to='team.Team', on_delete=models.CASCADE,
-                                related_name='lobby_queue')
+    team = models.ForeignKey(to='team.Team', on_delete=models.CASCADE,
+                                related_name='lobby_queues')
     game_type = models.CharField(
         max_length=50,
         choices=LobbyTypes.TYPES,
         default=LobbyTypes.FRIENDLY_MATCH
     )
 
-    @staticmethod
-    def get_lobby_population(game_type):
+    def get_lobby_population(self):
         return LobbyQueue.objects.filter(
-            game_type=game_type
+            game_type=self.game_type
         ).count()
+
+    def get_lobby_size(self):  # TODO : Read from config
+        if self.game_type == LobbyTypes.FRIENDLY_MATCH:
+            return 2
+
+        return 8

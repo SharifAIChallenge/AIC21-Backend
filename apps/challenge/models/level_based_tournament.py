@@ -13,3 +13,6 @@ class LevelBasedTournament(TimeStampedModel):
     @property
     def get_last_level(self):
         return 0  # TODO
+
+    def check_level(self):
+        pass
