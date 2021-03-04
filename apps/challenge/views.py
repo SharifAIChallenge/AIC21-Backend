@@ -1,4 +1,3 @@
-
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 
@@ -12,7 +11,6 @@ from apps.team.permissions import HasTeam
 
 from .models import Request, RequestTypes
 from .serializers import RequestSerializer
-
 
 
 class RequestAPIView(GenericAPIView):
@@ -61,15 +59,16 @@ class RequestAPIView(GenericAPIView):
         )
         queryset = self.queryset
 
-        queryset = (queryset.filter(source_team=self.request.user)
+        queryset = (queryset.filter(source_team=self.request.user.team)
                     if source else
-                    queryset.filter(target_team=self.request.user))
+                    queryset.filter(target_team=self.request.user.team))
 
         queryset = (queryset.filter(type=request_type)
                     if request_type else
                     queryset)
 
         return queryset
+
 
 class LobbyAPIView(GenericAPIView):
     permission_classes = [IsAuthenticated, HasTeam]
@@ -84,13 +83,13 @@ class LobbyAPIView(GenericAPIView):
             result.append({
                 'type': lobby_q.game_type,
                 'population': population,
-                'remaining_space': max(0, population - lobby_q.get_lobby_size())
+                'remaining_space': max(0,
+                                       population - lobby_q.get_lobby_size())
             })
 
         return Response(data={
             'data': result
         }, status=status.HTTP_200_OK)
-
 
     def post(self, request):
         lobby_q = self.get_serializer(data=request.data)
@@ -121,4 +120,3 @@ class ClanAPIView(GenericAPIView):
 
     def put(self, request):
         pass
-
