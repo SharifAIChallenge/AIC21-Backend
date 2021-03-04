@@ -1,8 +1,10 @@
 from django.db import models
 
+
 # Create your models here.
 
 class Past(models.Model):
+    event_year = models.CharField(max_length=128)
     image = models.ImageField()
     title_en = models.CharField(max_length=50, blank=True)
     title_fa = models.CharField(max_length=50)
@@ -13,4 +15,6 @@ class Past(models.Model):
     thirdTeam = models.TextField(max_length=50)
 
     def __str__(self):
-        return '%s (%s) [ %s - %s - %s ]' % (self.title_en, self.title_fa,self.firstTeam, self.secondTeam, self.thirdTeam)
+        return '%s (%s) [ %s - %s - %s ]' % (
+        self.title_en, self.title_fa, self.firstTeam, self.secondTeam,
+        self.thirdTeam)

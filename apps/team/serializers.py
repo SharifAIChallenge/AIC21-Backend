@@ -2,7 +2,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 
-from .exceptions import NoTeamException, TeamIsFullException, HasTeamException, DuplicatePendingInviteException
+from .exceptions import NoTeamException, TeamIsFullException, HasTeamException, \
+    DuplicatePendingInviteException
 from .models import Team, Invitation, Submission
 from ..accounts.models import User
 
@@ -29,6 +30,14 @@ class TeamSerializer(serializers.ModelSerializer):
         current_user.team = team
         current_user.save()
         return team
+
+    def validate(self, attrs):
+        image = attrs.get('image')
+
+        if image and image.size > Team.IMAGE_MAX_SIZE:
+            raise serializers.ValidationError('Maximum file size reached')
+
+        return attrs
 
 
 class TeamInfoSerializer(serializers.ModelSerializer):
@@ -87,7 +96,8 @@ class TeamToUserInvitationSerializer(serializers.ModelSerializer):
             raise TeamIsFullException()
         elif target_user.team is not None:
             raise HasTeamException()
-        elif Invitation.objects.filter(team=request.user.team, user=target_user, status='pending').exists():
+        elif Invitation.objects.filter(team=request.user.team, user=target_user,
+                                       status='pending').exists():
             raise DuplicatePendingInviteException()
         return data
 
@@ -96,7 +106,8 @@ class UserPendingInvitationSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         request = self.context['request']
-        invitation = get_object_or_404(Invitation, id=self.context['invitation_id'])
+        invitation = get_object_or_404(Invitation,
+                                       id=self.context['invitation_id'])
         answer = request.query_params.get('answer', "0")
 
         if request.user != invitation.user:
@@ -120,6 +131,7 @@ class TeamPendingInvitationSerializer(serializers.ModelSerializer):
     def validate(self, data):
         request = self.context['request']
         invitation = get_object_or_404(Invitation, id=self.context['invitation_id'])
+
         answer = request.query_params.get('answer', 0)
         if request.user.team != invitation.team:
             raise PermissionDenied('this is not your invitation to change')

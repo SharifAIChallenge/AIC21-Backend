@@ -18,6 +18,8 @@ logger = logging.getLogger(__name__)
 
 
 class Team(UUIDModel, TimeStampedModel):
+    IMAGE_MAX_SIZE = 1024 * 1024
+
     name = models.CharField(max_length=128, unique=True)
     image = models.ImageField(upload_to="teams/images/", null=True,
                               blank=True)  # TODO : Should read path from setting parameters

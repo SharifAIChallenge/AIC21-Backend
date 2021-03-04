@@ -1,9 +1,17 @@
 from rest_framework.serializers import ModelSerializer
 
-from . import models as faq_models
+from .models import QuestionTitle, QuestionWithAnswer
 
 
 class QuestionWithAnswerSerializer(ModelSerializer):
     class Meta:
-        model = faq_models.QuestionWithAnswer
+        model = QuestionWithAnswer
         exclude = ['id']
+
+
+class QuestionTitleSerializer(ModelSerializer):
+    faqs = QuestionWithAnswerSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = QuestionTitle
+        fields = ('title', 'faqs')
