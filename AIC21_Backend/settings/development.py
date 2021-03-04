@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     "dj_rest_auth.registration",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
+    'import_export',
 ]
 
 MIDDLEWARE = [
@@ -220,7 +221,6 @@ EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 EMAIL_USE_SSL = config('EMAIL_USE_SSL')
 EMAIL_BACKEND = config('EMAIL_BACKEND')
-
 
 # DOMAIN = config('DOMAIN', 'localhost:8000')
 
