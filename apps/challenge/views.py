@@ -1,10 +1,10 @@
-from rest_framework.generics import GenericAPIView
+from rest_framework.generics import GenericAPIView, get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 
 from rest_framework.response import Response
 from rest_framework import status
 
-from apps.challenge.models import LobbyQueue
+from apps.challenge.models import LobbyQueue, RequestStatusTypes
 from apps.challenge.serializers import LobbyQueueSerializer
 from apps.challenge.services.lobby import LobbyService
 from apps.team.permissions import HasTeam
@@ -40,8 +40,21 @@ class RequestAPIView(GenericAPIView):
             status=status.HTTP_200_OK
         )
 
-    def put(self, request):
-        pass
+    def put(self, request, request_id):
+        team_request = get_object_or_404(Request, id=request_id)
+        answer = self.request.query_params.get('answer', 1)
+        try:
+            answer = int(answer)
+        except ValueError:
+            answer = 1
+
+        if answer == 1:
+            team_request.status = RequestStatusTypes.ACCEPTED
+            # Call services
+        elif answer == 0:
+            team_request.status = RequestStatusTypes.REJECTED
+
+        return Response(status=status.HTTP_200_OK)
 
     def get_queryset(self):
         source = self.request.query_params.get(
