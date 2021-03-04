@@ -32,6 +32,7 @@ class Request(TimeStampedModel):
         choices=RequestStatusTypes.TYPES,
         default=RequestStatusTypes.PENDING
     )
+
     type = models.CharField(
         max_length=50,
         choices=RequestTypes.TYPES

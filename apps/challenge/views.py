@@ -1,11 +1,13 @@
-from rest_framework.generics import GenericAPIView
+from rest_framework.generics import GenericAPIView, get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 
 from rest_framework.response import Response
 from rest_framework import status
 
-from apps.challenge.models import LobbyQueue
+from apps.challenge.models import LobbyQueue, Clan, ClanTeam
+from apps.challenge.permissions import HasClan, NoClan
 from apps.challenge.serializers import LobbyQueueSerializer
+from apps.challenge.serializers.clan import ClanSerializer
 from apps.challenge.services.lobby import LobbyService
 from apps.team.permissions import HasTeam
 
@@ -112,11 +114,56 @@ class TournamentAPIView(GenericAPIView):
 
 
 class ClanAPIView(GenericAPIView):
+    permission_classes = [IsAuthenticated, HasTeam]
+    serializer_class = ClanSerializer
+    queryset = Clan.objects.all()
+
     def get(self, request):
-        pass
+        clan = request.user.team.clan_team.clan
+        print(type(clan))
+        data = self.get_serializer(clan).data
+        return Response(data)
 
     def post(self, request):
-        pass
+        clan = self.get_serializer(data=request.data)
+        clan.is_valid(raise_exception=True)
+        clan.save()
+
+        return Response(
+            data={
+                "data": clan.data
+            },
+            status=status.HTTP_200_OK
+        )
 
     def put(self, request):
-        pass
+        clan = self.get_serializer(data=request.data,
+                                   instance=request.user.team.clan_team.clan, partial=True)
+        clan.is_valid(raise_exception=True)
+        clan.save()
+
+        return Response(
+            data={
+                "data": clan.data
+            },
+            status=status.HTTP_200_OK
+        )
+
+    def delete(self, request):
+        clan_team = get_object_or_404(ClanTeam,team=request.user.team)
+        clan = clan_team.clan
+        clan_team.delete()
+        if (clan_team.clan.leader == request.user.team):
+            clan.delete()
+
+        return Response(
+            data={"message": "You left the clan"},
+            status=status.HTTP_200_OK
+        )
+    def get_permissions(self):
+        new_permissions = self.permission_classes.copy()
+        if self.request.method in ['PUT', 'GET', 'DELETE']:
+            new_permissions += [HasClan]
+        if self.request.method == 'POST':
+            new_permissions += [NoClan]
+        return [permission() for permission in new_permissions]

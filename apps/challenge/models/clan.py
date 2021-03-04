@@ -4,6 +4,8 @@ from django.conf import settings
 
 
 class Clan(TimeStampedModel):
+    IMAGE_MAX_SIZE = 1024 * 1024
+
     name = models.CharField(max_length=256, unique=True)
     leader = models.OneToOneField(to='team.Team', on_delete=models.RESTRICT, related_name='owned_clan')
     image = models.ImageField(upload_to=settings.UPLOAD_PATHS['CLAN_IMAGE'], null=True, blank=True)
