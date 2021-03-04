@@ -69,7 +69,7 @@ class TeamAPIView(GenericAPIView):
 
     def get_permissions(self):
         new_permissions = self.permission_classes.copy()
-        if self.request.method in ['PUT', 'GET']:
+        if self.request.method in ['PUT', 'GET', 'DELETE']:
             new_permissions += [HasTeam]
         if self.request.method == 'POST':
             new_permissions += [NoTeam]
