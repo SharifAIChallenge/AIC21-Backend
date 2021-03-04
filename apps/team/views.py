@@ -69,7 +69,7 @@ class TeamAPIView(GenericAPIView):
 
     def get_permissions(self):
         new_permissions = self.permission_classes.copy()
-        if self.request.method in ['PUT', 'GET']:
+        if self.request.method in ['PUT', 'GET', 'DELETE']:
             new_permissions += [HasTeam]
         if self.request.method == 'POST':
             new_permissions += [NoTeam]
@@ -189,13 +189,14 @@ class UserAnswerInvitationAPIView(GenericAPIView):
         context['invitation_id'] = self.kwargs['invitation_id']
         return context
 
+
 class TeamAnswerInvitationAPIView(GenericAPIView):
     permission_classes = [IsAuthenticated, HasTeam]
     serializer_class = TeamPendingInvitationSerializer
     queryset = Invitation.objects.all()
 
     def put(self, request, invitation_id):
-        invitation = get_object_or_404(Invitation,id=invitation_id)
+        invitation = get_object_or_404(Invitation, id=invitation_id)
         serializer = self.get_serializer(instance=invitation,
                                          data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -218,6 +219,7 @@ class TeamAnswerInvitationAPIView(GenericAPIView):
         context = super().get_serializer_context()
         context['invitation_id'] = self.kwargs['invitation_id']
         return context
+
 
 class TeamSentInvitationListAPIView(GenericAPIView):
     permission_classes = [IsAuthenticated, HasTeam, ]
