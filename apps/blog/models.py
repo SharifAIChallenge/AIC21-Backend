@@ -15,7 +15,7 @@ class Post(models.Model):
     description_fa = models.TextField(max_length=300)
 
     def __str__(self):
-        return '%s %s' % (self.title_en, self.title_fa)
+        return '%s, %s' % (self.title_en, self.title_fa)
 
 
 class Comment(models.Model):
@@ -30,7 +30,7 @@ class Comment(models.Model):
         'Comment', on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
-        return '%s' % (self.user)
+        return f'user: {self.user}, post: {str(self.post)}'
 
 
 class Tag(models.Model):
@@ -41,4 +41,18 @@ class Tag(models.Model):
     color = models.CharField(max_length=20)
 
     def __str__(self):
-        return '%s %s' % (self.name_en, self.name_fa)
+        return '%s, %s' % (self.name_en, self.name_fa)
+
+
+class AparatMedia(models.Model):
+    script = models.TextField()
+    post = models.ForeignKey(
+        to=Post,
+        related_name='aparats',
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL
+    )
+
+    def __str__(self):
+        return f'post: {self.post_id}'

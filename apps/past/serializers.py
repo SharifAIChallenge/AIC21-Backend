@@ -8,4 +8,4 @@ class PastSerializer(serializers.ModelSerializer):
         model = Past
         fields = ['id', 'title_en', 'title_fa', 'description_en',
                   'description_fa', 'firstTeam', 'secondTeam',
-                  'thirdTeam', 'image']
+                  'thirdTeam', 'image', 'event_year']
