@@ -15,6 +15,6 @@ class Past(models.Model):
     thirdTeam = models.TextField(max_length=50)
 
     def __str__(self):
-        return '%s (%s) [ %s - %s - %s ]' % (
-        self.title_en, self.title_fa, self.firstTeam, self.secondTeam,
-        self.thirdTeam)
+        return '%s (%s) [ %s - %s - %s ]: %s' % (
+            self.title_en, self.title_fa, self.firstTeam, self.secondTeam,
+            self.thirdTeam, self.event_year)
