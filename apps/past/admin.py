@@ -13,4 +13,4 @@ class PastAdmin(ModelAdmin):
         models.TextField: {'widget': AdminMartorWidget},
     }
 
-    list_display = ('id', 'tilte_fa', 'event_year')
+    list_display = ('id', 'event_year')
