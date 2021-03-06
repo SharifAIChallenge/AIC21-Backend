@@ -45,7 +45,9 @@ class Tag(models.Model):
 
 
 class AparatMedia(models.Model):
-    script = models.TextField()
+    aparat_id = models.CharField(max_length=128)
+    aparat_src = models.URLField(max_length=512)
+
     post = models.ForeignKey(
         to=Post,
         related_name='aparats',

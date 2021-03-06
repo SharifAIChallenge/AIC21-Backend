@@ -7,7 +7,7 @@ from apps.blog.models import *
 class AparatMediaSerializer(serializers.ModelSerializer):
     class Meta:
         model = AparatMedia
-        fields = ('script',)
+        fields = ('aparat_id', 'aparat_src')
 
 
 class TagSerializer(serializers.ModelSerializer):
