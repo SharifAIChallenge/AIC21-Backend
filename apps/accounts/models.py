@@ -145,11 +145,9 @@ class ResetPasswordToken(models.Model):
 
 class Skill(models.Model):
     skill = models.CharField(max_length=512)
-    profile = models.ForeignKey(
-        to=Profile,
-        related_name='skills',
-        on_delete=models.CASCADE
-    )
+    profile = models.ForeignKey(to=Profile,
+                                related_name='skills',
+                                on_delete=models.CASCADE)
 
 
 class JobExperience(models.Model):
