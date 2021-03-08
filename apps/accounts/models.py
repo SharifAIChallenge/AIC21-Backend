@@ -16,6 +16,20 @@ from apps.core.utils import send_email
 import os
 
 
+class DegreeTypes:
+    ST = 'دانش‌ آموز'
+    BA = 'کارشناسی'
+    MA = 'کارشناسی ارشد'
+    DO = 'دکترا'
+
+    TYPES = (
+        ('ST', ST),
+        ('BA', BA),
+        ('MA', MA),
+        ('DO', DO)
+    )
+
+
 class User(AbstractUser):
     team = models.ForeignKey(to='team.Team',
                              on_delete=models.SET_NULL,
@@ -87,34 +101,29 @@ class Profile(models.Model):
                                 on_delete=models.CASCADE,
                                 related_name='profile'
                                 )
-    firstname_fa = models.CharField(max_length=64,
-                                    blank=True,
-                                    null=True)
-    firstname_en = models.CharField(max_length=64,
-                                    blank=True,
-                                    null=True)
-    lastname_fa = models.CharField(max_length=64,
-                                   blank=True,
-                                   null=True)
-    lastname_en = models.CharField(max_length=64,
-                                   blank=True,
-                                   null=True)
-    university = models.CharField(max_length=128,
-                                  blank=True,
-                                  null=True)
-    province = models.CharField(max_length=64,
-                                blank=True,
-                                null=True)
-    major = models.CharField(max_length=64,
-                             blank=True,
-                             null=True)
-    birth_date = models.CharField(
-        max_length=128,
-        blank=True,
-        null=True
-    )
 
+    # Personal Info
+    firstname_fa = models.CharField(max_length=64, blank=True, null=True)
+    firstname_en = models.CharField(max_length=64, blank=True, null=True)
+    lastname_fa = models.CharField(max_length=64, blank=True, null=True)
+    lastname_en = models.CharField(max_length=64, blank=True, null=True)
+    birth_date = models.CharField(max_length=128, blank=True, null=True)
+    province = models.CharField(max_length=64, blank=True, null=True)
+    phone_number = models.CharField(max_length=32, blank=True, null=True)
+
+    # Academic Info
+    university = models.CharField(max_length=128, blank=True, null=True)
+    major = models.CharField(max_length=64, blank=True, null=True)
+    university_term = models.PositiveSmallIntegerField(null=True)
+    university_degree = models.CharField(choices=DegreeTypes.TYPES,
+                                         max_length=32, null=True)
+
+    # Job Info
+
+    # Others
     image = models.ImageField(null=True, blank=True)
+    hide_profile_info = models.BooleanField(default=False)
+
     resume = models.FileField(upload_to="resume", null=True, blank=True)
 
     def __str__(self):
@@ -132,3 +141,23 @@ class ResetPasswordToken(models.Model):
     uid = models.CharField(max_length=100)
     token = models.CharField(max_length=100)
     expiration_date = models.DateTimeField()
+
+
+class Skill(models.Model):
+    skill = models.CharField(max_length=512)
+    profile = models.ForeignKey(
+        to=Profile,
+        related_name='skills',
+        on_delete=models.CASCADE
+    )
+
+
+class JobExperience(models.Model):
+    company = models.CharField(max_length=128)
+    position = models.CharField(max_length=256)
+    description = models.CharField(max_length=1024, blank=True, null=True)
+    profile = models.ForeignKey(
+        to=Profile,
+        related_name='jobs',
+        on_delete=models.CASCADE
+    )
