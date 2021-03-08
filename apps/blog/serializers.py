@@ -36,7 +36,8 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
         fields = ['tags', 'num_comments', 'date', 'image',
                   'title_en', 'title_fa', 'text_en', 'text_fa',
-                  'description_en', 'description_fa', 'aparats']
+                  'description_en', 'description_fa', 'aparats',
+                  'google_calendar_link', 'webinar_link']
 
     def get_num_comments(self, obj):
         return obj.comments.count()
