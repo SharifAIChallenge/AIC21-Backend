@@ -12,7 +12,7 @@ from .permissions import HasTeam, NoTeam
 from .serializers import (TeamSerializer, TeamInfoSerializer,
                           UserToTeamInvitationSerializer,
                           TeamToUserInvitationSerializer,
-                          UserPendingInvitationSerializer,
+                          UserReceivedInvitationSerializer,
                           TeamPendingInvitationSerializer,
                           SubmissionSerializer, )
 
@@ -127,15 +127,31 @@ class IncompleteTeamInfoListAPIView(GenericAPIView):
         )
 
 
-class UserPendingInvitationListAPIView(GenericAPIView):
+class UserReceivedPendingInvitationListAPIView(GenericAPIView):
     permission_classes = [IsAuthenticated, ]
-    serializer_class = UserPendingInvitationSerializer
+    serializer_class = UserReceivedInvitationSerializer
     queryset = Invitation.objects.all()
 
     def get(self, request):
         invitations = self.get_queryset().filter(user=request.user,
                                                  status='pending',
                                                  type='team_to_user')
+        data = self.get_serializer(instance=invitations, many=True).data
+        return Response(
+            data={'data': data},
+            status=status.HTTP_200_OK
+        )
+
+
+class UserReceivedResolvedInvitationListAPIView(GenericAPIView):
+    permission_classes = [IsAuthenticated, ]
+    serializer_class = UserReceivedInvitationSerializer
+    queryset = Invitation.objects.all()
+
+    def get(self, request):
+        invitations = self.get_queryset().filter(user=request.user,
+                                                 type='team_to_user'
+                                                 ).exclude(status="pending")
         data = self.get_serializer(instance=invitations, many=True).data
         return Response(
             data={'data': data},
@@ -161,7 +177,7 @@ class TeamPendingInvitationListAPIView(GenericAPIView):
 
 class UserAnswerInvitationAPIView(GenericAPIView):
     permission_classes = [IsAuthenticated, NoTeam]
-    serializer_class = UserPendingInvitationSerializer
+    serializer_class = UserReceivedInvitationSerializer
     queryset = Invitation.objects.all()
 
     def put(self, request, invitation_id):
