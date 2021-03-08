@@ -119,8 +119,8 @@ class Profile(models.Model):
                                          max_length=32, null=True)
 
     # Job Info
-    linkedin = models.CharField(max_length=512, blank=True)
-    github = models.CharField(max_length=512, null=True)
+    linkedin = models.CharField(max_length=512, blank=True, null=True)
+    github = models.CharField(max_length=512, null=True, blank=True)
 
     # Others
     image = models.ImageField(null=True, blank=True)
