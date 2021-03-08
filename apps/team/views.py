@@ -102,6 +102,7 @@ class TeamInfoAPIView(GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = TeamInfoSerializer
     queryset = Team.objects.all()
+    parser_classes = (MultiPartParser, FormParser)
 
     def get(self, req, team_id):
         team = get_object_or_404(Team, id=team_id)
@@ -116,6 +117,7 @@ class IncompleteTeamInfoListAPIView(GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = TeamInfoSerializer
     queryset = Team.objects.all()
+    parser_classes = (MultiPartParser, FormParser)
 
     def get(self, request):
         teams = self.get_queryset()

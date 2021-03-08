@@ -9,16 +9,21 @@ from .serializers import (NotificationSerializer, SubscriberSerializer,
                           PublicNotificationSerializer)
 
 
-@permission_classes([IsAuthenticated])
 class NotificationView(GenericAPIView):
     queryset = Notification.objects.all()
     serializer_class = NotificationSerializer
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         notifications = request.user.notifications.all()
         data = self.get_serializer(notifications, many=True).data
         return Response(data={'notifications': data},
                         status=status.HTTP_200_OK)
+
+    def post(self, request):
+        request.user.notifications.all().update(seen=True)
+
+        return Response(status=status.HTTP_200_OK)
 
 
 class PublicNotificationsAPIView(GenericAPIView):
