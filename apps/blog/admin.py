@@ -16,6 +16,8 @@ class PostAdmin(ModelAdmin):
         models.TextField: {'widget': AdminMartorWidget},
     }
     inlines = (AparatInline,)
+    list_display = ('id', 'title_fa', 'google_calendar_link', 'webinar_link')
+    list_editable = ('google_calendar_link', 'webinar_link')
 
 
 @admin.register(AparatMedia)
