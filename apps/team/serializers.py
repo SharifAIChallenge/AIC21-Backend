@@ -101,7 +101,7 @@ class TeamToUserInvitationSerializer(serializers.ModelSerializer):
             raise DuplicatePendingInviteException()
         return data
 
-class UserPendingInvitationSerializer(serializers.ModelSerializer):
+class UserReceivedInvitationSerializer(serializers.ModelSerializer):
     team = TeamInfoSerializer(read_only=True)
 
     def validate(self, data):

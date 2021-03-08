@@ -1,7 +1,8 @@
 from django.urls import path
 
 from apps.team.views import TeamAPIView, TeamSearchAPIView, TeamInfoAPIView, IncompleteTeamInfoListAPIView, \
-    UserPendingInvitationListAPIView, TeamSentInvitationListAPIView, UserAnswerInvitationAPIView, \
+    UserReceivedPendingInvitationListAPIView,UserReceivedResolvedInvitationListAPIView\
+    , TeamSentInvitationListAPIView, UserAnswerInvitationAPIView, \
     UserSentInvitationListAPIView, TeamPendingInvitationListAPIView, TeamAnswerInvitationAPIView
 
 app_name = 'team'
@@ -10,8 +11,10 @@ urlpatterns = [
     path('', view=TeamAPIView.as_view(), name="team_operations"),
     path('search', view=TeamSearchAPIView.as_view(), name="team_search"),
     path('incomplete', view=IncompleteTeamInfoListAPIView.as_view(), name="get_incomplete_teams"),
-    path('invitations/user_pending', view=UserPendingInvitationListAPIView.as_view(),
-         name="get_user_pending_invitations"),
+    path('invitations/user_pending', view=UserReceivedPendingInvitationListAPIView.as_view(),
+         name="get_user_received_pending_invitations"),
+    path('invitations/user_received_resolved',view=UserReceivedResolvedInvitationListAPIView.as_view(),
+         name="get_user_received_resolved_invitations"),
     path('invitations/team_pending', view=TeamPendingInvitationListAPIView.as_view(),
          name="get_team_pending_invitations"),
     path('invitations/team_pending/<str:invitation_id>', view=TeamAnswerInvitationAPIView.as_view(),
