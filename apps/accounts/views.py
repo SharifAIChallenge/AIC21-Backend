@@ -27,7 +27,8 @@ from google.auth.transport import requests
 __all__ = ('LoginAPIView', 'SignUpAPIView', 'ActivateAPIView', 'LogoutAPIView',
            'ResendActivationEmailAPIView', 'ProfileAPIView',
            'ChangePasswordAPIView', 'ResetPasswordAPIView',
-           'ResetPasswordConfirmAPIView')
+           'ResetPasswordConfirmAPIView', 'HideProfileInfoAPIView',
+           'UserWithoutTeamAPIView')
 
 CLIENT_ID = '864043474548-9is9rd8jbf3bbq4tdrhsfdjnivasj7l6.apps.googleusercontent.com'
 
@@ -115,6 +116,20 @@ class ProfileAPIView(GenericAPIView):
 
         return Response(
             data={'data': serializer.data},
+            status=status.HTTP_200_OK
+        )
+
+
+class HideProfileInfoAPIView(GenericAPIView):
+
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request):
+        request.user.profile.hide_profile_info = (
+            not request.user.profile.hide_profile_info
+        )
+
+        return Response(
             status=status.HTTP_200_OK
         )
 

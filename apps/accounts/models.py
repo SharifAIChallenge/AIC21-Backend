@@ -126,6 +126,15 @@ class Profile(models.Model):
 
     resume = models.FileField(upload_to="resume", null=True, blank=True)
 
+    @property
+    def is_complete(self):
+        return all(
+            (
+                self.university, self.university_degree, self.major,
+                self.phone_number, self.birth_date
+            )
+        )
+
     def __str__(self):
         return f'username: {self.user.username},' \
                f'name: {self.firstname_en} {self.lastname_en},' \
@@ -149,6 +158,9 @@ class Skill(models.Model):
                                 related_name='skills',
                                 on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f'{self.skill}'
+
 
 class JobExperience(models.Model):
     company = models.CharField(max_length=128)
@@ -159,3 +171,6 @@ class JobExperience(models.Model):
         related_name='jobs',
         on_delete=models.CASCADE
     )
+
+    def __str__(self):
+        return f'{self.position}'
