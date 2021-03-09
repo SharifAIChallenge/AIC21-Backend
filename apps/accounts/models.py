@@ -110,6 +110,8 @@ class Profile(models.Model):
     birth_date = models.CharField(max_length=128, blank=True, null=True)
     province = models.CharField(max_length=64, blank=True, null=True)
     phone_number = models.CharField(max_length=32, blank=True, null=True)
+    programming_language = models.CharField(max_length=32, blank=True,
+                                            null=True)
 
     # Academic Info
     university = models.CharField(max_length=128, blank=True, null=True)
