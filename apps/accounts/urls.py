@@ -4,7 +4,8 @@ from .views import (
     LoginAPIView, SignUpAPIView, ActivateAPIView, LogoutAPIView,
     ResendActivationEmailAPIView, ProfileAPIView, ChangePasswordAPIView,
     ResetPasswordAPIView, ResetPasswordConfirmAPIView, UserWithoutTeamAPIView,
-    ProfileInfoAPIView)
+    ProfileInfoAPIView, HideProfileInfoAPIView
+)
 
 urlpatterns = [
     path('login', view=LoginAPIView.as_view(), name='login'),
@@ -21,5 +22,7 @@ urlpatterns = [
          name='reset password'),
     path('password/reset/confirm', view=ResetPasswordConfirmAPIView.as_view(),
          name='confirm password'),
-    path('without_team', view=UserWithoutTeamAPIView.as_view(), name='users without team')
+    path('without_team', view=UserWithoutTeamAPIView.as_view(), name='users without team'),
+    path('profile/hide', view=HideProfileInfoAPIView.as_view(),
+         name='hide_profile_info')
 ]

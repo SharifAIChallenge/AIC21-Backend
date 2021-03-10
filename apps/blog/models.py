@@ -7,15 +7,18 @@ User = get_user_model()
 class Post(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     image = models.ImageField()
-    title_en = models.CharField(max_length=50)
+    title_en = models.CharField(max_length=50, blank=True, null=True)
     title_fa = models.CharField(max_length=50)
-    text_en = models.TextField(max_length=10000)
+    text_en = models.TextField(max_length=10000, blank=True, null=True)
     text_fa = models.TextField(max_length=10000)
     description_en = models.TextField(max_length=300)
     description_fa = models.TextField(max_length=300)
+    google_calendar_link = models.URLField(max_length=512, blank=True,
+                                           null=True)
+    webinar_link = models.URLField(max_length=512, blank=True, null=True)
 
     def __str__(self):
-        return '%s %s' % (self.title_en, self.title_fa)
+        return '%s, %s' % (self.title_en, self.title_fa)
 
 
 class Comment(models.Model):
@@ -30,7 +33,7 @@ class Comment(models.Model):
         'Comment', on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
-        return '%s' % (self.user)
+        return f'user: {self.user}, post: {str(self.post)}'
 
 
 class Tag(models.Model):
@@ -41,4 +44,20 @@ class Tag(models.Model):
     color = models.CharField(max_length=20)
 
     def __str__(self):
-        return '%s %s' % (self.name_en, self.name_fa)
+        return '%s, %s' % (self.name_en, self.name_fa)
+
+
+class AparatMedia(models.Model):
+    aparat_id = models.CharField(max_length=128)
+    aparat_src = models.URLField(max_length=512)
+
+    post = models.ForeignKey(
+        to=Post,
+        related_name='aparats',
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL
+    )
+
+    def __str__(self):
+        return f'post: {self.post_id}'
