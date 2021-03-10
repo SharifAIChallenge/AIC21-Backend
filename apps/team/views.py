@@ -7,6 +7,7 @@ from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.generics import GenericAPIView, get_object_or_404
 
+from apps.team.paginations import TeamPagination
 from .models import Team, Invitation, Submission
 from .permissions import HasTeam, NoTeam
 from .serializers import (TeamSerializer, TeamInfoSerializer,
@@ -77,8 +78,9 @@ class TeamAPIView(GenericAPIView):
 
 
 class TeamSearchAPIView(GenericAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated,]
     serializer_class = TeamSerializer
+    pagination_class = TeamPagination
     queryset = Team.objects.all()
 
     def get(self, request):
@@ -86,15 +88,15 @@ class TeamSearchAPIView(GenericAPIView):
         if term is None or term == '':
             return Response(data={"message": "Provide search parameter"},
                             status=status.HTTP_400_BAD_REQUEST)
-
+        teams = self.get_queryset().filter(name__icontains=term)
+        page = self.paginate_queryset(teams)
         results = self.get_serializer(
-            self.get_queryset().filter(name__icontains=term), many=True)
+            page, many=True)
 
-        return Response(
+        return self.get_paginated_response(
             data={
                 "data": results.data
-            },
-            status=status.HTTP_200_OK
+            }
         )
 
 
@@ -114,18 +116,23 @@ class TeamInfoAPIView(GenericAPIView):
 
 
 class IncompleteTeamInfoListAPIView(GenericAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated,]
     serializer_class = TeamInfoSerializer
+    pagination_class = TeamPagination
     queryset = Team.objects.all()
     parser_classes = (MultiPartParser, FormParser)
 
     def get(self, request):
-        teams = self.get_queryset()
-        teams = filter(lambda team: not team.is_complete(), teams)
-        data = self.get_serializer(instance=teams, many=True).data
-        return Response(
-            data={'data': data},
-            status=status.HTTP_200_OK
+        incomplete_teams_id = [team.id for team in
+                               filter(lambda team: not team.is_complete(),
+                                      self.get_queryset()
+                                      )
+                               ]
+        incomplete_teams = self.get_queryset().filter(id__in=incomplete_teams_id)
+        page = self.paginate_queryset(incomplete_teams)
+        data = self.get_serializer(instance=page, many=True).data
+        return self.get_paginated_response(
+            data={'data': data}
         )
 
 
