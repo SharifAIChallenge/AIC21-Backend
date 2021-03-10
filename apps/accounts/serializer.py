@@ -33,10 +33,15 @@ class ProfileSerializer(serializers.ModelSerializer):
     skills = SkillSerializer(many=True)
     jobs = JobExperienceSerializer(many=True)
     is_complete = serializers.SerializerMethodField('_is_complete')
+    email = serializers.SerializerMethodField('_email')
 
     @staticmethod
     def _is_complete(obj: Profile):
         return obj.is_complete
+
+    @staticmethod
+    def _email(obj: Profile):
+        return obj.user.email
 
     class Meta:
         model = Profile
