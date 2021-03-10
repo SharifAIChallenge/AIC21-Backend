@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 
+from apps.accounts.serializer import ProfileSerializer
 from .exceptions import NoTeamException, TeamIsFullException, HasTeamException, \
     DuplicatePendingInviteException
 from .models import Team, Invitation, Submission
@@ -9,9 +10,10 @@ from ..accounts.models import User
 
 
 class MemberSerializer(serializers.ModelSerializer):
+    profile = ProfileSerializer(read_only=True)
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email']
+        fields = ['first_name', 'last_name', 'email','id','profile']
 
 
 class TeamSerializer(serializers.ModelSerializer):
@@ -50,21 +52,22 @@ class TeamInfoSerializer(serializers.ModelSerializer):
 
 
 class UserToTeamInvitationSerializer(serializers.ModelSerializer):
+    team = TeamInfoSerializer(read_only=True)
     class Meta:
         model = Invitation
-        fields = ['team', 'status']
+        fields = ['team', 'status',]
 
     def create(self, data):
         data['type'] = 'user_to_team'
         current_user = self.context['request'].user
         data['user'] = current_user
+        data['team'] = get_object_or_404(Team, id=self.context['request'].data['team_id'])
         invitation = Invitation.objects.create(**data)
         return invitation
 
     def validate(self, data):
         request = self.context['request']
-
-        team = data['team']
+        team = get_object_or_404(Team, id= self.context['request'].data['team_id'])
         if team.is_complete():
             raise TeamIsFullException()
         elif Invitation.objects.filter(team=team, user=request.user,
