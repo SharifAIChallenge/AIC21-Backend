@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 
+from apps.accounts.serializer import ProfileSerializer
 from .exceptions import NoTeamException, TeamIsFullException, HasTeamException, \
     DuplicatePendingInviteException
 from .models import Team, Invitation, Submission
@@ -9,9 +10,10 @@ from ..accounts.models import User
 
 
 class MemberSerializer(serializers.ModelSerializer):
+    profile = ProfileSerializer(read_only=True)
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email','id']
+        fields = ['first_name', 'last_name', 'email','id','profile']
 
 
 class TeamSerializer(serializers.ModelSerializer):
