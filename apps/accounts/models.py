@@ -127,6 +127,7 @@ class Profile(models.Model):
     # Others
     image = models.ImageField(null=True, blank=True)
     hide_profile_info = models.BooleanField(default=False)
+    can_sponsors_see = models.BooleanField(default=True)
 
     resume = models.FileField(upload_to="resume", null=True, blank=True)
 
