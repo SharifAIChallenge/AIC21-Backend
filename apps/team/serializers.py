@@ -11,7 +11,7 @@ from ..accounts.models import User
 class MemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email']
+        fields = ['first_name', 'last_name', 'email','id']
 
 
 class TeamSerializer(serializers.ModelSerializer):

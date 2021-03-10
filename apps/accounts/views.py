@@ -181,3 +181,13 @@ class UserWithoutTeamAPIView(GenericAPIView):
         return Response({
             "data": result,
         }, status= status.HTTP_200_OK)
+
+class ProfileInfoAPIView(GenericAPIView):
+    queryset = User.objects.all()
+    serializer_class = ProfileSerializer
+    permission_classes = []
+
+    def get(self, request,userid):
+        user = get_object_or_404(User,id=userid)
+        data = self.get_serializer(user.profile).data
+        return Response(data={'data': data}, status=status.HTTP_200_OK)
