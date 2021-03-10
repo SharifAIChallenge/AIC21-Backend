@@ -50,21 +50,22 @@ class TeamInfoSerializer(serializers.ModelSerializer):
 
 
 class UserToTeamInvitationSerializer(serializers.ModelSerializer):
+    team = TeamInfoSerializer(read_only=True)
     class Meta:
         model = Invitation
-        fields = ['team', 'status']
+        fields = ['team', 'status',]
 
     def create(self, data):
         data['type'] = 'user_to_team'
         current_user = self.context['request'].user
         data['user'] = current_user
+        data['team'] = get_object_or_404(Team, id=self.context['request'].data['team_id'])
         invitation = Invitation.objects.create(**data)
         return invitation
 
     def validate(self, data):
         request = self.context['request']
-
-        team = data['team']
+        team = get_object_or_404(Team, id= self.context['request'].data['team_id'])
         if team.is_complete():
             raise TeamIsFullException()
         elif Invitation.objects.filter(team=team, user=request.user,
