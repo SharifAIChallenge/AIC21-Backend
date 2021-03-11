@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 
+from apps.accounts.serializer import ProfileSerializer
 from .exceptions import NoTeamException, TeamIsFullException, HasTeamException, \
     DuplicatePendingInviteException
 from .models import Team, Invitation, Submission
@@ -9,9 +10,10 @@ from ..accounts.models import User
 
 
 class MemberSerializer(serializers.ModelSerializer):
+    profile = ProfileSerializer(read_only=True)
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email']
+        fields = ['first_name', 'last_name', 'email','id','profile']
 
 
 class TeamSerializer(serializers.ModelSerializer):
@@ -50,21 +52,22 @@ class TeamInfoSerializer(serializers.ModelSerializer):
 
 
 class UserToTeamInvitationSerializer(serializers.ModelSerializer):
+    team = TeamInfoSerializer(read_only=True)
     class Meta:
         model = Invitation
-        fields = ['team', 'status']
+        fields = ['team', 'status',]
 
     def create(self, data):
         data['type'] = 'user_to_team'
         current_user = self.context['request'].user
         data['user'] = current_user
+        data['team'] = get_object_or_404(Team, id=self.context['request'].data['team_id'])
         invitation = Invitation.objects.create(**data)
         return invitation
 
     def validate(self, data):
         request = self.context['request']
-
-        team = data['team']
+        team = get_object_or_404(Team, id= self.context['request'].data['team_id'])
         if team.is_complete():
             raise TeamIsFullException()
         elif Invitation.objects.filter(team=team, user=request.user,
@@ -74,21 +77,24 @@ class UserToTeamInvitationSerializer(serializers.ModelSerializer):
 
 
 class TeamToUserInvitationSerializer(serializers.ModelSerializer):
+    user = MemberSerializer(read_only=True)
+
     class Meta:
         model = Invitation
-        fields = ['user', 'status']
-        extra_kwargs = {'user': {'required': True}}
+        fields = ['user', 'status',]
 
     def create(self, data):
         current_user = self.context['request'].user
         data['team'] = current_user.team
         data['type'] = 'team_to_user'
+        data['user'] = get_object_or_404(User, email= self.context['request'].data['user_email'])
         invitation = Invitation.objects.create(**data)
         return invitation
 
     def validate(self, data):
         request = self.context['request']
-        target_user = get_object_or_404(User, id=request.data['user'])
+        # todo: make user_email required
+        target_user = get_object_or_404(User, email=request.data['user_email'])
         if request.user.team.is_complete():
             raise TeamIsFullException()
         elif target_user.team is not None:
@@ -98,8 +104,7 @@ class TeamToUserInvitationSerializer(serializers.ModelSerializer):
             raise DuplicatePendingInviteException()
         return data
 
-
-class UserPendingInvitationSerializer(serializers.ModelSerializer):
+class UserReceivedInvitationSerializer(serializers.ModelSerializer):
     team = TeamInfoSerializer(read_only=True)
 
     def validate(self, data):
@@ -128,8 +133,8 @@ class TeamPendingInvitationSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         request = self.context['request']
-        invitation = get_object_or_404(Invitation,
-                                       id=self.context['invitation_id'])
+        invitation = get_object_or_404(Invitation, id=self.context['invitation_id'])
+
         answer = request.query_params.get('answer', 0)
         if request.user.team != invitation.team:
             raise PermissionDenied('this is not your invitation to change')

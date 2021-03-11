@@ -3,7 +3,7 @@ from django.contrib.admin import ModelAdmin
 from django.db import models
 from martor.widgets import AdminMartorWidget
 
-from apps.team.models import Team, Invitation
+from apps.team.models import Team, Invitation, Submission
 
 
 @admin.register(Team)
@@ -22,3 +22,6 @@ class InvitationAdmin(ModelAdmin):
     pass
 
 
+@admin.register(Submission)
+class SubmissionAdmin(ModelAdmin):
+    pass

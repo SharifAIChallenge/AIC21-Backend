@@ -3,7 +3,11 @@ from django.contrib.admin import ModelAdmin
 from django.db import models
 from martor.widgets import AdminMartorWidget
 
-from apps.blog.models import Post, Comment, Tag
+from apps.blog.models import Post, Comment, Tag, AparatMedia
+
+
+class AparatInline(admin.StackedInline):
+    model = AparatMedia
 
 
 @admin.register(Post)
@@ -11,6 +15,13 @@ class PostAdmin(ModelAdmin):
     formfield_overrides = {
         models.TextField: {'widget': AdminMartorWidget},
     }
+    inlines = (AparatInline,)
+    list_display = ('id', 'title_fa', 'google_calendar_link', 'webinar_link')
+    list_editable = ('google_calendar_link', 'webinar_link')
+
+
+@admin.register(AparatMedia)
+class AparatMediaAdmin(admin.ModelAdmin):
     pass
 
 
@@ -29,4 +40,3 @@ class TagAdmin(ModelAdmin):
         models.TextField: {'widget': AdminMartorWidget},
     }
     pass
-

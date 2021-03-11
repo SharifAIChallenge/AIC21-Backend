@@ -4,10 +4,45 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.validators import UniqueValidator
 
-from .models import User, Profile, ResetPasswordToken
+from .models import User, Profile, ResetPasswordToken, Skill, JobExperience
+
+
+class SkillSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Skill
+        fields = ('skill',)
+
+    def create(self, validated_data):
+        validated_data['profile'] = self.context['request'].user.profile
+
+        return Skill.objects.create(**validated_data)
+
+
+class JobExperienceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = JobExperience
+        fields = ('company', 'position', 'description')
+
+    def create(self, validated_data):
+        validated_data['profile'] = self.context['request'].user.profile
+
+        return JobExperience.objects.create(**validated_data)
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+    skills = SkillSerializer(many=True)
+    jobs = JobExperienceSerializer(many=True)
+    is_complete = serializers.SerializerMethodField('_is_complete')
+    email = serializers.SerializerMethodField('_email')
+
+    @staticmethod
+    def _is_complete(obj: Profile):
+        return obj.is_complete
+
+    @staticmethod
+    def _email(obj: Profile):
+        return obj.user.email
+
     class Meta:
         model = Profile
         exclude = ['user', 'id']

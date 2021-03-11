@@ -3,6 +3,7 @@ from django.contrib.admin import ModelAdmin
 from django.db import models
 
 from martor.widgets import AdminMartorWidget
+from import_export.admin import ImportExportModelAdmin
 
 from apps.homepage.models import Subscribe
 from .models import Intro, TimelineEvent, Prize, Stats, Sponsor, WhyThisEvent, \
@@ -95,6 +96,6 @@ class GoogleAddEventToCalender(ModelAdmin):
 
 
 @admin.register(Subscribe)
-class SubscribeAdmin(ModelAdmin):
+class SubscribeAdmin(ImportExportModelAdmin):
     list_display = ('id', 'email')
     list_display_links = ('id',)
