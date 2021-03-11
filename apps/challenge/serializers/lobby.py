@@ -15,8 +15,9 @@ class LobbyQueueSerializer(serializers.ModelSerializer):
                 'Invalid lobby type. it should be one of ' + ", ".join(LobbyTypes.TYPES_ARR)
             )
 
-        teamLobbyQueues = self.context['request'].user.team.lobby_queues
-        if data['game_type'] in [q.game_type for q in teamLobbyQueues]:
+        lobby_q = self.context['request'].user.team.lobby_queues.filter(game_type=data['game_type']).first()
+
+        if lobby_q is not None:
             raise serializers.ValidationError(
                 'You are already in lobby of type ' + data['game_type']
             )
