@@ -12,3 +12,12 @@ class Level(models.Model):
     @property
     def is_finished(self):
         return False  # TODO
+
+    @staticmethod
+    def create_levels_for_level_based_tournament(level_based_tournament, count):
+        levels = []
+        for i in range(count):
+            lvl = Level(number=i+1, level_based_tournament=level_based_tournament)
+            levels.append(lvl)
+
+        return levels
