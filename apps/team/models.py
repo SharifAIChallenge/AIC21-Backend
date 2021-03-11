@@ -37,8 +37,13 @@ class Team(UUIDModel, TimeStampedModel):
     def member_count(self):
         return self.members.count()
 
-def __str__(self):
-    return '%s' % self.name
+    def final_submission(self):
+        return self.submissions.filter(
+            is_final=True
+        ).last()
+
+    def __str__(self):
+        return '%s' % self.name
 
 
 class InvitationTypes:

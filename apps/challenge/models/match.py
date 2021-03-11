@@ -17,16 +17,23 @@ class MatchStatusTypes:
 
 
 class Match(TimeStampedModel):
-    team1 = models.ForeignKey(to='team.Team', on_delete=models.CASCADE, related_name='matches_first')
-    team2 = models.ForeignKey(to='team.Team', on_delete=models.CASCADE, related_name='matches_second')
+    team1 = models.ForeignKey(to='team.Team', on_delete=models.CASCADE,
+                              related_name='matches_first')
+    team2 = models.ForeignKey(to='team.Team', on_delete=models.CASCADE,
+                              related_name='matches_second')
     status = models.CharField(
         max_length=50,
         choices=MatchStatusTypes.TYPES,
         default=MatchStatusTypes.RUNNING
     )
-    winner = models.ForeignKey(to='team.Team', on_delete=models.CASCADE, related_name='won_matches', null=True, blank=True)
-    log = models.FileField(upload_to=settings.UPLOAD_PATHS['MATCH_LOGS'], null=True, blank=True)
-    tournament = models.ForeignKey(to='challenge.Tournament', on_delete=models.CASCADE, related_name='matches')
+    winner = models.ForeignKey(to='team.Team', on_delete=models.CASCADE,
+                               related_name='won_matches', null=True,
+                               blank=True)
+    log = models.FileField(upload_to=settings.UPLOAD_PATHS['MATCH_LOGS'],
+                           null=True, blank=True)
+    tournament = models.ForeignKey(to='challenge.Tournament',
+                                   on_delete=models.CASCADE,
+                                   related_name='matches')
 
     @property
     def is_freeze(self):
@@ -37,9 +44,33 @@ class Match(TimeStampedModel):
 
     @staticmethod
     def run_matches(matches):
-        pass
+        for match in matches:
+            match.run_match()
 
     @staticmethod
-    def create_match(team1, team2, tournament, match_map):
-        pass
+    def create_match(team1, team2, tournament, match_map, is_freeze=False):
+        from apps.challenge.models import MatchInfo
 
+        team1_final_submission = team1.final_submission()
+        team2_final_submission = team2.final_submission()
+
+        if team1_final_submission and team2_final_submission:
+            match = Match.objects.create(
+                team1=team1,
+                team2=team2,
+                status=MatchStatusTypes.RUNNING
+                if not is_freeze else MatchStatusTypes.FREEZE,
+                tournament=tournament
+            )
+            match_info = MatchInfo.objects.create(
+                team1_code=team1_final_submission,
+                team2_code=team2_final_submission,
+                match=match,
+                map=match_map
+            )
+
+            if not is_freeze:
+                match.run_match()
+
+            return match
+        return None
