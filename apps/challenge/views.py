@@ -96,8 +96,7 @@ class LobbyAPIView(GenericAPIView):
             result.append({
                 'type': lobby_q.game_type,
                 'population': population,
-                'remaining_space': max(0,
-                                       population - lobby_q.get_lobby_size())
+                'remaining_space': max(0, population - lobby_q.get_lobby_size())
             })
 
         return Response(data={
