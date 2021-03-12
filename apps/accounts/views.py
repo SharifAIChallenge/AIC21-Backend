@@ -167,7 +167,9 @@ class ResetPasswordConfirmAPIView(GenericAPIView):
     serializer_class = ResetPasswordConfirmSerializer
 
     def post(self, request):
-        data = self.get_serializer(request.data).data
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
 
         rs_token = get_object_or_404(ResetPasswordToken, uid=data['uid'],
                                      token=data['token'])
