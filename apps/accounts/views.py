@@ -1,3 +1,4 @@
+from django.db.models import F
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.utils.http import urlsafe_base64_decode
@@ -12,7 +13,6 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.parsers import FormParser, MultiPartParser
 
 from rest_framework.permissions import IsAuthenticated
-
 
 from .models import Profile, User, ResetPasswordToken
 from .serializer import (
@@ -109,7 +109,8 @@ class ProfileAPIView(GenericAPIView):
 
     def put(self, request):
         user = request.user
-        serializer = ProfileSerializer(instance=user.profile, data=request.data,
+        serializer = ProfileSerializer(instance=user.profile,
+                                       data=request.data,
                                        partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -121,7 +122,6 @@ class ProfileAPIView(GenericAPIView):
 
 
 class HideProfileInfoAPIView(GenericAPIView):
-
     permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request):
@@ -159,8 +159,9 @@ class ResetPasswordAPIView(GenericAPIView):
         user = get_object_or_404(User, email=data['email'])
         user.send_password_confirm_email()
 
-        return Response({'detail': _('Successfully Sent Reset Password Email')},
-                        status=200)
+        return Response(
+            {'detail': _('Successfully Sent Reset Password Email')},
+            status=200)
 
 
 class ResetPasswordConfirmAPIView(GenericAPIView):
@@ -193,18 +194,57 @@ class UserWithoutTeamAPIView(GenericAPIView):
     queryset = User.objects.all().filter(team=None)
 
     def get(self, request):
+
         result = self.get_serializer(self.get_queryset(), many=True).data
 
         return Response({
             "data": result,
-        }, status= status.HTTP_200_OK)
+        }, status=status.HTTP_200_OK)
+
+    def get_queryset(self):
+        name = self.request.query_params.get('name')
+        email = self.request.query_params.get('email')
+        university = self.request.query_params.get('university')
+        programming_language = self.request.query_params.get(
+            'programming_language')
+        major = self.request.query_params.get('major')
+
+        queryset = self.queryset
+        if name:
+            queryset = queryset.annotate(
+                name=F('profile__first_name_fa') + ' ' + F(
+                    'profile__last_name_fa')
+            ).filter(name__icontains=name)
+
+        if email:
+            queryset = queryset.filter(
+                email=email
+            )
+
+        if university:
+            queryset = queryset.filter(
+                profile__university__icontains=university
+            )
+
+        if programming_language:
+            queryset = queryset.filter(
+                profile__programming_language=programming_language
+            )
+
+        if major:
+            queryset = queryset.filter(
+                profile__major__icontains=major
+            )
+
+        return queryset
+
 
 class ProfileInfoAPIView(GenericAPIView):
     queryset = User.objects.all()
     serializer_class = ProfileSerializer
     permission_classes = []
 
-    def get(self, request,userid):
-        user = get_object_or_404(User,id=userid)
+    def get(self, request, userid):
+        user = get_object_or_404(User, id=userid)
         data = self.get_serializer(user.profile).data
         return Response(data={'data': data}, status=status.HTTP_200_OK)

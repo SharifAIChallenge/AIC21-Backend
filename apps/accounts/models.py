@@ -13,7 +13,6 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 from apps.core.utils import send_email
-import os
 
 
 class DegreeTypes:
@@ -94,6 +93,12 @@ class User(AbstractUser):
         user.save()
 
 
+def language_types():
+    from apps.team.models import SubmissionLanguagesTypes
+
+    return SubmissionLanguagesTypes.TYPES
+
+
 class Profile(models.Model):
     IMAGE_MAX_SIZE = 1024 * 1024
 
@@ -110,8 +115,12 @@ class Profile(models.Model):
     birth_date = models.CharField(max_length=128, blank=True, null=True)
     province = models.CharField(max_length=64, blank=True, null=True)
     phone_number = models.CharField(max_length=32, blank=True, null=True)
-    programming_language = models.CharField(max_length=32, blank=True,
-                                            null=True)
+    programming_language = models.CharField(
+        max_length=32,
+        blank=True,
+        null=True,
+        choices=language_types()
+    )
 
     # Academic Info
     university = models.CharField(max_length=128, blank=True, null=True)
