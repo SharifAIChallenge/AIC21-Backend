@@ -59,6 +59,10 @@ class ProfileSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer(read_only=True)
 
+    phone_number = serializers.CharField(
+        max_length=32,
+        required=True,
+    )
     email = serializers.EmailField(
         validators=[UniqueValidator(queryset=User.objects.all())]
     )
@@ -71,7 +75,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['email', 'password_1', 'password_2', 'profile']
+        fields = ['email', 'phone_number', 'password_1', 'password_2',
+                  'profile']
 
     def validate(self, attrs):
         if attrs.get('password_1') != attrs.get('password_2'):
@@ -89,7 +94,10 @@ class UserSerializer(serializers.ModelSerializer):
             password=validated_data.get('password'),
             is_active=False
         )
-        profile = Profile.objects.create(user=user)
+        profile = Profile.objects.create(
+            user=user,
+            phone_number=validated_data.get('phone_number')
+        )
 
         return user
 
