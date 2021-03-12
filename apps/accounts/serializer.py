@@ -1,4 +1,5 @@
 from django.utils.translation import gettext_lazy as _
+from django.conf import settings
 
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
@@ -34,6 +35,8 @@ class ProfileSerializer(serializers.ModelSerializer):
     jobs = JobExperienceSerializer(many=True)
     is_complete = serializers.SerializerMethodField('_is_complete')
     email = serializers.SerializerMethodField('_email')
+    resume_link = serializers.SerializerMethodField('_get_resume_link')
+    image_link = serializers.SerializerMethodField('_get_image_link')
 
     @staticmethod
     def _is_complete(obj: Profile):
@@ -42,6 +45,20 @@ class ProfileSerializer(serializers.ModelSerializer):
     @staticmethod
     def _email(obj: Profile):
         return obj.user.email
+
+    @staticmethod
+    def _get_resume_link(obj: Profile):
+        url = obj.resume.url
+        if settings.DOMAIN not in url:
+            return settings.DOMAIN + url
+        return url
+
+    @staticmethod
+    def _get_image_link(obj: Profile):
+        url = obj.image.url
+        if settings.DOMAIN not in url:
+            return settings.DOMAIN + url
+        return url
 
     class Meta:
         model = Profile
