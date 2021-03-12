@@ -48,6 +48,8 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def _get_resume_link(obj: Profile):
+        if not obj.resume:
+            return ''
         url = obj.resume.url
         if settings.DOMAIN not in url:
             return settings.DOMAIN + url
@@ -55,6 +57,8 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def _get_image_link(obj: Profile):
+        if not obj.image:
+            return ''
         url = obj.image.url
         if settings.DOMAIN not in url:
             return settings.DOMAIN + url
