@@ -116,6 +116,19 @@ class ProfileAPIView(GenericAPIView):
             status=status.HTTP_200_OK
         )
 
+    def delete(self, request):
+        to_be_deleted = self.request.query_params.get('file')
+        if not to_be_deleted or to_be_deleted not in ('image', 'resume'):
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        if to_be_deleted == 'image':
+            self.request.user.profile.image = None
+        else:
+            self.request.user.profile.resume = None
+
+        self.request.user.profile.save()
+
+        return Response(status=status.HTTP_200_OK)
+
 
 class HideProfileInfoAPIView(GenericAPIView):
     permission_classes = (permissions.IsAuthenticated,)
