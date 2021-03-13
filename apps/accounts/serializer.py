@@ -74,7 +74,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        if self.context['limited']:
+        if self.context.get('limited', False):
             for field in Profile.sensitive_fields():
                 data.pop(field)
 
