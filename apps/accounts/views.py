@@ -32,7 +32,7 @@ class GoogleLoginAPIView(GenericAPIView):
 
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
-        serializer.is_valid()
+        serializer.is_valid(raise_exception=True)
         token = serializer.save()
 
         return Response(
