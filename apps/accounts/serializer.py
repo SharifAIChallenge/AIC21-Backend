@@ -77,6 +77,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         if self.context.get('limited', False):
             for field in Profile.sensitive_fields():
                 data.pop(field)
+        return data
 
     def validate(self, attrs):
         image = attrs.get('image')

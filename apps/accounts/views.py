@@ -101,7 +101,7 @@ class ProfileAPIView(GenericAPIView):
 
     def get(self, request):
         user = request.user
-        data = self.get_serializer(user.profile).data
+        data = self.get_serializer(instance=user.profile).data
         return Response(data={'data': data}, status=status.HTTP_200_OK)
 
     def put(self, request):
