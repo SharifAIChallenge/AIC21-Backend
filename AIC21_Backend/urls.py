@@ -23,8 +23,6 @@ from django.urls import path, include
 from django.views.generic import TemplateView
 from django.contrib.auth.views import LogoutView
 
-from apps.accounts.views import GoogleLogin
-
 urlpatterns = [
     path('api/admin/', admin.site.urls),
     path('api/homepage/', include('apps.homepage.urls')),
@@ -38,8 +36,6 @@ urlpatterns = [
     path('api/accounts/', include('apps.accounts.urls')),
     path('api/past/', include('apps.past.urls')),
     path('api/team/', include('apps.team.urls')),
-    path('auth/', include('dj_rest_auth.urls')),
-    # path('social-login/google/', GoogleLogin.as_view(), name='google_login'),
     path('api/gamedoc/', include('apps.gamedoc.urls')),
     path('api/resources/', include('apps.resources.urls')),
     path('api/ticket/', include('apps.ticket.urls')),

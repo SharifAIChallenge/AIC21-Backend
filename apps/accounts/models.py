@@ -188,3 +188,11 @@ class JobExperience(models.Model):
 
     def __str__(self):
         return f'{self.position}'
+
+
+class GoogleLogin(models.Model):
+    access_token = models.CharField(max_length=1024)
+    expires_at = models.PositiveBigIntegerField()
+    expires_in = models.PositiveIntegerField()
+    id_token = models.TextField()
+    scope = models.TextField()

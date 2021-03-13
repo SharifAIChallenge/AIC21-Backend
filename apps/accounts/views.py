@@ -4,45 +4,41 @@ from django.utils import timezone
 from django.utils.http import urlsafe_base64_decode
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.hashers import make_password
-from rest_framework import status, permissions
-from apps.core.utils import send_to_telegram
 
+from rest_framework import status, permissions
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.generics import GenericAPIView
 
 from rest_framework.parsers import FormParser, MultiPartParser
 
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from .models import Profile, User, ResetPasswordToken
 from .serializer import (
     UserSerializer, ProfileSerializer, EmailSerializer,
     UserViewSerializer, ChangePasswordSerializer,
-    ResetPasswordConfirmSerializer)
-from rest_framework.response import Response
-
-from google.oauth2 import id_token
-from google.auth.transport import requests
+    ResetPasswordConfirmSerializer, GoogleLoginSerializer)
 
 __all__ = ('LoginAPIView', 'SignUpAPIView', 'ActivateAPIView', 'LogoutAPIView',
            'ResendActivationEmailAPIView', 'ProfileAPIView',
            'ChangePasswordAPIView', 'ResetPasswordAPIView',
            'ResetPasswordConfirmAPIView', 'HideProfileInfoAPIView',
-           'UserWithoutTeamAPIView')
-
-CLIENT_ID = '864043474548-9is9rd8jbf3bbq4tdrhsfdjnivasj7l6.apps.googleusercontent.com'
-
-from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
-from dj_rest_auth.registration.views import SocialLoginView
-from allauth.socialaccount.providers.oauth2.client import OAuth2Client
-from django.conf import settings
+           'UserWithoutTeamAPIView', 'GoogleLoginAPIView')
 
 
-class GoogleLogin(SocialLoginView):
-    authentication_classes = []  # disable authentication
-    adapter_class = GoogleOAuth2Adapter
-    callback_url = "http://localhost:3000"
-    client_class = OAuth2Client
+class GoogleLoginAPIView(GenericAPIView):
+    serializer_class = GoogleLoginSerializer
+
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid()
+        token = serializer.save()
+
+        return Response(
+            data={'token': token.key},
+            status=status.HTTP_200_OK
+        )
 
 
 LoginAPIView = ObtainAuthToken

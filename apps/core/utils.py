@@ -1,6 +1,13 @@
+import json
+import string
+import random
+
 from django.conf import settings
 import telegram
-import json
+
+LETTERS = string.ascii_letters
+NUMBERS = string.digits
+PUNCTUATION = string.punctuation
 
 
 def send_email(subject, template_name, context,
@@ -34,7 +41,6 @@ def send_email(subject, template_name, context,
 
 
 def send_to_telegram(dict):
-
     # todo set proxy after deploy
     # REQUEST_KWARGS = {
     #     # "USERNAME:PASSWORD@" is optional, if you need authentication:
@@ -43,3 +49,18 @@ def send_to_telegram(dict):
     bot = telegram.Bot(token='1603176620:AAEEjAyO6MUyYG1ycudQusoI3YkZulZW6rQ')
     bot.send_message("@ai_challange_alert", json.dumps(dict, indent=4))
 
+
+def get_password_length():
+    length = input("How long do you want your password: ")
+    return int(length)
+
+
+def password_generator(length=32):
+    printable = f'{LETTERS}{NUMBERS}{PUNCTUATION}'
+
+    printable = list(printable)
+    random.shuffle(printable)
+
+    random_password = random.choices(printable, k=length)
+    random_password = ''.join(random_password)
+    return random_password
