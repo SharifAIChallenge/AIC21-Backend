@@ -153,7 +153,7 @@ class Profile(models.Model):
     @staticmethod
     def sensitive_fields():
         return ('hide_profile_info', 'can_sponsors_see', 'phone_number',
-                'province')
+                'province', 'is_complete')
 
     def __str__(self):
         return f'username: {self.user.username},' \
