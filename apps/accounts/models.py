@@ -145,9 +145,15 @@ class Profile(models.Model):
         return all(
             (
                 self.university, self.university_degree, self.major,
-                self.phone_number, self.birth_date
+                self.phone_number, self.birth_date, self.firstname_fa,
+                self.lastname_fa
             )
         )
+
+    @staticmethod
+    def sensitive_fields():
+        return ('hide_profile_info', 'can_sponsors_see', 'phone_number',
+                'province')
 
     def __str__(self):
         return f'username: {self.user.username},' \

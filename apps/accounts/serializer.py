@@ -72,6 +72,12 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = Profile
         exclude = ['user', 'id']
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if self.context['limited']:
+            for field in Profile.sensitive_fields():
+                data.pop(field)
+
     def validate(self, attrs):
         image = attrs.get('image')
 

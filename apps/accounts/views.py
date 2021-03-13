@@ -14,6 +14,7 @@ from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from .permissions import ProfileComplete
 from .models import Profile, User, ResetPasswordToken
 from .serializer import (
     UserSerializer, ProfileSerializer, EmailSerializer,
@@ -198,7 +199,7 @@ class ResetPasswordConfirmAPIView(GenericAPIView):
 
 
 class UserWithoutTeamAPIView(GenericAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, ProfileComplete]
     serializer_class = UserViewSerializer
     queryset = User.objects.all().filter(team=None)
 
@@ -247,6 +248,12 @@ class UserWithoutTeamAPIView(GenericAPIView):
 
         return queryset
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['limited'] = True
+
+        return context
+
 
 class ProfileInfoAPIView(GenericAPIView):
     queryset = User.objects.all()
@@ -257,3 +264,8 @@ class ProfileInfoAPIView(GenericAPIView):
         user = get_object_or_404(User, id=userid)
         data = self.get_serializer(user.profile).data
         return Response(data={'data': data}, status=status.HTTP_200_OK)
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['limited'] = True
+        return context
