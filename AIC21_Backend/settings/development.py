@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'apps.team',
     'apps.course',
     'apps.challenge',
+    'apps.infra_gateway',
     "dj_rest_auth",
     "allauth",
     "allauth.account",

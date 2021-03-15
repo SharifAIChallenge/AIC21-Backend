@@ -44,6 +44,7 @@ urlpatterns = [
     path('api/resources/', include('apps.resources.urls')),
     path('api/ticket/', include('apps.ticket.urls')),
     path('api/courses/', include('apps.course.urls')),
+    path('api/infra_gateway',include('apps.infra_gateway.urls'))
 ]
 
 # if settings.DEBUG:
