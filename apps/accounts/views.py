@@ -201,7 +201,6 @@ class ResetPasswordConfirmAPIView(GenericAPIView):
 class UserWithoutTeamAPIView(GenericAPIView):
     permission_classes = [IsAuthenticated, ProfileComplete]
     serializer_class = UserViewSerializer
-    queryset = User.objects.all().filter(team=None)
 
     def get(self, request):
 
@@ -219,7 +218,9 @@ class UserWithoutTeamAPIView(GenericAPIView):
             'programming_language')
         major = self.request.query_params.get('major')
 
-        queryset = User.objects.all().filter(team=None)
+        queryset = User.objects.all().filter(team=None).exclude(profile=None)
+        print(queryset)
+
         if name:
             queryset = queryset.annotate(
                 name=F('profile__first_name_fa') + ' ' + F(
@@ -245,7 +246,12 @@ class UserWithoutTeamAPIView(GenericAPIView):
             queryset = queryset.filter(
                 profile__major__icontains=major
             )
-
+        complete_profiles = [user.id for user in
+                               filter(lambda user: user.profile.is_complete,
+                                      queryset
+                                      )
+                               ]
+        queryset = queryset.filter(id__in=complete_profiles)
         return queryset
 
     def get_serializer_context(self):

@@ -7,6 +7,7 @@ from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.generics import GenericAPIView, get_object_or_404
 
+from apps.accounts.permissions import ProfileComplete
 from apps.team.paginations import TeamPagination
 from .models import Team, Invitation, Submission
 from .permissions import HasTeam, NoTeam
@@ -73,7 +74,7 @@ class TeamAPIView(GenericAPIView):
         if self.request.method in ['PUT', 'GET', 'DELETE']:
             new_permissions += [HasTeam]
         if self.request.method == 'POST':
-            new_permissions += [NoTeam]
+            new_permissions += [NoTeam,ProfileComplete]
         return [permission() for permission in new_permissions]
 
 
