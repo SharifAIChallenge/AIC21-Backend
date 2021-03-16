@@ -219,8 +219,7 @@ class UserWithoutTeamAPIView(GenericAPIView):
             'programming_language')
         major = self.request.query_params.get('major')
 
-        queryset = User.objects.all().filter(team=None).exclude(profile=None)
-
+        queryset = User.objects.all().filter(team=None).exclude(profile=None,profile__hide_profile_info=True)
         if name:
             queryset = queryset.annotate(
             name=Concat('profile__firstname_fa' , Value(' ') ,'profile__lastname_fa')
