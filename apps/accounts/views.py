@@ -300,10 +300,11 @@ class UniversitySearchAPIView(GenericAPIView):
 
     def get(self, request):
         import requests
+        import json
 
         api_config = UniversityAPIConfig.objects.last()
         url = api_config.url
-        headers = api_config.headers
+        headers = json.loads(json.dumps(api_config.headers))
 
         payload = f"query={self.request.query_params.get('q', '')}"
 
@@ -311,7 +312,7 @@ class UniversitySearchAPIView(GenericAPIView):
             'POST',
             url,
             headers=headers,
-            data=payload
+            data=payload.encode('utf-8')
         )
 
         return Response(
