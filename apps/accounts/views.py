@@ -296,17 +296,20 @@ class ProfileInfoAPIView(GenericAPIView):
 
 
 class UniversitySearchAPIView(GenericAPIView):
-    permission_classes = (IsAuthenticated,)
+    # permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         import requests
         import json
+        import ast
 
         api_config = UniversityAPIConfig.objects.last()
         url = api_config.url
-        headers = json.loads(json.dumps(api_config.headers))
 
+        headers = eval(api_config.headers)
         payload = f"query={self.request.query_params.get('q', '')}"
+
+        print(headers, type(headers))
 
         response = requests.request(
             'POST',
@@ -314,6 +317,7 @@ class UniversitySearchAPIView(GenericAPIView):
             headers=headers,
             data=payload.encode('utf-8')
         )
+        print(response.status_code, '<===============')
 
         return Response(
             data={'data': response.json()},
