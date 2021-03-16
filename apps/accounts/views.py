@@ -332,17 +332,16 @@ class MajorSearchAPIView(GenericAPIView):
 
         api_config = MajorAPIConfig.objects.last()
         url = api_config.url
-
         headers = eval(api_config.headers)
 
-        print(headers, type(headers))
-
+        url = f'{url}/{self.request.query_params.get("q", "")}'
+        print(url)
         response = requests.request(
             'GET',
-            f'{url}/{self.request.query_params.get("q", "")}',
-            headers=headers
+            url,
+            headers=headers,
+            data={}
         )
-        print(response.status_code, '<===============')
 
         return Response(
             data={'data': response.json()},
