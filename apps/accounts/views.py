@@ -318,7 +318,7 @@ class UniversitySearchAPIView(GenericAPIView):
             for data in response.json()["data"]:
                 if not University.objects.all().filter(id=data["id"]).exists():
                     University.objects.create(id=data["id"],name=data["name"],school_type=data["school_type"])
-            response = response.json()
+            response = response.json()["data"]
         else:
             universities = University.objects.filter(name__icontains=search_param).order_by('name')[:20]
             response = self.get_serializer(instance=universities,many=True).data
@@ -338,7 +338,7 @@ class MajorSearchAPIView(GenericAPIView):
         url = api_config.url
         headers = eval(api_config.headers)
 
-        url = f'{url}/{self.request.query_params.get("q", "")}'
+        url = f'{url}/{self.request.query_params.get("q", "")}/'
         print(url)
         response = requests.request(
             'GET',
