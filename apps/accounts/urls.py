@@ -4,13 +4,14 @@ from .views import (
     LoginAPIView, SignUpAPIView, ActivateAPIView, LogoutAPIView,
     ResendActivationEmailAPIView, ProfileAPIView, ChangePasswordAPIView,
     ResetPasswordAPIView, ResetPasswordConfirmAPIView, UserWithoutTeamAPIView,
-    ProfileInfoAPIView, HideProfileInfoAPIView, GoogleLoginAPIView
+    HideProfileInfoAPIView, GoogleLoginAPIView, IsActivatedAPIView
 )
 
 urlpatterns = [
     path('login', view=LoginAPIView.as_view(), name='login'),
     path('social-login', view=GoogleLoginAPIView.as_view(),
          name='social_login'),
+    path('is-active', view=IsActivatedAPIView.as_view(), name='is_active')
     path('signup', view=SignUpAPIView.as_view(), name='signup'),
     path('activate/<slug:eid>/<slug:token>', view=ActivateAPIView.as_view(),
          name='activate'),

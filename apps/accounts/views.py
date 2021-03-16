@@ -22,11 +22,13 @@ from .serializer import (
     UserViewSerializer, ChangePasswordSerializer,
     ResetPasswordConfirmSerializer, GoogleLoginSerializer)
 
-__all__ = ('LoginAPIView', 'SignUpAPIView', 'ActivateAPIView', 'LogoutAPIView',
-           'ResendActivationEmailAPIView', 'ProfileAPIView',
-           'ChangePasswordAPIView', 'ResetPasswordAPIView',
-           'ResetPasswordConfirmAPIView', 'HideProfileInfoAPIView',
-           'UserWithoutTeamAPIView', 'GoogleLoginAPIView')
+__all__ = (
+    'LoginAPIView', 'SignUpAPIView', 'ActivateAPIView', 'LogoutAPIView',
+    'ResendActivationEmailAPIView', 'ProfileAPIView',
+    'ChangePasswordAPIView', 'ResetPasswordAPIView',
+    'ResetPasswordConfirmAPIView', 'HideProfileInfoAPIView',
+    'UserWithoutTeamAPIView', 'GoogleLoginAPIView', 'IsActivatedAPIView'
+)
 
 
 class GoogleLoginAPIView(GenericAPIView):
@@ -44,6 +46,19 @@ class GoogleLoginAPIView(GenericAPIView):
 
 
 LoginAPIView = ObtainAuthToken
+
+
+class IsActivatedAPIView(GenericAPIView):
+    serializer_class = EmailSerializer
+
+    def post(self, request):
+        data = self.get_serializer(data=request.data).data
+        user = get_object_or_404(User, username=data['email'])
+
+        return Response(
+            data={'is_active': user.is_active},
+            status=status.HTTP_200_OK
+        )
 
 
 class SignUpAPIView(GenericAPIView):
@@ -223,8 +238,9 @@ class UserWithoutTeamAPIView(GenericAPIView):
 
         if name:
             queryset = queryset.annotate(
-            name=Concat('profile__firstname_fa' , Value(' ') ,'profile__lastname_fa')
-        ).filter(name__icontains=name)
+                name=Concat('profile__firstname_fa', Value(' '),
+                            'profile__lastname_fa')
+            ).filter(name__icontains=name)
 
         if email:
             queryset = queryset.filter(
@@ -246,10 +262,10 @@ class UserWithoutTeamAPIView(GenericAPIView):
                 profile__major__icontains=major
             )
         complete_profiles = [user.id for user in
-                               filter(lambda user: user.profile.is_complete,
-                                      queryset
-                                      )
-                               ]
+                             filter(lambda user: user.profile.is_complete,
+                                    queryset
+                                    )
+                             ]
         queryset = queryset.filter(id__in=complete_profiles)
         return queryset
 
