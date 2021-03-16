@@ -51,7 +51,7 @@ class User(AbstractUser):
         send_email(
             subject='فعالسازی اکانت AIC21',
             context=context,
-            template_name='accounts/email/user_activate_email.html',
+            template_name='accounts/email/registerifinal.htm',
             receipts=[self.email]
         )
 
