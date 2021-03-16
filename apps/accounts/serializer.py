@@ -41,8 +41,8 @@ class StringListField(serializers.ListField):
 class ProfileSerializer(serializers.ModelSerializer):
     skills = SkillSerializer(many=True, read_only=True)
     jobs = JobExperienceSerializer(many=True, read_only=True)
-    skills_list = StringListField(write_only=True)
-    jobs_list = StringListField(write_only=True)
+    skills_list = StringListField(write_only=True,  allow_null=True, allow_empty=True)
+    jobs_list = StringListField(write_only=True, allow_null=True, allow_empty=True)
     is_complete = serializers.SerializerMethodField('_is_complete')
     email = serializers.SerializerMethodField('_email')
     resume_link = serializers.SerializerMethodField('_get_resume_link')
@@ -96,11 +96,18 @@ class ProfileSerializer(serializers.ModelSerializer):
     def update(self, instance: Profile, validated_data):
         instance: Profile = super().update(instance, validated_data)
 
-        jobs = validated_data.get('jobs_list', [])
-        skills = validated_data.get('skills_list', [])
-
-        instance.jobs.all().delete()
-        instance.skills.all().delete()
+        jobs = validated_data.get('jobs_list')
+        skills = validated_data.get('skills_list')
+        
+        if not jobs:
+            jobs = list()
+        if not skills:
+            skills = list()
+        
+        if jobs:
+            instance.jobs.all().delete()
+        if skills:
+            instance.skills.all().delete()
 
         for job in jobs:
             JobExperience.objects.create(
