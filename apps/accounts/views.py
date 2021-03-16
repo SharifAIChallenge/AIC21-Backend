@@ -15,13 +15,13 @@ from rest_framework.parsers import FormParser, MultiPartParser, JSONParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from apps.accounts.models import MajorAPIConfig
+from apps.accounts.models import MajorAPIConfig, Major
 from .permissions import ProfileComplete
 from .models import Profile, User, ResetPasswordToken, UniversityAPIConfig, University
 from .serializer import (
     UserSerializer, ProfileSerializer, EmailSerializer,
     UserViewSerializer, ChangePasswordSerializer,
-    ResetPasswordConfirmSerializer, GoogleLoginSerializer, UniversitySerializer)
+    ResetPasswordConfirmSerializer, GoogleLoginSerializer, UniversitySerializer, MajorSerializer)
 
 __all__ = (
     'LoginAPIView', 'SignUpAPIView', 'ActivateAPIView', 'LogoutAPIView',
@@ -329,16 +329,16 @@ class UniversitySearchAPIView(GenericAPIView):
 
 
 class MajorSearchAPIView(GenericAPIView):
-    # permission_classes = (IsAuthenticated,)
-
+    permission_classes = (IsAuthenticated,)
+    serializer_class = MajorSerializer
     def get(self, request):
         import requests
 
         api_config = MajorAPIConfig.objects.last()
         url = api_config.url
         headers = eval(api_config.headers)
-
-        url = f'{url}/{self.request.query_params.get("q", "")}/'
+        search_param = self.request.query_params.get("q", "")
+        url = f'{url}/{search_param}/'
         print(url)
         response = requests.request(
             'GET',
@@ -346,8 +346,15 @@ class MajorSearchAPIView(GenericAPIView):
             headers=headers,
             data={}
         )
-
+        if(response.status_code == status.HTTP_200_OK):
+            for data in response.json()["results"]:
+                if not Major.objects.all().filter(id=data["key"]).exists():
+                    Major.objects.create(id=data["key"],name=data["text"])
+            response = response.json()["results"]
+        else:
+            majors = Major.objects.filter(name__icontains=search_param).order_by('name')[:20]
+            response = self.get_serializer(instance=majors,many=True).data
         return Response(
-            data={'data': response.json()},
+            data={'data': response},
             status=status.HTTP_200_OK
         )
