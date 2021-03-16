@@ -90,8 +90,8 @@ class ProfileSerializer(serializers.ModelSerializer):
     def update(self, instance: Profile, validated_data):
         instance: Profile = super().update(instance, validated_data)
 
-        jobs = validated_data.get('jobs')
-        skills = validated_data.get('skills')
+        jobs = validated_data.get('jobs', [])
+        skills = validated_data.get('skills', [])
 
         for job in jobs:
             job_obj = instance.jobs.filter(position=job).last()
