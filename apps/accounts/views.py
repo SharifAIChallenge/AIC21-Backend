@@ -15,6 +15,7 @@ from rest_framework.parsers import FormParser, MultiPartParser, JSONParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from apps.accounts.models import MajorAPIConfig
 from .permissions import ProfileComplete
 from .models import Profile, User, ResetPasswordToken, UniversityAPIConfig
 from .serializer import (
@@ -28,7 +29,7 @@ __all__ = (
     'ChangePasswordAPIView', 'ResetPasswordAPIView',
     'ResetPasswordConfirmAPIView', 'HideProfileInfoAPIView',
     'UserWithoutTeamAPIView', 'GoogleLoginAPIView', 'IsActivatedAPIView',
-    'UniversitySearchAPIView'
+    'UniversitySearchAPIView', 'MajorSearchAPIView'
 )
 
 
@@ -300,10 +301,36 @@ class UniversitySearchAPIView(GenericAPIView):
 
     def get(self, request):
         import requests
-        import json
-        import ast
 
         api_config = UniversityAPIConfig.objects.last()
+        url = api_config.url
+
+        headers = eval(api_config.headers)
+        payload = f"query={self.request.query_params.get('q', '')}"
+
+        print(headers, type(headers))
+
+        response = requests.request(
+            'POST',
+            url,
+            headers=headers,
+            data=payload.encode('utf-8')
+        )
+        print(response.status_code, '<===============')
+
+        return Response(
+            data={'data': response.json()},
+            status=status.HTTP_200_OK
+        )
+
+
+class MajorSearchAPIView(GenericAPIView):
+    # permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        import requests
+
+        api_config = MajorAPIConfig.objects.last()
         url = api_config.url
 
         headers = eval(api_config.headers)

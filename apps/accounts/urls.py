@@ -1,5 +1,6 @@
 from django.urls import path, include
 
+from apps.accounts.views import MajorSearchAPIView
 from .views import (
     LoginAPIView, SignUpAPIView, ActivateAPIView, LogoutAPIView,
     ResendActivationEmailAPIView, ProfileAPIView, ChangePasswordAPIView,
@@ -15,6 +16,8 @@ urlpatterns = [
     path('is-active', view=IsActivatedAPIView.as_view(), name='is_active'),
     path('university-search', view=UniversitySearchAPIView.as_view(),
          name='university_search'),
+    path('major-search', view=MajorSearchAPIView.as_view(),
+         name='major_search'),
     path('signup', view=SignUpAPIView.as_view(), name='signup'),
     path('activate/<slug:eid>/<slug:token>', view=ActivateAPIView.as_view(),
          name='activate'),
@@ -23,7 +26,7 @@ urlpatterns = [
          name='resend'),
     path('profile', view=ProfileAPIView.as_view(), name='profile'),
     # path('profile/<int:userid>', view=ProfileInfoAPIView.as_view(),
-         # name='get profile'),
+    # name='get profile'),
     path('password/change', ChangePasswordAPIView.as_view()),
     path('password/reset', view=ResetPasswordAPIView.as_view(),
          name='reset password'),

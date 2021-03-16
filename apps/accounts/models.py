@@ -208,3 +208,8 @@ class GoogleLogin(models.Model):
 class UniversityAPIConfig(models.Model):
     url = models.CharField(max_length=256)
     headers = models.TextField()
+
+
+class MajorAPIConfig(models.Model):
+    url = models.CharField(max_length=256)
+    headers = models.TextField()
