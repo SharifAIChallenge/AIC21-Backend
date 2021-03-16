@@ -34,9 +34,15 @@ class JobExperienceSerializer(serializers.ModelSerializer):
         return JobExperience.objects.create(**validated_data)
 
 
+class StringListField(serializers.ListField):
+    child = serializers.CharField(max_length=256)
+
+
 class ProfileSerializer(serializers.ModelSerializer):
-    skills = SkillSerializer(many=True)
-    jobs = JobExperienceSerializer(many=True)
+    skills = SkillSerializer(many=True, read_only=True)
+    jobs = JobExperienceSerializer(many=True, read_only=True)
+    skills_list = StringListField(write_only=True)
+    jobs_list = StringListField(write_only=True)
     is_complete = serializers.SerializerMethodField('_is_complete')
     email = serializers.SerializerMethodField('_email')
     resume_link = serializers.SerializerMethodField('_get_resume_link')
@@ -90,10 +96,8 @@ class ProfileSerializer(serializers.ModelSerializer):
     def update(self, instance: Profile, validated_data):
         instance: Profile = super().update(instance, validated_data)
 
-        raise ValidationError(detail=f"{validated_data.get('jobs')}, {validated_data.get('skilss')}")
-
-        jobs = validated_data.get('jobs', [])
-        skills = validated_data.get('skills', [])
+        jobs = validated_data.get('jobs_list', [])
+        skills = validated_data.get('skills_list', [])
 
         for job in jobs:
             job_obj = instance.jobs.filter(position=job).last()

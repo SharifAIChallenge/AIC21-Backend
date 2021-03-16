@@ -125,9 +125,9 @@ class Profile(models.Model):
     # Academic Info
     university = models.CharField(max_length=128, blank=True, null=True)
     major = models.CharField(max_length=64, blank=True, null=True)
-    university_term = models.PositiveSmallIntegerField(null=True)
+    university_term = models.PositiveSmallIntegerField(null=True, blank=True)
     university_degree = models.CharField(choices=DegreeTypes.TYPES,
-                                         max_length=32, null=True)
+                                         max_length=32, null=True, blank=True)
 
     # Job Info
     linkedin = models.CharField(max_length=512, blank=True, null=True)
