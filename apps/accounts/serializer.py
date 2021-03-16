@@ -35,14 +35,17 @@ class JobExperienceSerializer(serializers.ModelSerializer):
 
 
 class StringListField(serializers.ListField):
-    child = serializers.CharField(max_length=256)
+    child = serializers.CharField(max_length=256, allow_null=True,
+                                  allow_blank=True)
 
 
 class ProfileSerializer(serializers.ModelSerializer):
     skills = SkillSerializer(many=True, read_only=True)
     jobs = JobExperienceSerializer(many=True, read_only=True)
-    skills_list = StringListField(write_only=True,  allow_null=True, allow_empty=True)
-    jobs_list = StringListField(write_only=True, allow_null=True, allow_empty=True)
+    skills_list = StringListField(write_only=True, allow_null=True,
+                                  allow_empty=True)
+    jobs_list = StringListField(write_only=True, allow_null=True,
+                                allow_empty=True)
     is_complete = serializers.SerializerMethodField('_is_complete')
     email = serializers.SerializerMethodField('_email')
     resume_link = serializers.SerializerMethodField('_get_resume_link')
@@ -98,28 +101,30 @@ class ProfileSerializer(serializers.ModelSerializer):
 
         jobs = validated_data.get('jobs_list')
         skills = validated_data.get('skills_list')
-        
+
         if not jobs:
             jobs = list()
         if not skills:
             skills = list()
-        
+
         if jobs:
             instance.jobs.all().delete()
         if skills:
             instance.skills.all().delete()
 
         for job in jobs:
-            JobExperience.objects.create(
-                position=job,
-                profile=instance
-            )
+            if job:
+                JobExperience.objects.create(
+                    position=job,
+                    profile=instance
+                )
 
         for skill in skills:
-            Skill.objects.create(
-                skill=skill,
-                profile=instance
-            )
+            if skill:
+                Skill.objects.create(
+                    skill=skill,
+                    profile=instance
+                )
         return instance
 
 
