@@ -90,7 +90,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     def update(self, instance: Profile, validated_data):
         instance: Profile = super().update(instance, validated_data)
 
-        raise ValidationError(validated_data.get('jobs'))
+        raise ValidationError(detail=f"{validated_data.get('jobs')}, {validated_data.get('skilss')}")
 
         jobs = validated_data.get('jobs', [])
         skills = validated_data.get('skills', [])
