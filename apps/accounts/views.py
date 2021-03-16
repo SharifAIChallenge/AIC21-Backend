@@ -297,7 +297,7 @@ class ProfileInfoAPIView(GenericAPIView):
 
 
 class UniversitySearchAPIView(GenericAPIView):
-    permission_classes = (IsAuthenticated,)
+    # permission_classes = (IsAuthenticated,)
     serializer_class = UniversitySerializer
     def get(self, request):
         import requests
@@ -318,7 +318,7 @@ class UniversitySearchAPIView(GenericAPIView):
             for data in response.json()["data"]:
                 if not University.objects.all().filter(id=data["id"]).exists():
                     University.objects.create(id=data["id"],name=data["name"],school_type=data["school_type"])
-            response = response.json()
+            response = response.json()["data"]
         else:
             universities = University.objects.filter(name__icontains=search_param).order_by('name')[:20]
             response = self.get_serializer(instance=universities,many=True).data
