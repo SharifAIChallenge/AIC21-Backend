@@ -218,3 +218,7 @@ class MajorAPIConfig(models.Model):
 class University(models.Model):
     name = models.CharField(max_length=1024)
     school_type = models.CharField(max_length=1024)
+
+
+class Major(models.Model):
+    name = models.CharField(max_length=1024)
