@@ -334,15 +334,13 @@ class MajorSearchAPIView(GenericAPIView):
         url = api_config.url
 
         headers = eval(api_config.headers)
-        payload = f"query={self.request.query_params.get('q', '')}"
 
         print(headers, type(headers))
 
         response = requests.request(
-            'POST',
-            url,
-            headers=headers,
-            data=payload.encode('utf-8')
+            'GET',
+            f'{url}/{self.request.query_params.get("q", "")}',
+            headers=headers
         )
         print(response.status_code, '<===============')
 
