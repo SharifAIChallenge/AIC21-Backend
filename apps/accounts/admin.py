@@ -2,7 +2,8 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.utils.translation import gettext, gettext_lazy as _
 
-from .models import User, Profile, Skill, JobExperience, GoogleLogin
+from .models import User, Profile, Skill, JobExperience, GoogleLogin, \
+    UniversityAPIConfig
 
 
 # Register your models here.
@@ -13,6 +14,11 @@ class SkillInline(admin.StackedInline):
 
 class JobExperienceInline(admin.StackedInline):
     model = JobExperience
+
+
+@admin.register(UniversityAPIConfig)
+class UniversityAPIConfigAdmin(admin.ModelAdmin):
+    pass
 
 
 @admin.register(User)
