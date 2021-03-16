@@ -203,3 +203,8 @@ class GoogleLogin(models.Model):
     expires_in = models.PositiveIntegerField()
     id_token = models.TextField()
     scope = models.TextField()
+
+
+class UniversityAPIConfig(models.Model):
+    url = models.CharField(max_length=256)
+    headers = models.JSONField()

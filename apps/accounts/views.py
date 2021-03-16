@@ -16,7 +16,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .permissions import ProfileComplete
-from .models import Profile, User, ResetPasswordToken
+from .models import Profile, User, ResetPasswordToken, UniversityAPIConfig
 from .serializer import (
     UserSerializer, ProfileSerializer, EmailSerializer,
     UserViewSerializer, ChangePasswordSerializer,
@@ -27,7 +27,8 @@ __all__ = (
     'ResendActivationEmailAPIView', 'ProfileAPIView',
     'ChangePasswordAPIView', 'ResetPasswordAPIView',
     'ResetPasswordConfirmAPIView', 'HideProfileInfoAPIView',
-    'UserWithoutTeamAPIView', 'GoogleLoginAPIView', 'IsActivatedAPIView'
+    'UserWithoutTeamAPIView', 'GoogleLoginAPIView', 'IsActivatedAPIView',
+    'UniversitySearchAPIView'
 )
 
 
@@ -292,3 +293,28 @@ class ProfileInfoAPIView(GenericAPIView):
         context = super().get_serializer_context()
         context['limited'] = True
         return context
+
+
+class UniversitySearchAPIView(GenericAPIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        import requests
+
+        api_config = UniversityAPIConfig.objects.last()
+        url = api_config.url
+        headers = api_config.headers
+
+        payload = f"query={self.request.query_params.get('q', '')}"
+
+        response = requests.request(
+            'POST',
+            url,
+            headers=headers,
+            data=payload
+        )
+
+        return Response(
+            data={'data': response.json()},
+            status=status.HTTP_200_OK
+        )
