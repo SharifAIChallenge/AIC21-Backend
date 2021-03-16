@@ -111,7 +111,8 @@ class ProfileSerializer(serializers.ModelSerializer):
             skill_obj = instance.skills.filter(skill=skill).last()
             if not skill_obj:
                 Skill.objects.create(
-                    skill=skill
+                    skill=skill,
+                    profile=instance
                 )
         return instance
 
