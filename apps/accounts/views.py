@@ -52,7 +52,9 @@ class IsActivatedAPIView(GenericAPIView):
     serializer_class = EmailSerializer
 
     def post(self, request):
-        data = self.get_serializer(data=request.data).data
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
         user = get_object_or_404(User, username=data['email'])
 
         return Response(
