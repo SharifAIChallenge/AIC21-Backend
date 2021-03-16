@@ -99,21 +99,20 @@ class ProfileSerializer(serializers.ModelSerializer):
         jobs = validated_data.get('jobs_list', [])
         skills = validated_data.get('skills_list', [])
 
+        instance.jobs.all().delete()
+        instance.skills.all().delete()
+
         for job in jobs:
-            job_obj = instance.jobs.filter(position=job).last()
-            if not job_obj:
-                JobExperience.objects.create(
-                    position=job,
-                    profile=instance
-                )
+            JobExperience.objects.create(
+                position=job,
+                profile=instance
+            )
 
         for skill in skills:
-            skill_obj = instance.skills.filter(skill=skill).last()
-            if not skill_obj:
-                Skill.objects.create(
-                    skill=skill,
-                    profile=instance
-                )
+            Skill.objects.create(
+                skill=skill,
+                profile=instance
+            )
         return instance
 
 
