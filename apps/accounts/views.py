@@ -1,4 +1,5 @@
-from django.db.models import F
+from django.db.models import F, Value
+from django.db.models.functions import Concat
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.utils.http import urlsafe_base64_decode
@@ -219,17 +220,15 @@ class UserWithoutTeamAPIView(GenericAPIView):
         major = self.request.query_params.get('major')
 
         queryset = User.objects.all().filter(team=None).exclude(profile=None)
-        print(queryset)
 
         if name:
             queryset = queryset.annotate(
-                name=F('profile__first_name_fa') + ' ' + F(
-                    'profile__last_name_fa')
-            ).filter(name__icontains=name)
+            name=Concat('profile__firstname_fa' , Value(' ') ,'profile__lastname_fa')
+        ).filter(name__icontains=name)
 
         if email:
             queryset = queryset.filter(
-                email=email
+                email__icontains=email
             )
 
         if university:
