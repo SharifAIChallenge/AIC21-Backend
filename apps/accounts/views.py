@@ -297,7 +297,7 @@ class ProfileInfoAPIView(GenericAPIView):
 
 
 class UniversitySearchAPIView(GenericAPIView):
-    # permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated,)
     serializer_class = UniversitySerializer
     def get(self, request):
         import requests
@@ -338,7 +338,7 @@ class MajorSearchAPIView(GenericAPIView):
         url = api_config.url
         headers = eval(api_config.headers)
 
-        url = f'{url}/{self.request.query_params.get("q", "")}'
+        url = f'{url}/{self.request.query_params.get("q", "")}/'
         print(url)
         response = requests.request(
             'GET',
