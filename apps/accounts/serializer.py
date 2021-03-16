@@ -9,7 +9,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.validators import UniqueValidator
 
 from .models import User, Profile, ResetPasswordToken, Skill, JobExperience, \
-    GoogleLogin
+    GoogleLogin, University
 
 
 class SkillSerializer(serializers.ModelSerializer):
@@ -221,6 +221,12 @@ class UserViewSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['profile', 'email', 'id']
+
+
+class UniversitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = University
+        fields = ['name']
 
 
 class GoogleLoginSerializer(serializers.ModelSerializer):

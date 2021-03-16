@@ -17,11 +17,11 @@ from rest_framework.response import Response
 
 from apps.accounts.models import MajorAPIConfig
 from .permissions import ProfileComplete
-from .models import Profile, User, ResetPasswordToken, UniversityAPIConfig
+from .models import Profile, User, ResetPasswordToken, UniversityAPIConfig, University
 from .serializer import (
     UserSerializer, ProfileSerializer, EmailSerializer,
     UserViewSerializer, ChangePasswordSerializer,
-    ResetPasswordConfirmSerializer, GoogleLoginSerializer)
+    ResetPasswordConfirmSerializer, GoogleLoginSerializer, UniversitySerializer)
 
 __all__ = (
     'LoginAPIView', 'SignUpAPIView', 'ActivateAPIView', 'LogoutAPIView',
@@ -297,29 +297,33 @@ class ProfileInfoAPIView(GenericAPIView):
 
 
 class UniversitySearchAPIView(GenericAPIView):
-    # permission_classes = (IsAuthenticated,)
-
+    permission_classes = (IsAuthenticated,)
+    serializer_class = UniversitySerializer
     def get(self, request):
         import requests
 
         api_config = UniversityAPIConfig.objects.last()
         url = api_config.url
-
+        print(url)
         headers = eval(api_config.headers)
-        payload = f"query={self.request.query_params.get('q', '')}"
-
-        print(headers, type(headers))
-
+        search_param = self.request.query_params.get('q', '')
+        payload = f"query={search_param}"
         response = requests.request(
             'POST',
             url,
             headers=headers,
             data=payload.encode('utf-8')
         )
-        print(response.status_code, '<===============')
-
+        if(response.status_code == status.HTTP_200_OK):
+            for data in response.json()["data"]:
+                if not University.objects.all().filter(id=data["id"]).exists():
+                    University.objects.create(id=data["id"],name=data["name"],school_type=data["school_type"])
+            response = response.json()
+        else:
+            universities = University.objects.filter(name__icontains=search_param).order_by('name')[:20]
+            response = self.get_serializer(instance=universities,many=True).data
         return Response(
-            data={'data': response.json()},
+            data={'data': response},
             status=status.HTTP_200_OK
         )
 
