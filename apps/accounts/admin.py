@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.utils.translation import gettext, gettext_lazy as _
 
 from .models import User, Profile, Skill, JobExperience, GoogleLogin, \
-    UniversityAPIConfig
+    UniversityAPIConfig, University
 
 
 # Register your models here.
@@ -55,3 +55,8 @@ class JobExperienceAdmin(admin.ModelAdmin):
 @admin.register(GoogleLogin)
 class GoogleLoginAdmin(admin.ModelAdmin):
     pass
+
+@admin.register(University)
+class UniversityAdmin(admin.ModelAdmin):
+    pass
+
