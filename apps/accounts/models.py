@@ -183,7 +183,8 @@ class Skill(models.Model):
 
 
 class JobExperience(models.Model):
-    company = models.CharField(max_length=128)
+    company = models.CharField(max_length=128, default='_', blank=True,
+                               null=True)
     position = models.CharField(max_length=256)
     description = models.CharField(max_length=1024, blank=True, null=True)
     profile = models.ForeignKey(

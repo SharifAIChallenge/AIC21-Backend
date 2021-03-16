@@ -87,6 +87,28 @@ class ProfileSerializer(serializers.ModelSerializer):
 
         return attrs
 
+    def update(self, instance: Profile, validated_data):
+        instance: Profile = super().update(instance, validated_data)
+
+        jobs = validated_data.get('jobs')
+        skills = validated_data.get('skills')
+
+        for job in jobs:
+            job_obj = instance.jobs.filter(position=job).last()
+            if not job_obj:
+                JobExperience.objects.create(
+                    position=job,
+                    profile=instance
+                )
+
+        for skill in skills:
+            skill_obj = instance.skills.filter(skill=skill).last()
+            if not skill_obj:
+                Skill.objects.create(
+                    skill=skill
+                )
+        return instance
+
 
 class UserSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer(read_only=True)
