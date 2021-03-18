@@ -39,6 +39,10 @@ class Match(TimeStampedModel):
     def is_freeze(self):
         return self.status == MatchStatusTypes.FREEZE
 
+    @property
+    def is_finished(self):
+        return self.status == MatchStatusTypes.SUCCESSFUL
+
     def run_match(self):
         pass
 
@@ -74,3 +78,23 @@ class Match(TimeStampedModel):
 
             return match
         return None
+
+    @staticmethod
+    def create_match_from_list(teams, tournament, match_map):
+        if len(teams) % 2 == 1:
+            raise Exception('teams list size must be even not odd!')
+
+        i = 0
+        matches = []
+        while i < len(teams):
+            team1 = teams[i]
+            team2 = teams[i + 1]
+            match = Match.create_match(
+                team1=team1,
+                team2=team2,
+                tournament=tournament,
+                match_map=match_map
+            )
+            matches.append(match)
+
+        return matches
