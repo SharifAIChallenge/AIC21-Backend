@@ -18,7 +18,7 @@ class Level(models.Model):
         ).count()
 
     @staticmethod
-    def create_level(self, matches, tournament, last_level: 'Level' = None):
+    def create_level(matches, tournament, last_level: 'Level' = None):
         from apps.challenge.models import LevelMatch
 
         level = Level.objects.create(
