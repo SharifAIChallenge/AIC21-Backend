@@ -11,7 +11,8 @@ from apps.team.permissions import HasTeam
 
 from .models import Request, RequestTypes
 from .serializers import RequestSerializer
-from .serializers.level_based_tournament import LevelBasedTournamentCreateSerializer
+from .serializers.level_based_tournament import LevelBasedTournamentCreateSerializer, \
+    LevelBasedTournamentAddTeamsSerializer
 
 
 class RequestAPIView(GenericAPIView):
@@ -146,3 +147,20 @@ class LevelBasedTournamentAPIView(GenericAPIView):
         serializer.save()
 
         return Response(data="OK", status=status.HTTP_200_OK)
+
+
+
+class LevelBasedTournamentAddTeamsAPIView(GenericAPIView):
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def post(self, request):
+        serializer = LevelBasedTournamentAddTeamsSerializer(
+            data=request.data
+        )
+
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(data="OK", status=status.HTTP_200_OK)
+
+
