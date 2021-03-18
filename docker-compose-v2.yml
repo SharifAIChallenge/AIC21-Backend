@@ -13,8 +13,8 @@ services:
       - /var/log/AIC21_Backend/nginx/:/var/log/nginx/
       - ./deploy/config/nginx:/etc/nginx/conf.d
     depends_on:
-      - aic21_Backend_web
-  aic21_Backend_web:
+      - aic21_backend_web
+  aic21_backend_web:
     build: .
     container_name: AIC21_Backend_web
     restart: always
