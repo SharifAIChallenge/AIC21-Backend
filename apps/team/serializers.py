@@ -10,7 +10,7 @@ from ..accounts.models import User
 
 
 class MemberSerializer(serializers.ModelSerializer):
-    profile = ProfileSerializer(read_only=True)
+    profile = ProfileSerializer(read_only=True, context={'limited': True})
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'email','id','profile']
