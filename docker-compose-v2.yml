@@ -1,0 +1,92 @@
+version: '3.3'
+
+services:
+  thebackend_nginx:
+    image: nginx:latest
+    container_name: AIC21_Backend_nginx
+    restart: always
+    ports:
+      - 800:800
+    volumes:
+      - ./static/:/static/
+      - ./media/:/media/
+      - /var/log/AIC21_Backend/nginx/:/var/log/nginx/
+      - ./deploy/config/nginx:/etc/nginx/conf.d
+    depends_on:
+      - aic21_Backend_web
+  aic21_Backend_web:
+    build: .
+    container_name: AIC21_Backend_web
+    restart: always
+    depends_on:
+      - rabbitmq
+      - postgres
+      - redis
+    environment:
+      DJANGO_SETTINGS_MODULE: "AIC21_Backend.settings.production"
+    command: >
+      sh -c "
+        ./manage.py migrate;
+        ./manage.py compilemessages;
+        ./manage.py collectstatic --noinput;
+        gunicorn --bind=0.0.0.0:8000 --timeout=90  --workers=10 --preload AIC21_Backend.asgi:application;
+      "
+    volumes:
+      - .:/code
+      - ./static/:/static/
+      - ./media/:/media/
+      - /var/log/AIC21_Backend:/var/log/AIC21_Backend
+      - cachedata:/cachec
+    ports:
+      - 8000:8000
+    env_file:
+      - .env
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3-management
+    environment:
+      - RABBITMQ_DEFAULT_USER=aic
+      - RABBITMQ_DEFAULT_PASS=aic21challenge
+    ports:
+    - 5672:5672
+
+  celery:
+    container_name: celery
+    build: .
+    command: ["celery", "-A", "AIC21_Backend", "worker", "-l", "info", "-E", "--concurrency=10"]
+    depends_on:
+      - rabbitmq
+    links:
+      - rabbitmq
+    volumes:
+      - ./static/:/static/
+      - ./media/:/media/
+      - /var/log/AIC21_Backend:/var/log/AIC21_Backend
+
+  postgres:
+    restart: always
+    image: postgres:latest
+    volumes:
+      - ./media/:/media/
+      - pgdata:/var/lib/postgresql/data/
+    env_file:
+      - .env
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - 6379:6379
+    volumes:
+      - redisdata:/data
+
+volumes:
+  pgdata:
+  redisdata:
+  cachedata:
