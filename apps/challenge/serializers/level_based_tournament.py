@@ -1,7 +1,9 @@
+from behave import When
 from rest_framework import serializers
 from rest_framework.generics import get_object_or_404
+from sqlparse.sql import Case
 
-from apps.challenge.models import LevelBasedTournament
+from apps.challenge.models import LevelBasedTournament, Match, Map, LevelMatch, Level
 from apps.team.models import Team
 
 
@@ -44,6 +46,10 @@ class LevelBasedTournamentAddTeamsSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         get_object_or_404(LevelBasedTournament.objects.all(), pk=attrs['id'])
+
+        if len(attrs['teams']) % 2 == 1:
+            raise Exception('Teams list size must be even not odd!')
+
         teams_list = Team.objects.filter(id__in=attrs['teams'])
         if len(teams_list) != len(attrs['teams']):
             team_list_id = [team.id for team in teams_list]
@@ -55,6 +61,20 @@ class LevelBasedTournamentAddTeamsSerializer(serializers.Serializer):
 
 
     def create(self, validated_data):
-        pass
+        level_based_tournament = get_object_or_404(LevelBasedTournament.objects.all(), pk=validated_data.id)
 
-        # TODO : Add a new level and add teams to it and create match 2 by 2
+        preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(validated_data.teams)])
+        teams = Team.objects.filter(id__in=validated_data.teams).order_by(preserved)
+        # TODO : Check the order is the same ...
+
+        random_map = Map.get_random_map()
+        matches = Match.create_match_from_list(teams, level_based_tournament.tournament, random_map)
+
+        last_level = LevelBasedTournament.last_level
+        new_level = Level.objects.create(
+            last_level.number + 1,
+            level_based_tournament
+        )
+
+        level_matches = LevelMatch.create_level_matches(matches, new_level)
+
