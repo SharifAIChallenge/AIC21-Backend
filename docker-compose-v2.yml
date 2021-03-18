@@ -29,7 +29,7 @@ services:
         ./manage.py migrate;
         ./manage.py compilemessages;
         ./manage.py collectstatic --noinput;
-        gunicorn --bind=0.0.0.0:8000 --timeout=90  --workers=10 --preload AIC21_Backend.asgi:application;
+        gunicorn --bind=0.0.0.0:8000 --timeout=90  --workers=10 --preload AIC21_Backend.wsgi:application;
       "
     volumes:
       - .:/code
