@@ -1,10 +1,15 @@
+import requests
+
 from django.utils.translation import gettext_lazy as _
+from django.conf import settings
 
 from rest_framework import serializers
+from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import ValidationError
 from rest_framework.validators import UniqueValidator
 
-from .models import User, Profile, ResetPasswordToken, Skill, JobExperience
+from .models import User, Profile, ResetPasswordToken, Skill, JobExperience, \
+    GoogleLogin, University, Major
 
 
 class SkillSerializer(serializers.ModelSerializer):
@@ -29,11 +34,22 @@ class JobExperienceSerializer(serializers.ModelSerializer):
         return JobExperience.objects.create(**validated_data)
 
 
+class StringListField(serializers.ListField):
+    child = serializers.CharField(max_length=256, allow_null=True,
+                                  allow_blank=True)
+
+
 class ProfileSerializer(serializers.ModelSerializer):
-    skills = SkillSerializer(many=True)
-    jobs = JobExperienceSerializer(many=True)
+    skills = SkillSerializer(many=True, read_only=True)
+    jobs = JobExperienceSerializer(many=True, read_only=True)
+    skills_list = StringListField(write_only=True, allow_null=True,
+                                  allow_empty=True)
+    jobs_list = StringListField(write_only=True, allow_null=True,
+                                allow_empty=True)
     is_complete = serializers.SerializerMethodField('_is_complete')
     email = serializers.SerializerMethodField('_email')
+    resume_link = serializers.SerializerMethodField('_get_resume_link')
+    image_link = serializers.SerializerMethodField('_get_image_link')
 
     @staticmethod
     def _is_complete(obj: Profile):
@@ -43,9 +59,34 @@ class ProfileSerializer(serializers.ModelSerializer):
     def _email(obj: Profile):
         return obj.user.email
 
+    @staticmethod
+    def _get_resume_link(obj: Profile):
+        if not obj.resume:
+            return ''
+        url = obj.resume.url
+        if settings.DOMAIN not in url:
+            return settings.DOMAIN + url
+        return url
+
+    @staticmethod
+    def _get_image_link(obj: Profile):
+        if not obj.image:
+            return ''
+        url = obj.image.url
+        if settings.DOMAIN not in url:
+            return settings.DOMAIN + url
+        return url
+
     class Meta:
         model = Profile
         exclude = ['user', 'id']
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if self.context.get('limited', False):
+            for field in Profile.sensitive_fields():
+                data.pop(field)
+        return data
 
     def validate(self, attrs):
         image = attrs.get('image')
@@ -55,10 +96,45 @@ class ProfileSerializer(serializers.ModelSerializer):
 
         return attrs
 
+    def update(self, instance: Profile, validated_data):
+        instance: Profile = super().update(instance, validated_data)
+
+        jobs = validated_data.get('jobs_list')
+        skills = validated_data.get('skills_list')
+
+        if not jobs:
+            jobs = list()
+        if not skills:
+            skills = list()
+
+        if jobs:
+            instance.jobs.all().delete()
+        if skills:
+            instance.skills.all().delete()
+
+        for job in jobs:
+            if job:
+                JobExperience.objects.create(
+                    position=job,
+                    profile=instance
+                )
+
+        for skill in skills:
+            if skill:
+                Skill.objects.create(
+                    skill=skill,
+                    profile=instance
+                )
+        return instance
+
 
 class UserSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer(read_only=True)
 
+    phone_number = serializers.CharField(
+        max_length=32,
+        required=True,
+    )
     email = serializers.EmailField(
         validators=[UniqueValidator(queryset=User.objects.all())]
     )
@@ -71,7 +147,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['email', 'password_1', 'password_2', 'profile']
+        fields = ['email', 'phone_number', 'password_1', 'password_2',
+                  'profile']
 
     def validate(self, attrs):
         if attrs.get('password_1') != attrs.get('password_2'):
@@ -89,7 +166,10 @@ class UserSerializer(serializers.ModelSerializer):
             password=validated_data.get('password'),
             is_active=False
         )
-        profile = Profile.objects.create(user=user)
+        profile = Profile.objects.create(
+            user=user,
+            phone_number=validated_data.get('phone_number')
+        )
 
         return user
 
@@ -141,3 +221,49 @@ class UserViewSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['profile', 'email', 'id']
+
+
+class UniversitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = University
+        fields = ['name']
+
+
+class MajorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Major
+        fields = ['name']
+
+
+class GoogleLoginSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GoogleLogin
+        exclude = ('id',)
+
+    def create(self, validated_data):
+        from apps.core.utils import password_generator
+
+        google_login = super().create(validated_data)
+
+        response = requests.get(
+            f'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token='
+            f'{google_login.id_token}'
+        )
+
+        if response.status_code != 200:
+            raise ValidationError("Error occurred with google login")
+
+        data = response.json()
+        user = User.objects.filter(email=data['email']).last()
+        if not user:
+            user = User.objects.create(
+                username=data['email'],
+                email=data['email'],
+                password=password_generator(),
+                is_active=True
+            )
+            profile = Profile.objects.create(
+                user=user
+            )
+        token, created = Token.objects.get_or_create(user=user)
+        return token

@@ -13,7 +13,6 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 from apps.core.utils import send_email
-import os
 
 
 class DegreeTypes:
@@ -52,7 +51,7 @@ class User(AbstractUser):
         send_email(
             subject='فعالسازی اکانت AIC21',
             context=context,
-            template_name='accounts/email/user_activate_email.html',
+            template_name='accounts/email/registerifinal.htm',
             receipts=[self.email]
         )
 
@@ -94,6 +93,12 @@ class User(AbstractUser):
         user.save()
 
 
+def language_types():
+    from apps.team.models import SubmissionLanguagesTypes
+
+    return SubmissionLanguagesTypes.TYPES
+
+
 class Profile(models.Model):
     IMAGE_MAX_SIZE = 1024 * 1024
 
@@ -110,15 +115,19 @@ class Profile(models.Model):
     birth_date = models.CharField(max_length=128, blank=True, null=True)
     province = models.CharField(max_length=64, blank=True, null=True)
     phone_number = models.CharField(max_length=32, blank=True, null=True)
-    programming_language = models.CharField(max_length=32, blank=True,
-                                            null=True)
+    programming_language = models.CharField(
+        max_length=32,
+        blank=True,
+        null=True,
+        choices=language_types()
+    )
 
     # Academic Info
     university = models.CharField(max_length=128, blank=True, null=True)
     major = models.CharField(max_length=64, blank=True, null=True)
-    university_term = models.PositiveSmallIntegerField(null=True)
+    university_term = models.PositiveSmallIntegerField(null=True, blank=True)
     university_degree = models.CharField(choices=DegreeTypes.TYPES,
-                                         max_length=32, null=True)
+                                         max_length=32, null=True, blank=True)
 
     # Job Info
     linkedin = models.CharField(max_length=512, blank=True, null=True)
@@ -136,9 +145,15 @@ class Profile(models.Model):
         return all(
             (
                 self.university, self.university_degree, self.major,
-                self.phone_number, self.birth_date
+                self.phone_number, self.birth_date, self.firstname_fa,
+                self.lastname_fa
             )
         )
+
+    @staticmethod
+    def sensitive_fields():
+        return ('hide_profile_info', 'can_sponsors_see', 'phone_number',
+                'province', 'is_complete')
 
     def __str__(self):
         return f'username: {self.user.username},' \
@@ -168,7 +183,8 @@ class Skill(models.Model):
 
 
 class JobExperience(models.Model):
-    company = models.CharField(max_length=128)
+    company = models.CharField(max_length=128, default='_', blank=True,
+                               null=True)
     position = models.CharField(max_length=256)
     description = models.CharField(max_length=1024, blank=True, null=True)
     profile = models.ForeignKey(
@@ -179,3 +195,30 @@ class JobExperience(models.Model):
 
     def __str__(self):
         return f'{self.position}'
+
+
+class GoogleLogin(models.Model):
+    access_token = models.CharField(max_length=1024)
+    expires_at = models.PositiveBigIntegerField()
+    expires_in = models.PositiveIntegerField()
+    id_token = models.TextField()
+    scope = models.TextField()
+
+
+class UniversityAPIConfig(models.Model):
+    url = models.CharField(max_length=256)
+    headers = models.TextField()
+
+
+class MajorAPIConfig(models.Model):
+    url = models.CharField(max_length=256)
+    headers = models.TextField()
+
+
+class University(models.Model):
+    name = models.CharField(max_length=1024)
+    school_type = models.CharField(max_length=1024)
+
+
+class Major(models.Model):
+    name = models.CharField(max_length=1024)
