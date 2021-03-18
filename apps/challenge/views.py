@@ -1,5 +1,5 @@
 from rest_framework.generics import GenericAPIView, get_object_or_404
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from rest_framework.response import Response
 from rest_framework import status
@@ -11,6 +11,7 @@ from apps.team.permissions import HasTeam
 
 from .models import Request, RequestTypes
 from .serializers import RequestSerializer
+from .serializers.level_based_tournament import LevelBasedTournamentCreateSerializer
 
 
 class RequestAPIView(GenericAPIView):
@@ -132,3 +133,16 @@ class ClanAPIView(GenericAPIView):
 
     def put(self, request):
         pass
+
+
+class LevelBasedTournamentAPIView(GenericAPIView):
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def post(self, request):
+        serializer = LevelBasedTournamentCreateSerializer(
+            data=request.data
+        )
+
+        serializer.save()
+
+        return Response(data="OK", status=status.HTTP_200_OK)
