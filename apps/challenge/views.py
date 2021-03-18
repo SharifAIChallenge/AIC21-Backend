@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework import status
 
-from apps.challenge.models import LobbyQueue, RequestStatusTypes
+from apps.challenge.models import LobbyQueue, RequestStatusTypes, LevelBasedTournament
 from apps.challenge.serializers import LobbyQueueSerializer
 from apps.challenge.services.lobby import LobbyService
 from apps.team.permissions import HasTeam
@@ -13,6 +13,7 @@ from .models import Request, RequestTypes
 from .serializers import RequestSerializer
 from .serializers.level_based_tournament import LevelBasedTournamentCreateSerializer, \
     LevelBasedTournamentAddTeamsSerializer
+from .serializers.tournament import LevelBasedTournamentUpdateSerializer
 
 
 class RequestAPIView(GenericAPIView):
@@ -148,6 +149,20 @@ class LevelBasedTournamentAPIView(GenericAPIView):
 
         return Response(data="OK", status=status.HTTP_200_OK)
 
+
+    def put(self, request):
+        level_based_tournament = get_object_or_404(LevelBasedTournament.objects.all(), pk=request.id)
+
+        serializer = LevelBasedTournamentUpdateSerializer(
+            data=request,
+            instance=level_based_tournament.tournament,
+            partial=True
+        )
+
+        serializer.save()
+
+        return Response(data="OK", status=status.HTTP_200_OK)
+        # TODO : Return the object data if needed
 
 
 class LevelBasedTournamentAddTeamsAPIView(GenericAPIView):
