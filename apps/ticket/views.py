@@ -86,8 +86,14 @@ class ReplyListAPIView(GenericAPIView):
     def post(self, request, ticket_id):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save(ticket_id=ticket_id)
+        serializer.save()
         return Response({"detail": "Your Reply has been submitted"})
+
+    def get_serializer_context(self):
+        ctx = super().get_serializer_context()
+        ctx['ticket_id'] = self.kwargs.get('ticket_id')
+
+        return ctx
 
 
 class ReplyAPIView(GenericAPIView):
