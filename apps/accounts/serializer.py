@@ -243,19 +243,20 @@ class GoogleLoginSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         from apps.core.utils import password_generator
 
-        google_login = super().create(validated_data)
-
         response = requests.get(
             f'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token='
-            f'{google_login.id_token}'
+            f'{validated_data["id_token"]}'
         )
 
         if response.status_code != 200:
             raise ValidationError("Error occurred with google login")
 
         data = response.json()
+        validated_data['email'] = data['email']
+
         user = User.objects.filter(email=data['email']).last()
         if not user:
+            validated_data['is_signup'] = True
             user = User.objects.create(
                 username=data['email'],
                 email=data['email'],
@@ -265,5 +266,7 @@ class GoogleLoginSerializer(serializers.ModelSerializer):
             profile = Profile.objects.create(
                 user=user
             )
+
+        google_login = super().create(validated_data)
         token, created = Token.objects.get_or_create(user=user)
         return token
