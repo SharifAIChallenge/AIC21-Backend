@@ -16,10 +16,15 @@ class TicketUserSerializer(serializers.ModelSerializer):
 
 class ReplySerializer(serializers.ModelSerializer):
     user = TicketUserSerializer(read_only=True)
+    is_owner = serializers.SerializerMethodField('_is_owner')
+
+    def _is_owner(self, obj: Reply):
+        return obj.user.id == self.context['request'].user.id
 
     class Meta:
         model = Reply
         fields = ['user', 'text', 'created', 'status', 'id']
+        read_only_fields = ('user', 'status', 'created', 'id')
 
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user
