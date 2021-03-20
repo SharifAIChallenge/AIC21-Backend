@@ -2,24 +2,16 @@ from rest_framework import serializers
 from django.conf import settings
 
 from apps.accounts.models import User
+from apps.accounts.serializer import ProfileSerializer
 from apps.ticket.models import Ticket, Reply
 
 
 class TicketUserSerializer(serializers.ModelSerializer):
-    first_name = serializers.SerializerMethodField('_first_name')
-    last_name = serializers.SerializerMethodField('_last_name')
-
-    @staticmethod
-    def _first_name(obj: User):
-        return obj.profile.firstname_fa
-
-    @staticmethod
-    def _last_name(obj: User):
-        return obj.profile.lastname_fa
+    profile = ProfileSerializer(read_only=True, context={'limited': True})
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email']
+        fields = ('email', 'profile')
 
 
 class ReplySerializer(serializers.ModelSerializer):
