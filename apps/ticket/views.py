@@ -43,7 +43,7 @@ class UserTicketsListAPIView(GenericAPIView):
         serializer.is_valid(raise_exception=True)
         ticket = serializer.save()
 
-        send_to_telegram(serializer.data)
+        # send_to_telegram(serializer.data)
 
         return Response(
             data={"detail": "Your ticket has been submitted"},

@@ -6,6 +6,17 @@ from apps.ticket.models import Ticket, Reply
 
 
 class TicketUserSerializer(serializers.ModelSerializer):
+    first_name = serializers.SerializerMethodField('_first_name')
+    last_name = serializers.SerializerMethodField('_last_name')
+
+    @staticmethod
+    def _first_name(obj: User):
+        return obj.profile.firstname_fa
+
+    @staticmethod
+    def _last_name(obj: User):
+        return obj.profile.lastname_fa
+
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'email']
