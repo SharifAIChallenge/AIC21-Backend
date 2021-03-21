@@ -21,11 +21,7 @@ class LobbyService:
     @staticmethod
     def run_friendly_tournament(lobby_q):
         records = LobbyQueue.objects.filter(game_type=LobbyTypes.FRIENDLY_MATCH)[:2]
-        game_map = Map.objects.filter(actice=True).order_by('?').first()
-        friendly_tournament = Tournament.objects.filter(types=TournamentTypes.FRIENDLY).first()
-
-        Match.create_match(records[0].team, records[1].team, friendly_tournament, game_map)
-
+        Match.create_friendly_match(records[0].team, records[1].team)
         records.delete()
 
     @staticmethod

@@ -15,4 +15,4 @@ class Map(TimeStampedModel, UUIDModel):
 
     @staticmethod
     def get_random_map():
-        return Map.objects.filter(actice=True).order_by('?').first()
+        return Map.objects.filter(active=True).order_by('?').first()
