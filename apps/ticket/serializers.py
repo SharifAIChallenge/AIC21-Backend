@@ -3,7 +3,13 @@ from django.conf import settings
 
 from apps.accounts.models import User
 from apps.accounts.serializer import ProfileSerializer
-from apps.ticket.models import Ticket, Reply
+from apps.ticket.models import Ticket, Reply, Tag
+
+
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = ('id', 'title')
 
 
 class TicketUserSerializer(serializers.ModelSerializer):
@@ -52,3 +58,11 @@ class TicketSerializer(serializers.ModelSerializer):
         validated_data['author'] = self.context['request'].user
         ticket = Ticket.objects.create(**validated_data)
         return ticket
+
+    def to_representation(self, instance: Ticket):
+        data = super().to_representation(instance)
+        data['tag'] = TagSerializer(
+            instance=instance.tag
+        ).data
+
+        return data

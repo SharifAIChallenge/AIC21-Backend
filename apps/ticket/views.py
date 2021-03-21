@@ -6,6 +6,8 @@ from rest_framework.response import Response
 from apps.core.utils import send_to_telegram
 
 from apps.ticket import paginations
+from apps.ticket.models import Tag
+from apps.ticket.serializers import TagSerializer
 from .models import Ticket, Reply
 from .serializers import TicketSerializer, ReplySerializer
 from .services import SendTicketToTelegramChannel
@@ -53,7 +55,9 @@ class UserTicketsListAPIView(GenericAPIView):
         )
 
     def get(self, request):
-        tickets = Ticket.objects.filter(author=request.user)
+        tickets = Ticket.objects.filter(
+            author=request.user
+        )
         data = self.get_serializer(instance=tickets, many=True).data
 
         return Response(
@@ -119,5 +123,21 @@ class ReplyAPIView(GenericAPIView):
         serializer.save()
         return Response(
             data={"detail": "Your change has been submitted"},
+            status=status.HTTP_200_OK
+        )
+
+
+class TagAPIView(GenericAPIView):
+    serializer_class = TagSerializer
+    queryset = Tag.objects.all()
+
+    def get(self, request):
+        data = self.get_serializer(
+            instance=self.get_queryset(),
+            many=True
+        ).data
+
+        return Response(
+            data={'data': data},
             status=status.HTTP_200_OK
         )
