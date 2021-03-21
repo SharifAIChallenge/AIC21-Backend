@@ -1,6 +1,7 @@
 from rest_framework.permissions import BasePermission
-
 from .models import Invitation
+
+
 class HasTeam(BasePermission):
     message = "you should be in a team to perform this action"
 
@@ -15,7 +16,7 @@ class NoTeam(BasePermission):
         return request.user.team is None
 
 
-class IsTeamFinalSubmissionCompiled(BasePermission):
+class TeamHasFinalSubmission(BasePermission):
     message = "your team's last submission must be compiled"
 
     def has_permission(self, request, view):
