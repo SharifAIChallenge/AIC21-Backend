@@ -2,7 +2,6 @@ from django.db import models
 from model_utils.models import TimeStampedModel
 from django.conf import settings
 
-from apps.challenge.models import Map, Tournament
 from apps.challenge.models.tournament import TournamentTypes
 
 
@@ -104,6 +103,8 @@ class Match(TimeStampedModel):
 
     @staticmethod
     def create_friendly_match(team1, team2, game_map=None):
+        from apps.challenge.models import Map, Tournament
+
         if game_map is None:
             game_map = Map.get_random_map()
         friendly_tournament = Tournament.objects.filter(type=TournamentTypes.FRIENDLY).first()
