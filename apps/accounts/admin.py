@@ -29,7 +29,7 @@ class MajorAPIConfigAdmin(admin.ModelAdmin):
 @admin.register(User)
 class UserAdmin(DjangoUserAdmin):
     fieldsets = (
-        (None, {'fields': ('username', 'password')}),
+        (None, {'fields': ('username', 'password', 'team')}),
         (_('Personal info'), {'fields': ('first_name', 'last_name', 'email')}),
         (_('Permissions'), {
             'fields': ('is_active', 'is_staff', 'is_superuser', 'groups',

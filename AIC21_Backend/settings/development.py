@@ -248,3 +248,5 @@ UPLOAD_PATHS = {
     'MATCH_LOGS': 'match/logs/',
     'CLAN_IMAGE': 'clan/images/',
 }
+
+DOMAIN = 'X'
