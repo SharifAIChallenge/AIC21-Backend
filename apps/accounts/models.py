@@ -203,6 +203,8 @@ class GoogleLogin(models.Model):
     expires_in = models.PositiveIntegerField()
     id_token = models.TextField()
     scope = models.TextField()
+    is_signup = models.BooleanField(default=False)
+    email = models.EmailField(blank=True, null=True)
 
 
 class UniversityAPIConfig(models.Model):

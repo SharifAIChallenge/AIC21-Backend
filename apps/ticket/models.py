@@ -54,8 +54,6 @@ class Ticket(UUIDModel, TimeStampedModel):
         choices=TicketStatus.TYPES
     )
 
-    html = models.TextField()
-
     def __str__(self):
         return f'{self.title} {self.author.username}'
 
@@ -78,8 +76,6 @@ class Reply(UUIDModel, TimeStampedModel):
         default=ReplyStatus.PENDING,
         choices=ReplyStatus.TYPES
     )
-
-    html = models.TextField()
 
     def __str__(self):
         return f'{self.user}'
