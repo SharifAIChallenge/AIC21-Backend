@@ -29,8 +29,8 @@ class ReplySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Reply
-        fields = ['user', 'text', 'created', 'status', 'id']
-        read_only_fields = ('user', 'status', 'created', 'id')
+        fields = ['user', 'text', 'created', 'status', 'id', 'is_owner']
+        read_only_fields = ('user', 'status', 'created', 'id', 'is_owner')
 
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user
