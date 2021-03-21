@@ -7,7 +7,7 @@ from rest_framework import status
 from apps.challenge.models import LobbyQueue, RequestStatusTypes, LevelBasedTournament
 from apps.challenge.serializers import LobbyQueueSerializer
 from apps.challenge.services.lobby import LobbyService
-from apps.team.permissions import HasTeam
+from apps.team.permissions import HasTeam, IsTeamFinalSubmissionCompiled
 
 from .models import Request, RequestTypes
 from .serializers import RequestSerializer
@@ -87,7 +87,7 @@ class RequestAPIView(GenericAPIView):
 
 
 class LobbyAPIView(GenericAPIView):
-    permission_classes = [IsAuthenticated, HasTeam]
+    permission_classes = [IsAuthenticated, HasTeam, IsTeamFinalSubmissionCompiled]
     serializer_class = LobbyQueueSerializer
     queryset = LobbyQueue.objects.all()
 
