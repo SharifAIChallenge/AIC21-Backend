@@ -46,6 +46,9 @@ class ProfileAdmin(admin.ModelAdmin):
                     'phone_number', 'university', 'major', 'university_degree')
     list_filter = ('university', 'major', 'university_degree')
 
+    search_fields = ('email', 'firstname_fa', 'lastname_fa', 'major',
+                     'phone_number', 'university')
+
 
 @admin.register(Skill)
 class SkillAdmin(admin.ModelAdmin):
@@ -59,11 +62,15 @@ class JobExperienceAdmin(admin.ModelAdmin):
 
 @admin.register(GoogleLogin)
 class GoogleLoginAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('id', 'email', 'is_signup')
+    list_display_links = ('id', 'email')
+    search_fields = ('email',)
+
 
 @admin.register(University)
 class UniversityAdmin(admin.ModelAdmin):
     pass
+
 
 @admin.register(Major)
 class MajorAdmin(admin.ModelAdmin):
