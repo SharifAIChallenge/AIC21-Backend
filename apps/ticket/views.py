@@ -1,6 +1,7 @@
 from rest_framework.generics import GenericAPIView, get_object_or_404
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, \
+    IsAuthenticated
 from rest_framework.response import Response
 from apps.core.utils import send_to_telegram
 
@@ -25,7 +26,8 @@ class TicketAPIView(GenericAPIView):
 
     def put(self, request, ticket_id):
         ticket = get_object_or_404(Ticket, id=ticket_id)
-        serializer = self.get_serializer(instance=ticket, data=request.data, partial=True)
+        serializer = self.get_serializer(instance=ticket, data=request.data,
+                                         partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(
@@ -76,7 +78,7 @@ class ReplyListAPIView(GenericAPIView):
     serializer_class = ReplySerializer
     queryset = Reply.objects.all().order_by('-created')
     pagination_class = paginations.ReplyPagination
-    permission_classes = [IsAuthenticated,]
+    permission_classes = [IsAuthenticated, ]
 
     def get(self, request, ticket_id):
         replies = self.get_queryset().filter(ticket__id=ticket_id)
@@ -98,7 +100,7 @@ class ReplyListAPIView(GenericAPIView):
 
 class ReplyAPIView(GenericAPIView):
     serializer_class = ReplySerializer
-    permission_classes = [IsAuthenticated,]
+    permission_classes = [IsAuthenticated, ]
 
     def get(self, request, ticket_id, reply_id):
         reply = get_object_or_404(Reply, id=reply_id)
@@ -111,7 +113,8 @@ class ReplyAPIView(GenericAPIView):
 
     def put(self, request, ticket_id, reply_id):
         reply = get_object_or_404(Reply, id=reply_id)
-        serializer = self.get_serializer(instance=reply, data=request.data, partial=True)
+        serializer = self.get_serializer(instance=reply, data=request.data,
+                                         partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(
