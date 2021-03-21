@@ -1,7 +1,6 @@
-from behave import When
+from django.db.models import Case, When
 from rest_framework import serializers
 from rest_framework.generics import get_object_or_404
-from sqlparse.sql import Case
 
 from apps.challenge.models import LevelBasedTournament, Match, Map, LevelMatch, Level
 from apps.team.models import Team

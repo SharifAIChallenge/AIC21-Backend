@@ -17,7 +17,7 @@ class NoTeam(BasePermission):
 
 
 class TeamHasFinalSubmission(BasePermission):
-    message = "your team's last submission must be compiled"
+    message = "your team doesn't have a final submission"
 
     def has_permission(self, request, view):
-        return request.user.team.submussions.filter(is_final=True) is not None
+        return request.user.team.submissions.filter(is_final=True).first() is not None
