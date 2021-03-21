@@ -22,7 +22,9 @@ class LobbyService:
     def run_friendly_tournament(lobby_q):
         records = LobbyQueue.objects.filter(game_type=LobbyTypes.FRIENDLY_MATCH)[:2]
         Match.create_friendly_match(records[0].team, records[1].team)
-        records.delete()
+
+        for record in records:
+            record.delete()
 
     @staticmethod
     def run_mini_tournament(lobby_q):
@@ -38,4 +40,5 @@ class LobbyService:
             team_list=team_list
         )
 
-        records.delete()
+        for record in records:
+            record.delete()

@@ -15,4 +15,8 @@ class Map(TimeStampedModel, UUIDModel):
 
     @staticmethod
     def get_random_map():
-        return Map.objects.filter(active=True).order_by('?').first()
+        game_map = Map.objects.filter(active=True).order_by('?').first()
+        if game_map is None:
+            raise Exception("There is no map available in the database")
+
+        return game_map
