@@ -14,7 +14,11 @@ class LobbyService:
         if lobby_q.game_type == LobbyTypes.FRIENDLY_MATCH:
             LobbyService.run_friendly_tournament(lobby_q)
 
-        # TODO : Handle for Mini Tournaments (Level Based)
+        elif lobby_q.game_type == LobbyTypes.LEVEL_BASED_TOURNAMENT:
+            LobbyService.run_mini_tournament(lobby_q)
+
+        else:
+            raise Exception("WTF?!")
 
     @staticmethod
     def run_friendly_tournament(lobby_q):
