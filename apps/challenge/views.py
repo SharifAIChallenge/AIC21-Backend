@@ -109,15 +109,14 @@ class LobbyAPIView(GenericAPIView):
     queryset = LobbyQueue.objects.all()
 
     def get(self, request):
-        lobby_queues = request.user.team.lobby_queues
+        lobby_queues = request.user.team.lobby_queues.all()
         result = []
         for lobby_q in lobby_queues:
             population = lobby_q.get_lobby_population()
             result.append({
                 'type': lobby_q.game_type,
                 'population': population,
-                'remaining_space': max(0,
-                                       population - lobby_q.get_lobby_size())
+                'remaining_space': max(0, lobby_q.get_lobby_size() - population)
             })
 
         return Response(data={
@@ -127,11 +126,11 @@ class LobbyAPIView(GenericAPIView):
     def post(self, request):
         lobby_q = self.get_serializer(data=request.data)
         lobby_q.is_valid(raise_exception=True)
-        lobby_q.save()
+        lobby_queue = lobby_q.save()
 
-        LobbyService.run_tournament_after_team_join(lobby_q)
+        LobbyService.run_tournament_after_team_join(lobby_queue)
 
-        return Response(data="OK", status=status.HTTP_200_OK)
+        return Response(data={"status": True}, status=status.HTTP_200_OK)
 
 
 class ScoreboardAPIView(GenericAPIView):

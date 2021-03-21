@@ -2,6 +2,9 @@ from django.db import models
 from model_utils.models import TimeStampedModel
 from django.conf import settings
 
+from apps.challenge.models import Map, Tournament
+from apps.challenge.models.tournament import TournamentTypes
+
 
 class MatchStatusTypes:
     FREEZE = 'freeze'
@@ -98,3 +101,14 @@ class Match(TimeStampedModel):
             matches.append(match)
 
         return matches
+
+    @staticmethod
+    def create_friendly_match(team1, team2, game_map=None):
+        if game_map is None:
+            game_map = Map.get_random_map()
+        friendly_tournament = Tournament.objects.filter(type=TournamentTypes.FRIENDLY).first()
+
+        if friendly_tournament is None:
+            raise Exception("Admin should initialize a friendly tournament first ...")
+
+        Match.create_match(team1, team2, friendly_tournament, game_map)

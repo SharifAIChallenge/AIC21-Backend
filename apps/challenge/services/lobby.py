@@ -1,4 +1,6 @@
-from apps.challenge.models import LobbyQueue, Map, Match, Tournament
+from datetime import datetime
+
+from apps.challenge.models import LobbyQueue, Map, Match, Tournament, LevelBasedTournament
 from apps.challenge.models.lobby import LobbyTypes
 from apps.challenge.models.tournament import TournamentTypes
 
@@ -11,15 +13,29 @@ class LobbyService:
 
         if lobby_q.game_type == LobbyTypes.FRIENDLY_MATCH:
             LobbyService.run_friendly_tournament(lobby_q)
-
-        # TODO : Handle for Mini Tournaments (Level Based)
+        elif lobby_q.game_type == LobbyTypes.LEVEL_BASED_TOURNAMENT:
+            LobbyService.run_mini_tournament(lobby_q)
+        else:
+            raise Exception("WTF?!")
 
     @staticmethod
     def run_friendly_tournament(lobby_q):
         records = LobbyQueue.objects.filter(game_type=LobbyTypes.FRIENDLY_MATCH)[:2]
-        game_map = Map.objects.filter(actice=True).order_by('?').first()
-        friendly_tournament = Tournament.objects.filter(types=TournamentTypes.FRIENDLY).first()
+        Match.create_friendly_match(records[0].team, records[1].team)
+        records.delete()
 
-        Match.create_match(records[0].team, records[1].team, friendly_tournament, game_map)
+    @staticmethod
+    def run_mini_tournament(lobby_q):
+
+        records = LobbyQueue.objects.filter(game_type=LobbyTypes.LEVEL_BASED_TOURNAMENT)[:8]
+        team_list = [record.team for record in records]
+
+        LevelBasedTournament.create_level_based_tournament(
+            name='Lobby Mini Tournament',
+            start_time=datetime.now,
+            end_time=None,
+            is_hidden=True,
+            team_list=team_list
+        )
 
         records.delete()
