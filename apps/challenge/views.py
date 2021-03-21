@@ -22,15 +22,12 @@ from .serializers.tournament import LevelBasedTournamentUpdateSerializer
 
 class RequestAPIView(GenericAPIView):
     serializer_class = RequestSerializer
-    permission_classes = (HasTeam, IsAuthenticated)
+    permission_classes = (IsAuthenticated, HasTeam)
     queryset = Request.objects.all()
 
     def get(self, request):
         data = self.get_serializer(
-            instance=self.get_queryset().filter(
-                Q(source_team=self.request.user.team) |
-                Q(target_team=self.request.user.team)
-            ),
+            instance=self.get_queryset(),
             many=True
         ).data
         return Response(
@@ -70,11 +67,15 @@ class RequestAPIView(GenericAPIView):
                     team1=team_request.source_team,
                     team2=team_request.target_team,
                 )
-                return Response(status=status.HTTP_200_OK)
         elif answer == 0:
             team_request.status = RequestStatusTypes.REJECTED
 
-        return Response(status=status.HTTP_200_OK)
+        team_request.save()
+
+        return Response(
+            data={"status": True},
+            status=status.HTTP_200_OK
+        )
 
     def get_queryset(self):
         source = self.request.query_params.get(
