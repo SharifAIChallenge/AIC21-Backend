@@ -1,17 +1,21 @@
+from django.db.models import Q
+
 from rest_framework.generics import GenericAPIView, get_object_or_404
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from rest_framework.response import Response
 from rest_framework import status
 
-from apps.challenge.models import LobbyQueue, RequestStatusTypes, LevelBasedTournament
+from apps.challenge.models import LobbyQueue, RequestStatusTypes, \
+    LevelBasedTournament, Match
 from apps.challenge.serializers import LobbyQueueSerializer
 from apps.challenge.services.lobby import LobbyService
 from apps.team.permissions import HasTeam, TeamHasFinalSubmission
 
 from .models import Request, RequestTypes
 from .serializers import RequestSerializer
-from .serializers.level_based_tournament import LevelBasedTournamentCreateSerializer, \
+from .serializers.level_based_tournament import \
+    LevelBasedTournamentCreateSerializer, \
     LevelBasedTournamentAddTeamsSerializer
 from .serializers.tournament import LevelBasedTournamentUpdateSerializer
 
@@ -23,7 +27,10 @@ class RequestAPIView(GenericAPIView):
 
     def get(self, request):
         data = self.get_serializer(
-            instance=self.get_queryset(),
+            instance=self.get_queryset().filter(
+                Q(source_team=self.request.user.team) |
+                Q(target_team=self.request.user.team)
+            ),
             many=True
         ).data
         return Response(
@@ -44,7 +51,12 @@ class RequestAPIView(GenericAPIView):
         )
 
     def put(self, request, request_id):
-        team_request = get_object_or_404(Request, id=request_id)
+        team_request = get_object_or_404(
+            Request,
+            id=request_id,
+            target_team=request.user.team,
+            status=RequestStatusTypes.PENDING
+        )
         answer = self.request.query_params.get('answer', 1)
         try:
             answer = int(answer)
@@ -53,7 +65,12 @@ class RequestAPIView(GenericAPIView):
 
         if answer == 1:
             team_request.status = RequestStatusTypes.ACCEPTED
-            # Call services
+            if team_request.type == RequestTypes.FRIENDLY_MATCH:
+                Match.create_friendly_match(
+                    team1=team_request.source_team,
+                    team2=team_request.target_team,
+                )
+                return Response(status=status.HTTP_200_OK)
         elif answer == 0:
             team_request.status = RequestStatusTypes.REJECTED
 
@@ -99,7 +116,8 @@ class LobbyAPIView(GenericAPIView):
             result.append({
                 'type': lobby_q.game_type,
                 'population': population,
-                'remaining_space': max(0, population - lobby_q.get_lobby_size())
+                'remaining_space': max(0,
+                                       population - lobby_q.get_lobby_size())
             })
 
         return Response(data={
@@ -149,9 +167,9 @@ class LevelBasedTournamentAPIView(GenericAPIView):
 
         return Response(data="OK", status=status.HTTP_200_OK)
 
-
     def put(self, request):
-        level_based_tournament = get_object_or_404(LevelBasedTournament.objects.all(), pk=request.id)
+        level_based_tournament = get_object_or_404(
+            LevelBasedTournament.objects.all(), pk=request.id)
 
         serializer = LevelBasedTournamentUpdateSerializer(
             data=request,
@@ -177,5 +195,3 @@ class LevelBasedTournamentAddTeamsAPIView(GenericAPIView):
         serializer.save()
 
         return Response(data="OK", status=status.HTTP_200_OK)
-
-
