@@ -9,8 +9,8 @@ from rest_framework import status
 
 class GamedocAPIView(GenericAPIView):
     serializer_class = GamedocSerializer
-    queryset = Gamedoc.objects.all().order_by('link')
+    queryset = Gamedoc.objects.all()
 
     def get(self, request):
-        gamedoc = self.get_serializer(self.get_queryset(), many=True)
+        gamedoc = self.get_serializer(self.get_queryset().last())
         return Response(data={"data": gamedoc.data}, status=status.HTTP_200_OK)
