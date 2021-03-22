@@ -309,7 +309,7 @@ class UserSentInvitationListAPIView(GenericAPIView):
 class SubmissionsListAPIView(GenericAPIView):
     queryset = Submission.objects.all()
     serializer_class = SubmissionSerializer
-    permission_classes = (HasTeam,)
+    permission_classes = (IsAuthenticated, HasTeam)
 
     def get(self, request):
         data = self.get_serializer(
@@ -321,7 +321,7 @@ class SubmissionsListAPIView(GenericAPIView):
 class SubmissionAPIView(GenericAPIView):
     queryset = Submission.objects.all()
     serializer_class = SubmissionSerializer
-    permission_classes = (HasTeam,)
+    permission_classes = (IsAuthenticated, HasTeam)
 
     def get(self, request):
         data = self.get_serializer(
