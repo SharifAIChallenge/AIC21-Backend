@@ -6,12 +6,14 @@ from apps.team.views import TeamAPIView, TeamSearchAPIView, TeamInfoAPIView, \
     UserReceivedResolvedInvitationListAPIView \
     , TeamSentInvitationListAPIView, UserAnswerInvitationAPIView, \
     UserSentInvitationListAPIView, TeamPendingInvitationListAPIView, \
-    TeamAnswerInvitationAPIView, SubmissionAPIView, SubmissionsListAPIView
+    TeamAnswerInvitationAPIView, SubmissionAPIView, SubmissionsListAPIView, \
+    TeamStatsAPIView
 
 app_name = 'team'
 
 urlpatterns = [
     path('', view=TeamAPIView.as_view(), name="team_operations"),
+    path('stats', view=TeamStatsAPIView.as_view(), name='team_stats'),
     path('search', view=TeamSearchAPIView.as_view(), name="team_search"),
     path('incomplete', view=IncompleteTeamInfoListAPIView.as_view(),
          name="get_incomplete_teams"),

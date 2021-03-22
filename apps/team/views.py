@@ -74,12 +74,12 @@ class TeamAPIView(GenericAPIView):
         if self.request.method in ['PUT', 'GET', 'DELETE']:
             new_permissions += [HasTeam]
         if self.request.method == 'POST':
-            new_permissions += [NoTeam,ProfileComplete]
+            new_permissions += [NoTeam, ProfileComplete]
         return [permission() for permission in new_permissions]
 
 
 class TeamSearchAPIView(GenericAPIView):
-    permission_classes = [IsAuthenticated,]
+    permission_classes = [IsAuthenticated, ]
     serializer_class = TeamSerializer
     pagination_class = TeamPagination
     queryset = Team.objects.all()
@@ -117,7 +117,7 @@ class TeamInfoAPIView(GenericAPIView):
 
 
 class IncompleteTeamInfoListAPIView(GenericAPIView):
-    permission_classes = [IsAuthenticated,]
+    permission_classes = [IsAuthenticated, ]
     serializer_class = TeamInfoSerializer
     pagination_class = TeamPagination
     queryset = Team.objects.all()
@@ -129,7 +129,8 @@ class IncompleteTeamInfoListAPIView(GenericAPIView):
                                       self.get_queryset()
                                       )
                                ]
-        incomplete_teams = self.get_queryset().filter(id__in=incomplete_teams_id)
+        incomplete_teams = self.get_queryset().filter(
+            id__in=incomplete_teams_id)
         page = self.paginate_queryset(incomplete_teams)
         data = self.get_serializer(instance=page, many=True).data
         return self.get_paginated_response(
@@ -351,3 +352,17 @@ class SubmissionAPIView(GenericAPIView):
         except ValueError as e:
             return Response(data={'errors': [str(e)]},
                             status=status.HTTP_406_NOT_ACCEPTABLE)
+
+
+class TeamStatsAPIView(GenericAPIView):
+    permission_classes = (IsAuthenticated, HasTeam)
+
+    def get(self, request):
+        team = request.user.team
+        return Response(
+            data={
+                'wins': team.wins(),
+                'losses': team.losses(),
+                'draws': team.draws()
+            }
+        )

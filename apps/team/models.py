@@ -3,6 +3,7 @@ import logging
 
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
 from model_utils.models import UUIDModel, TimeStampedModel
@@ -36,6 +37,24 @@ class Team(UUIDModel, TimeStampedModel):
 
     def member_count(self):
         return self.members.count()
+
+    def wins(self):
+        return self.won_matches.count()
+
+    def losses(self):
+        from apps.challenge.models import Match
+
+        return Match.objects.filter(
+            Q(team1=self) | Q(team2=self)
+        ).exclude(winner=self).exclude(winner=None).count()
+
+    def draws(self):
+        from apps.challenge.models import Match
+
+        not_draws = self.wins() + self.losses()
+        return Match.objects.filter(
+            Q(team1=self) | Q(team2=self)
+        ).count() - not_draws
 
     def final_submission(self):
         return self.submissions.filter(
