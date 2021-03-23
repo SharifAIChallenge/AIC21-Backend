@@ -27,11 +27,11 @@ class Migration(migrations.Migration):
             name='team2_code',
             field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='matches_second', to='team.submission'),
         ),
-        migrations.AlterField(
-            model_name='matchinfo',
-            name='match_duration',
-            field=models.PositiveSmallIntegerField(blank=True, null=True),
-        ),
+        # migrations.AlterField(
+        #     model_name='matchinfo',
+        #     name='match_duration',
+        #     field=models.PositiveSmallIntegerField(blank=True, null=True),
+        # ),
         migrations.AlterField(
             model_name='matchinfo',
             name='team1_score',

@@ -14,11 +14,11 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterField(
-            model_name='matchinfo',
-            name='match_duration',
-            field=models.PositiveSmallIntegerField(),
-        ),
+        # migrations.AlterField(
+        #     model_name='matchinfo',
+        #     name='match_duration',
+        #     field=models.PositiveSmallIntegerField(),
+        # ),
         migrations.CreateModel(
             name='Clan',
             fields=[

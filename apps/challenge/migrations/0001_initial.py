@@ -102,7 +102,7 @@ class Migration(migrations.Migration):
                 ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, editable=False, verbose_name='modified')),
                 ('team1_score', models.PositiveIntegerField()),
                 ('team2_score', models.PositiveIntegerField()),
-                ('match_duration', models.DurationField()),
+                # ('match_duration', models.DurationField()),
                 ('map', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='match_info', to='challenge.map')),
                 ('match', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='match_info', to='challenge.match')),
             ],
