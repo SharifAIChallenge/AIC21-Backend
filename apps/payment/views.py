@@ -86,7 +86,8 @@ class PaymentVerifyAPIView(LoggingErrorsMixin, GenericAPIView):
 
                 return redirect(
                     f'https://aichallenge.ir/dashboard/payment'
-                    f'?ref_id={payment_request.ref_id}&stauts=100&desc=با موفقیت پرداخت شد')
+                    f'?ref_id={payment_request.ref_id}'
+                    f'&status=100&desc=با موفقیت پرداخت شد')
             if result.Status == 101:
                 return redirect(
                     f'https://aichallenge.ir/dashboard/payment'
