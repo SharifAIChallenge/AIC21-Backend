@@ -228,10 +228,15 @@ class UserWithoutTeamAPIView(GenericAPIView):
 
     def get(self, request):
 
-        result = self.get_serializer(self.get_queryset(), many=True).data
+        queryset = self.get_queryset()
+        page = self.paginate_queryset(queryset)
+        data = self.get_serializer(
+            instance=page,
+            many=True
+        ).data
 
         return self.get_paginated_response(
-            data={'data': result},
+            data={'data': data},
         )
 
     def get_queryset(self):
