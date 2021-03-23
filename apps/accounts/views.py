@@ -18,11 +18,13 @@ from rest_framework.response import Response
 from apps.accounts.models import MajorAPIConfig, Major
 from apps.accounts.paginations import UsersPagination
 from .permissions import ProfileComplete
-from .models import Profile, User, ResetPasswordToken, UniversityAPIConfig, University
+from .models import Profile, User, ResetPasswordToken, UniversityAPIConfig, \
+    University
 from .serializer import (
     UserSerializer, ProfileSerializer, EmailSerializer,
     UserViewSerializer, ChangePasswordSerializer,
-    ResetPasswordConfirmSerializer, GoogleLoginSerializer, UniversitySerializer, MajorSerializer)
+    ResetPasswordConfirmSerializer, GoogleLoginSerializer,
+    UniversitySerializer, MajorSerializer)
 
 __all__ = (
     'LoginAPIView', 'SignUpAPIView', 'ActivateAPIView', 'LogoutAPIView',
@@ -228,9 +230,9 @@ class UserWithoutTeamAPIView(GenericAPIView):
 
         result = self.get_serializer(self.get_queryset(), many=True).data
 
-        return Response({
-            "data": result,
-        }, status=status.HTTP_200_OK)
+        return self.get_paginated_response(
+            data={'data': result},
+        )
 
     def get_queryset(self):
         name = self.request.query_params.get('name')
@@ -301,6 +303,7 @@ class ProfileInfoAPIView(GenericAPIView):
 class UniversitySearchAPIView(GenericAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = UniversitySerializer
+
     def get(self, request):
         import requests
 
@@ -316,14 +319,17 @@ class UniversitySearchAPIView(GenericAPIView):
             headers=headers,
             data=payload.encode('utf-8')
         )
-        if(response.status_code == status.HTTP_200_OK):
+        if (response.status_code == status.HTTP_200_OK):
             for data in response.json()["data"]:
                 if not University.objects.all().filter(id=data["id"]).exists():
-                    University.objects.create(id=data["id"],name=data["name"],school_type=data["school_type"])
+                    University.objects.create(id=data["id"], name=data["name"],
+                                              school_type=data["school_type"])
             response = response.json()["data"]
         else:
-            universities = University.objects.filter(name__icontains=search_param).order_by('name')[:20]
-            response = self.get_serializer(instance=universities,many=True).data
+            universities = University.objects.filter(
+                name__icontains=search_param).order_by('name')[:20]
+            response = self.get_serializer(instance=universities,
+                                           many=True).data
         return Response(
             data={'data': response},
             status=status.HTTP_200_OK
@@ -333,6 +339,7 @@ class UniversitySearchAPIView(GenericAPIView):
 class MajorSearchAPIView(GenericAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = MajorSerializer
+
     def get(self, request):
         import requests
 
@@ -348,14 +355,15 @@ class MajorSearchAPIView(GenericAPIView):
             headers=headers,
             data={}
         )
-        if(response.status_code == status.HTTP_200_OK):
+        if (response.status_code == status.HTTP_200_OK):
             for data in response.json()["results"]:
                 if not Major.objects.all().filter(id=data["key"]).exists():
-                    Major.objects.create(id=data["key"],name=data["text"])
+                    Major.objects.create(id=data["key"], name=data["text"])
             response = response.json()["results"]
         else:
-            majors = Major.objects.filter(name__icontains=search_param).order_by('name')[:20]
-            response = self.get_serializer(instance=majors,many=True).data
+            majors = Major.objects.filter(
+                name__icontains=search_param).order_by('name')[:20]
+            response = self.get_serializer(instance=majors, many=True).data
         return Response(
             data={'data': response},
             status=status.HTTP_200_OK
