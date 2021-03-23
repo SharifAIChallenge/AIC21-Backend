@@ -7,6 +7,8 @@ from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.generics import GenericAPIView, get_object_or_404
 
+from rest_framework_tracking.mixins import LoggingErrorsMixin
+
 from apps.accounts.permissions import ProfileComplete
 from apps.team.paginations import TeamPagination
 from .models import Team, Invitation, Submission
@@ -19,7 +21,7 @@ from .serializers import (TeamSerializer, TeamInfoSerializer,
                           SubmissionSerializer, )
 
 
-class TeamAPIView(GenericAPIView):
+class TeamAPIView(LoggingErrorsMixin, GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = TeamSerializer
     parser_classes = [MultiPartParser, FormParser]
@@ -196,7 +198,7 @@ class TeamPendingInvitationListAPIView(GenericAPIView):
         )
 
 
-class UserAnswerInvitationAPIView(GenericAPIView):
+class UserAnswerInvitationAPIView(LoggingErrorsMixin, GenericAPIView):
     permission_classes = [IsAuthenticated, NoTeam]
     serializer_class = UserReceivedInvitationSerializer
     queryset = Invitation.objects.all()
@@ -227,7 +229,7 @@ class UserAnswerInvitationAPIView(GenericAPIView):
         return context
 
 
-class TeamAnswerInvitationAPIView(GenericAPIView):
+class TeamAnswerInvitationAPIView(LoggingErrorsMixin, GenericAPIView):
     permission_classes = [IsAuthenticated, HasTeam]
     serializer_class = TeamPendingInvitationSerializer
     queryset = Invitation.objects.all()
@@ -258,7 +260,7 @@ class TeamAnswerInvitationAPIView(GenericAPIView):
         return context
 
 
-class TeamSentInvitationListAPIView(GenericAPIView):
+class TeamSentInvitationListAPIView(LoggingErrorsMixin, GenericAPIView):
     permission_classes = [IsAuthenticated, HasTeam, ]
     serializer_class = TeamToUserInvitationSerializer
     queryset = Invitation.objects.all()
@@ -282,7 +284,7 @@ class TeamSentInvitationListAPIView(GenericAPIView):
         )
 
 
-class UserSentInvitationListAPIView(GenericAPIView):
+class UserSentInvitationListAPIView(LoggingErrorsMixin, GenericAPIView):
     permission_classes = [IsAuthenticated, NoTeam]
     serializer_class = UserToTeamInvitationSerializer
     queryset = Invitation.objects.all()
@@ -318,7 +320,7 @@ class SubmissionsListAPIView(GenericAPIView):
         return Response(data={'submissions': data}, status=status.HTTP_200_OK)
 
 
-class SubmissionAPIView(GenericAPIView):
+class SubmissionAPIView(LoggingErrorsMixin, GenericAPIView):
     queryset = Submission.objects.all()
     serializer_class = SubmissionSerializer
     permission_classes = (IsAuthenticated, HasTeam)

@@ -16,6 +16,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from apps.accounts.models import MajorAPIConfig, Major
+from apps.accounts.paginations import UsersPagination
 from .permissions import ProfileComplete
 from .models import Profile, User, ResetPasswordToken, UniversityAPIConfig, University
 from .serializer import (
@@ -221,6 +222,7 @@ class ResetPasswordConfirmAPIView(GenericAPIView):
 class UserWithoutTeamAPIView(GenericAPIView):
     permission_classes = [IsAuthenticated, ProfileComplete]
     serializer_class = UserViewSerializer
+    pagination_class = UsersPagination
 
     def get(self, request):
 
