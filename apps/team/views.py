@@ -4,7 +4,7 @@ from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.generics import GenericAPIView, get_object_or_404
 
 from rest_framework_tracking.mixins import LoggingErrorsMixin
@@ -24,7 +24,7 @@ from .serializers import (TeamSerializer, TeamInfoSerializer,
 class TeamAPIView(LoggingErrorsMixin, GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = TeamSerializer
-    parser_classes = [MultiPartParser, FormParser]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
     queryset = Team.objects.all()
 
     def get(self, request):
