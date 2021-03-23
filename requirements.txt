@@ -17,3 +17,5 @@ google-auth==1.26.1
 djangorestframework-simplejwt==4.6.0
 dj-rest-auth==2.1.3
 django-import-export==2.5.0
+zeep==4.0.0
+drf-api-tracking==1.7.8

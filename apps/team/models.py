@@ -27,6 +27,9 @@ class Team(UUIDModel, TimeStampedModel):
     creator = models.ForeignKey(to=User,
                                 on_delete=models.RESTRICT,
                                 related_name='created_teams')
+    level_one_payed = models.BooleanField(
+        default=False
+    )
 
     def is_complete(self):
         return self.members.count() == MAX_MEMBERS

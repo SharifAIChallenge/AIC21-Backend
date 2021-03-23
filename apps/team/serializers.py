@@ -25,7 +25,7 @@ class TeamSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Team
-        fields = ['name', 'image', 'members', 'creator']
+        fields = ['name', 'image', 'members', 'creator', 'level_one_payed']
 
     def create(self, data):
         current_user = self.context['request'].user

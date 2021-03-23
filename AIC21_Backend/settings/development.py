@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'apps.team',
     'apps.course',
     'apps.challenge',
+    'apps.payment',
     "dj_rest_auth",
     "allauth",
     "allauth.account",
@@ -173,7 +174,6 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 100,
 }
 
-
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
@@ -249,4 +249,7 @@ UPLOAD_PATHS = {
     'CLAN_IMAGE': 'clan/images/',
 }
 
-DOMAIN = 'X'
+DOMAIN = 'localhost:8000'
+ZARRIN_PAL_CLIENT = config('ZARRIN_PAL_CLIENT')
+ZARRIN_PAL_START_PAY = config('ZARRIN_PAL_START_PAY')
+MERCHANT_ID = config('MERCHANT_ID')
