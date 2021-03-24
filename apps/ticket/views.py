@@ -128,6 +128,7 @@ class ReplyAPIView(GenericAPIView):
 
 
 class TagAPIView(GenericAPIView):
+    permission_classes = (IsAuthenticated,)
     serializer_class = TagSerializer
     queryset = Tag.objects.all()
 
