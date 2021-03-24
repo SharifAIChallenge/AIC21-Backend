@@ -12,6 +12,11 @@ class Map(TimeStampedModel, UUIDModel):
         upload_to=settings.UPLOAD_PATHS["MAP"]
     )
     active = models.BooleanField(default=True)
+    infra_token = models.CharField(
+        max_length=256,
+        blank=True,
+        null=True
+    )
 
     @staticmethod
     def get_random_map():

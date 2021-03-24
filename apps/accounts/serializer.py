@@ -255,6 +255,9 @@ class GoogleLoginSerializer(serializers.ModelSerializer):
         validated_data['email'] = data['email']
 
         user = User.objects.filter(email=data['email']).last()
+        if not user.is_active:
+            user.is_active = True
+            user.save()
         if not user:
             validated_data['is_signup'] = True
             user = User.objects.create(
