@@ -69,7 +69,7 @@ class User(AbstractUser):
         )
         reset_password_token.save()
         context = {
-            'domain': 'aichallenge.sharif.edu',
+            'domain': settings.DOMAIN,
             'username': self.username,
             'uid': reset_password_token.uid,
             'token': reset_password_token.token,
