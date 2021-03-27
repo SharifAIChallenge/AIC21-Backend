@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
-from apps.ticket.models import Ticket
+from apps.ticket.models import Ticket, TicketStatus
 from apps.ticket.serializers import TicketSerializer
 
 
@@ -36,5 +36,12 @@ class TicketAPIView(GenericAPIView):
             status=status.HTTP_200_OK
         )
 
-    def post(self, request, ticket_id):
-        pass
+    def delete(self, request, ticket_id):
+        ticket = get_object_or_404(Ticket, id=ticket_id)
+
+        ticket.status = TicketStatus.CLOSED
+        ticket.save()
+
+        return Response(
+            status=status.HTTP_200_OK
+        )

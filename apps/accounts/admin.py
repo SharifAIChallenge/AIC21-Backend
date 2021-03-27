@@ -2,6 +2,10 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.utils.translation import gettext, gettext_lazy as _
 
+from import_export.admin import ImportExportModelAdmin
+
+
+from .resources import ProfileResource
 from .models import User, Profile, Skill, JobExperience, GoogleLogin, \
     UniversityAPIConfig, MajorAPIConfig, University, Major
 
@@ -40,7 +44,7 @@ class UserAdmin(DjangoUserAdmin):
 
 
 @admin.register(Profile)
-class ProfileAdmin(admin.ModelAdmin):
+class ProfileAdmin(ImportExportModelAdmin):
     inlines = (SkillInline, JobExperienceInline)
     list_display = ('id', 'firstname_fa', 'lastname_fa', 'birth_date',
                     'phone_number', 'university', 'major', 'university_degree')
@@ -48,6 +52,8 @@ class ProfileAdmin(admin.ModelAdmin):
 
     search_fields = ('email', 'firstname_fa', 'lastname_fa', 'major',
                      'phone_number', 'university')
+
+    resource_class = ProfileResource
 
 
 @admin.register(Skill)

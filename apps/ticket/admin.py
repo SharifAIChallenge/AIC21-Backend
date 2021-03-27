@@ -30,6 +30,9 @@ class ReplyAdmin(ModelAdmin):
         models.TextField: {'widget': AdminMartorWidget},
     }
 
+    list_display = ('id', 'user', 'status')
+    list_filter = ('status',)
+
 
 @admin.register(Tag)
 class TagAdmin(ModelAdmin):
