@@ -49,10 +49,10 @@ class UserTicketsListAPIView(GenericAPIView):
         serializer.is_valid(raise_exception=True)
         ticket = serializer.save()
 
-        telegram = TelegramInterface(
-            ticket=ticket,
-            reply=None
-        )
+        # telegram = TelegramInterface(
+        #     ticket=ticket,
+        #     reply=None
+        # )
 
         # telegram.send()
 
@@ -101,10 +101,10 @@ class ReplyListAPIView(GenericAPIView):
         serializer.is_valid(raise_exception=True)
         reply = serializer.save()
 
-        telegram = TelegramInterface(
-            ticket=reply.ticket,
-            reply=reply
-        )
+        # telegram = TelegramInterface(
+        #     ticket=reply.ticket,
+        #     reply=reply
+        # )
 
         # telegram.send()
 
