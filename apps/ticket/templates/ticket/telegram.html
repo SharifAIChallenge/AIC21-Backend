@@ -1,0 +1,51 @@
+{% if type %}
+Type: <b>{{ type | upper }}</b>
+{% endif %}
+<pre>
+</pre>
+
+{% if ticket_id %}
+<b>Ticket ID:</b> {{ ticket_id }}
+{% endif %}
+
+{% if reply_id %}
+<b>Reply ID:</b> {{ reply_id }}
+{% endif %}
+
+{% if author %}
+<b>Author:</b> {{ author }}
+{% endif %}
+
+{% if user %}
+<b>User:</b> {{ user }}
+{% endif %}
+
+{% if tag %}
+<b>Tag:</b>{{ tag }}
+{% endif %}
+
+{% if title %}
+<b>Title:</b> {{ title }}
+{% endif %}
+
+{% if status %}
+<b>status: </b>{{ status }}
+{% endif %}
+
+{% if parrent_ticket %}
+    <b>Ticket: </b>{{ ticket }}
+{% endif %}
+
+
+{% if url %}
+<b>Url: </b> {{ url }}
+{% endif %}
+
+{% if ticket_created %}
+<b> Ticket Created At: </b> {{ ticket_created }}
+{% endif %}
+
+{% if reply_created %}
+<b> Reply Created At: </b> {{ reply_created }}
+{% endif %}
+

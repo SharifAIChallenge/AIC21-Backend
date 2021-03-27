@@ -1,13 +1,19 @@
 from django.shortcuts import render
+from rest_framework.permissions import IsAuthenticated
+
 from apps.gamedoc.serializers import *
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework import status
 
+from apps.accounts.permissions import ProfileComplete
+
 
 # Create your views here.
 
 class GamedocAPIView(GenericAPIView):
+    permission_classes = (IsAuthenticated, ProfileComplete)
+
     serializer_class = GamedocSerializer
     queryset = Gamedoc.objects.all()
 
