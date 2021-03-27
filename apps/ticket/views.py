@@ -54,7 +54,7 @@ class UserTicketsListAPIView(GenericAPIView):
             reply=None
         )
 
-        telegram.send()
+        # telegram.send()
 
         return Response(
             data={"detail": "Your ticket has been submitted"},
@@ -106,7 +106,7 @@ class ReplyListAPIView(GenericAPIView):
             reply=reply
         )
 
-        telegram.send()
+        # telegram.send()
 
         return Response({"detail": "Your Reply has been submitted"})
 
