@@ -4,7 +4,6 @@ from django.utils.translation import gettext, gettext_lazy as _
 
 from import_export.admin import ImportExportModelAdmin
 
-
 from .resources import ProfileResource
 from .models import User, Profile, Skill, JobExperience, GoogleLogin, \
     UniversityAPIConfig, MajorAPIConfig, University, Major
@@ -50,7 +49,7 @@ class ProfileAdmin(ImportExportModelAdmin):
                     'phone_number', 'university', 'major', 'university_degree')
     list_filter = ('university', 'major', 'university_degree')
 
-    search_fields = ('email', 'firstname_fa', 'lastname_fa', 'major',
+    search_fields = ('firstname_fa', 'lastname_fa', 'major',
                      'phone_number', 'university')
 
     resource_class = ProfileResource
