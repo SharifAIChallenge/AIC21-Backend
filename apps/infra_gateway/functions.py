@@ -83,7 +83,7 @@ def run_match(match: Match):
         },
         headers={'Authorization': f'Token {settings.GATEWAY_AUTH_TOKEN}'}
     )
-    print(response.status_code, response.json(), "==== Upload Map ====")
+    print(response.status_code, response.json(), "==== Run Game ====")
 
     return response.json()['game_id']
 
@@ -96,3 +96,33 @@ def run_games(single_games, desired_map):
     :return: Returns the list of tokens and success status and errors assigned to the matches
     """
     pass
+
+
+def download_code(file_infra_token):
+    response = requests.get(
+        settings.GATEWAY_HOST + "/download/code",
+        params={
+            'code_id': file_infra_token
+        },
+        headers={'Authorization': f'Token {settings.GATEWAY_AUTH_TOKEN}'}
+    )
+    print(response.status_code, response.json(), "==== Download File ====")
+
+    return response.json()['url']
+
+
+def download_log(match_infra_token, file_infra_token=None):
+
+    params = {
+        'game_id': match_infra_token
+    }
+    if file_infra_token:
+        params['player_id'] = file_infra_token
+    response = requests.get(
+        settings.GATEWAY_HOST + "/download/code",
+        params=params,
+        headers={'Authorization': f'Token {settings.GATEWAY_AUTH_TOKEN}'}
+    )
+    print(response.status_code, response.json(), "==== Download File ====")
+
+    return response.json()['url']

@@ -37,6 +37,12 @@ class Match(TimeStampedModel):
                                    on_delete=models.CASCADE,
                                    related_name='matches')
 
+    infra_token = models.CharField(
+        max_length=256,
+        blank=True,
+        null=True
+    )
+
     @property
     def is_freeze(self):
         return self.status == MatchStatusTypes.FREEZE
@@ -47,9 +53,10 @@ class Match(TimeStampedModel):
 
     def run_match(self):
         from apps.infra_gateway.functions import run_match
-        run_match(
+        self.infra_token = run_match(
             match=self
         )
+        self.save()
 
     @staticmethod
     def run_matches(matches):
@@ -110,9 +117,11 @@ class Match(TimeStampedModel):
 
         if game_map is None:
             game_map = Map.get_random_map()
-        friendly_tournament = Tournament.objects.filter(type=TournamentTypes.FRIENDLY).first()
+        friendly_tournament = Tournament.objects.filter(
+            type=TournamentTypes.FRIENDLY).first()
 
         if friendly_tournament is None:
-            raise Exception("Admin should initialize a friendly tournament first ...")
+            raise Exception(
+                "Admin should initialize a friendly tournament first ...")
 
         Match.create_match(team1, team2, friendly_tournament, game_map)
