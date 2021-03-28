@@ -28,5 +28,5 @@ class DuplicatePendingInviteException(APIException):
 
 class NoFinalSubmission(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
-    default_detail = "team has no final submission"
+    default_detail = "target team has no final submission"
     default_code = "no_final_submission"
