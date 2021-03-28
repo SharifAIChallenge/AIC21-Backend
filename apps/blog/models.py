@@ -16,6 +16,7 @@ class Post(models.Model):
     google_calendar_link = models.URLField(max_length=512, blank=True,
                                            null=True)
     webinar_link = models.URLField(max_length=512, blank=True, null=True)
+    is_webinar = models.BooleanField(default=False)
 
     def __str__(self):
         return '%s, %s' % (self.title_en, self.title_fa)

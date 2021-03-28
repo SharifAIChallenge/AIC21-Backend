@@ -62,16 +62,18 @@ class TelegramInterface:
     def _send_message_bot(self, channel_id, message):
         with requests.Session() as session:
             session.proxies.update(proxies)
-            response = session.post(
-                f'https://api.telegram.org/bot{self.bot_token}/'
+            response = session.get(
+                f'{settings.TELEGRAM_HOST}/telegram/bot{self.bot_token}/'
                 f'sendMessage',
-                json={
+                params={
                     'chat_id': int(f'-100{channel_id}'),
                     'text': message,
-                    'parse_mode': 'HTML'
-                }
+                    'parse_mode': 'MarkdownV2'
+                },
+                headers={
+                    'Authorization': 'JhbGciOiJIUzsiYW5hbHl0aWNzX3NhdXJvbiJdLCJzY29wZSI6WyJyZWFkIiwiXJ2'}
             )
-            print(response.json(), response.text, response.status_code)
+            print(response.text, response.status_code)
 
     def _get_html_message(self, context):
         html = render_to_string('ticket/telegram.html', context=context)

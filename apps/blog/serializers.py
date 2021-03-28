@@ -37,7 +37,7 @@ class PostSerializer(serializers.ModelSerializer):
         fields = ['tags', 'num_comments', 'date', 'image',
                   'title_en', 'title_fa', 'text_en', 'text_fa',
                   'description_en', 'description_fa', 'aparats',
-                  'google_calendar_link', 'webinar_link']
+                  'google_calendar_link', 'webinar_link', 'is_webinar']
 
     def get_num_comments(self, obj):
         return obj.comments.count()
@@ -49,4 +49,4 @@ class PostDescriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ['id', 'tags', 'date', 'image', 'title_en',
-                  'title_fa', 'description_en', 'description_fa']
+                  'title_fa', 'description_en', 'description_fa', 'is_webinar']
