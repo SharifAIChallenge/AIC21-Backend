@@ -111,7 +111,7 @@ class LobbyAPIView(GenericAPIView):
     queryset = LobbyQueue.objects.all()
 
     def get(self, request):
-        # Such a shit :| ... do this with serializer later  
+        # Such a shit :| ... do this with serializer later
         lobby_queues = self.get_queryset()
         user_lobby_queues = request.user.team.lobby_queues.all()
         result = []
