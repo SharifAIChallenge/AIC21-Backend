@@ -141,3 +141,29 @@ class Match(TimeStampedModel):
                 "Admin should initialize a friendly tournament first ...")
 
         Match.create_match(team1, team2, friendly_tournament, game_map)
+
+    @property
+    def game_log(self):
+        from apps.infra_gateway.functions import download_log
+
+        return download_log(
+            match_infra_token=self.infra_token
+        )
+
+    @property
+    def team1_log(self):
+        from apps.infra_gateway.functions import download_log
+
+        return download_log(
+            match_infra_token=self.infra_token,
+            file_infra_token=self.match_info.team1_code
+        )
+
+    @property
+    def team2_log(self):
+        from apps.infra_gateway.functions import download_log
+
+        return download_log(
+            match_infra_token=self.infra_token,
+            file_infra_token=self.match_info.team2_code
+        )
