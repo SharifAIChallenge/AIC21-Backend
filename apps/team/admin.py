@@ -11,7 +11,7 @@ class TeamAdmin(ModelAdmin):
     formfield_overrides = {
         models.TextField: {'widget': AdminMartorWidget},
     }
-    pass
+    list_display = ('id', 'name', 'image', 'creator', 'level_one_payed')
 
 
 @admin.register(Invitation)

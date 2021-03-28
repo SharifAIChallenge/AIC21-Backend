@@ -1,4 +1,4 @@
-from .match import Match
+from .match import Match, MatchStatusTypes
 from .match_info import MatchInfo
 from .map import Map
 from .tournament import Tournament

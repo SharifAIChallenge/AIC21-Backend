@@ -6,7 +6,7 @@ from apps.challenge.models import Request
 class RequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = Request
-        fields = ('source_team', 'target_team', 'status', 'type')
+        fields = ('id', 'source_team', 'target_team', 'status', 'type')
         read_only_fields = ('source_team', 'status')
 
     def create(self, validated_data):

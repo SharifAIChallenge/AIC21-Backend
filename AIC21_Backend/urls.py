@@ -39,8 +39,11 @@ urlpatterns = [
     path('api/gamedoc/', include('apps.gamedoc.urls')),
     path('api/resources/', include('apps.resources.urls')),
     path('api/ticket/', include('apps.ticket.urls')),
+    path('api/payment/', include('apps.payment.urls')),
     path('api/courses/', include('apps.course.urls')),
     path('api/infra_gateway',include('apps.infra_gateway.urls'))
+    path('api/challenge/', include('apps.challenge.urls')),
+    path('api/ai-admin/', include('apps.ai_admin.urls'))
 ]
 
 # if settings.DEBUG:

@@ -4,11 +4,13 @@ from django.contrib.admin import ModelAdmin
 from .models import Resource, DownloadLink
 
 
-# Register your models here.
+class DownloadLinkInline(admin.StackedInline):
+    model = DownloadLink
+
 
 @admin.register(Resource)
 class ResourceAdmin(ModelAdmin):
-    pass
+    inlines = (DownloadLinkInline,)
 
 
 @admin.register(DownloadLink)

@@ -63,6 +63,8 @@ INSTALLED_APPS = [
     'apps.course',
     'apps.challenge',
     'apps.infra_gateway',
+    'apps.payment',
+    'apps.ai_admin',
     "dj_rest_auth",
     "allauth",
     "allauth.account",
@@ -70,6 +72,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
     'import_export',
+    'rest_framework_tracking',
 ]
 
 MIDDLEWARE = [
@@ -174,7 +177,6 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 100,
 }
 
-
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
@@ -249,3 +251,14 @@ UPLOAD_PATHS = {
     'MATCH_LOGS': 'match/logs/',
     'CLAN_IMAGE': 'clan/images/',
 }
+
+DOMAIN = 'localhost:8000'
+ZARRIN_PAL_CLIENT = config('ZARRIN_PAL_CLIENT')
+ZARRIN_PAL_START_PAY = config('ZARRIN_PAL_START_PAY')
+MERCHANT_ID = config('MERCHANT_ID')
+BOT_TOKEN = config('BOT_TOKEN')
+CHANNEL_ID = config('CHANNEL_ID')
+PROXY_PROTOCOL = config('PROXY_PROTOCOL')
+PROXY_HOST = config('PROXY_HOST')
+PROXY_PORT = config("PROXY_PORT")
+TELEGRAM_HOST = config('TELEGRAM_HOST')

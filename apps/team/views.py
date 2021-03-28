@@ -4,8 +4,10 @@ from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.generics import GenericAPIView, get_object_or_404
+
+from rest_framework_tracking.mixins import LoggingErrorsMixin
 
 from apps.accounts.permissions import ProfileComplete
 from apps.team.paginations import TeamPagination
@@ -19,10 +21,10 @@ from .serializers import (TeamSerializer, TeamInfoSerializer,
                           SubmissionSerializer, )
 
 
-class TeamAPIView(GenericAPIView):
+class TeamAPIView(LoggingErrorsMixin, GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = TeamSerializer
-    parser_classes = [MultiPartParser, FormParser]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
     queryset = Team.objects.all()
 
     def get(self, request):
@@ -74,12 +76,12 @@ class TeamAPIView(GenericAPIView):
         if self.request.method in ['PUT', 'GET', 'DELETE']:
             new_permissions += [HasTeam]
         if self.request.method == 'POST':
-            new_permissions += [NoTeam,ProfileComplete]
+            new_permissions += [NoTeam, ProfileComplete]
         return [permission() for permission in new_permissions]
 
 
 class TeamSearchAPIView(GenericAPIView):
-    permission_classes = [IsAuthenticated,]
+    permission_classes = [IsAuthenticated, ]
     serializer_class = TeamSerializer
     pagination_class = TeamPagination
     queryset = Team.objects.all()
@@ -117,24 +119,35 @@ class TeamInfoAPIView(GenericAPIView):
 
 
 class IncompleteTeamInfoListAPIView(GenericAPIView):
-    permission_classes = [IsAuthenticated,]
+    permission_classes = [IsAuthenticated, ]
     serializer_class = TeamInfoSerializer
     pagination_class = TeamPagination
     queryset = Team.objects.all()
     parser_classes = (MultiPartParser, FormParser)
 
-    def get(self, request):
+    def get(self, request, ):
         incomplete_teams_id = [team.id for team in
                                filter(lambda team: not team.is_complete(),
                                       self.get_queryset()
                                       )
                                ]
-        incomplete_teams = self.get_queryset().filter(id__in=incomplete_teams_id)
+        incomplete_teams = self.get_queryset().filter(
+            id__in=incomplete_teams_id)
         page = self.paginate_queryset(incomplete_teams)
         data = self.get_serializer(instance=page, many=True).data
         return self.get_paginated_response(
             data={'data': data}
         )
+
+    def get_queryset(self):
+        name = self.request.query_params.get('name')
+
+        queryset = Team.objects.all()
+
+        if name:
+            queryset = queryset.filter(name__icontains=name)
+
+        return queryset
 
 
 class UserReceivedPendingInvitationListAPIView(GenericAPIView):
@@ -185,7 +198,7 @@ class TeamPendingInvitationListAPIView(GenericAPIView):
         )
 
 
-class UserAnswerInvitationAPIView(GenericAPIView):
+class UserAnswerInvitationAPIView(LoggingErrorsMixin, GenericAPIView):
     permission_classes = [IsAuthenticated, NoTeam]
     serializer_class = UserReceivedInvitationSerializer
     queryset = Invitation.objects.all()
@@ -216,7 +229,7 @@ class UserAnswerInvitationAPIView(GenericAPIView):
         return context
 
 
-class TeamAnswerInvitationAPIView(GenericAPIView):
+class TeamAnswerInvitationAPIView(LoggingErrorsMixin, GenericAPIView):
     permission_classes = [IsAuthenticated, HasTeam]
     serializer_class = TeamPendingInvitationSerializer
     queryset = Invitation.objects.all()
@@ -247,7 +260,7 @@ class TeamAnswerInvitationAPIView(GenericAPIView):
         return context
 
 
-class TeamSentInvitationListAPIView(GenericAPIView):
+class TeamSentInvitationListAPIView(LoggingErrorsMixin, GenericAPIView):
     permission_classes = [IsAuthenticated, HasTeam, ]
     serializer_class = TeamToUserInvitationSerializer
     queryset = Invitation.objects.all()
@@ -271,7 +284,7 @@ class TeamSentInvitationListAPIView(GenericAPIView):
         )
 
 
-class UserSentInvitationListAPIView(GenericAPIView):
+class UserSentInvitationListAPIView(LoggingErrorsMixin, GenericAPIView):
     permission_classes = [IsAuthenticated, NoTeam]
     serializer_class = UserToTeamInvitationSerializer
     queryset = Invitation.objects.all()
@@ -298,7 +311,7 @@ class UserSentInvitationListAPIView(GenericAPIView):
 class SubmissionsListAPIView(GenericAPIView):
     queryset = Submission.objects.all()
     serializer_class = SubmissionSerializer
-    permission_classes = (HasTeam,)
+    permission_classes = (IsAuthenticated, HasTeam)
 
     def get(self, request):
         data = self.get_serializer(
@@ -307,10 +320,10 @@ class SubmissionsListAPIView(GenericAPIView):
         return Response(data={'submissions': data}, status=status.HTTP_200_OK)
 
 
-class SubmissionAPIView(GenericAPIView):
+class SubmissionAPIView(LoggingErrorsMixin, GenericAPIView):
     queryset = Submission.objects.all()
     serializer_class = SubmissionSerializer
-    permission_classes = (HasTeam,)
+    permission_classes = (IsAuthenticated, HasTeam)
 
     def get(self, request):
         data = self.get_serializer(
@@ -341,3 +354,42 @@ class SubmissionAPIView(GenericAPIView):
         except ValueError as e:
             return Response(data={'errors': [str(e)]},
                             status=status.HTTP_406_NOT_ACCEPTABLE)
+
+
+class TeamStatsAPIView(GenericAPIView):
+    permission_classes = (IsAuthenticated, HasTeam)
+
+    def get(self, request):
+        team = request.user.team
+        return Response(
+            data={
+                'wins': team.wins(),
+                'losses': team.losses(),
+                'draws': team.draws()
+            }
+        )
+
+
+class ALlTeamsAPIView(GenericAPIView):
+    permission_classes = [IsAuthenticated, ]
+    serializer_class = TeamInfoSerializer
+    pagination_class = TeamPagination
+    queryset = Team.objects.all()
+    parser_classes = (MultiPartParser, FormParser)
+
+    def get(self, request):
+        page = self.paginate_queryset(self.get_queryset())
+        data = self.get_serializer(instance=page, many=True).data
+        return self.get_paginated_response(
+            data={'data': data}
+        )
+
+    def get_queryset(self):
+        name = self.request.query_params.get('name')
+
+        queryset = Team.objects.all()
+
+        if name:
+            queryset = queryset.filter(name__icontains=name)
+
+        return queryset

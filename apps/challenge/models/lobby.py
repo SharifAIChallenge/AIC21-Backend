@@ -18,7 +18,6 @@ class LobbyQueue(TimeStampedModel):
     game_type = models.CharField(
         max_length=50,
         choices=LobbyTypes.TYPES,
-        default=LobbyTypes.FRIENDLY_MATCH
     )
 
     def get_lobby_population(self):

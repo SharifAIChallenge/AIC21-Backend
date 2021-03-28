@@ -6,12 +6,14 @@ from apps.team.views import TeamAPIView, TeamSearchAPIView, TeamInfoAPIView, \
     UserReceivedResolvedInvitationListAPIView \
     , TeamSentInvitationListAPIView, UserAnswerInvitationAPIView, \
     UserSentInvitationListAPIView, TeamPendingInvitationListAPIView, \
-    TeamAnswerInvitationAPIView, SubmissionAPIView, SubmissionsListAPIView
+    TeamAnswerInvitationAPIView, SubmissionAPIView, SubmissionsListAPIView, \
+    TeamStatsAPIView, ALlTeamsAPIView
 
 app_name = 'team'
 
 urlpatterns = [
     path('', view=TeamAPIView.as_view(), name="team_operations"),
+    path('stats', view=TeamStatsAPIView.as_view(), name='team_stats'),
     path('search', view=TeamSearchAPIView.as_view(), name="team_search"),
     path('incomplete', view=IncompleteTeamInfoListAPIView.as_view(),
          name="get_incomplete_teams"),
@@ -34,10 +36,11 @@ urlpatterns = [
          name="user_sent_invitation_list"),
     path('invitations/team_sent', view=TeamSentInvitationListAPIView.as_view(),
          name="team_sent_invitation_list"),
-    path('<str:team_id>', view=TeamInfoAPIView.as_view(), name="get_team"),
     path('submission', view=SubmissionAPIView.as_view(), name='submission'),
     path('submission/<int:submission_id>', view=SubmissionAPIView.as_view(),
          name='update_submission'),
     path('submissions', view=SubmissionsListAPIView.as_view(),
-         name='submissions_list')
+         name='submissions_list'),
+    path('all-teams', view=ALlTeamsAPIView.as_view(), name='all_teams_list'),
+    path('<str:team_id>', view=TeamInfoAPIView.as_view(), name="get_team"),
 ]

@@ -1,0 +1,49 @@
+{% if type %}
+* Type:* {{ type | upper }}
+{% endif %}
+
+{% if ticket_id %}
+* Ticket ID:* {{ ticket_id }}
+{% endif %}
+
+{% if reply_id %}
+* Reply ID:* {{ reply_id }}
+{% endif %}
+
+{% if author %}
+* Author:* {{ author }}
+{% endif %}
+
+{% if user %}
+* User:* {{ user }}
+{% endif %}
+
+{% if tag %}
+* Tag:*{{ tag }}
+{% endif %}
+
+{% if title %}
+* Title:* {{ title }}
+{% endif %}
+
+{% if status %}
+* Status: *{{ status }}
+{% endif %}
+
+{% if parrent_ticket %}
+    * Ticket: *{{ ticket }}
+{% endif %}
+
+
+{% if url %}
+* Url: * {{ url }}
+{% endif %}
+
+{% if ticket_created %}
+* Ticket Created At: * {{ ticket_created }}
+{% endif %}
+
+{% if reply_created %}
+* Reply Created At: * {{ reply_created }}
+{% endif %}
+

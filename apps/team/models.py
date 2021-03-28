@@ -3,6 +3,7 @@ import logging
 
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
 from model_utils.models import UUIDModel, TimeStampedModel
@@ -26,6 +27,9 @@ class Team(UUIDModel, TimeStampedModel):
     creator = models.ForeignKey(to=User,
                                 on_delete=models.RESTRICT,
                                 related_name='created_teams')
+    level_one_payed = models.BooleanField(
+        default=False
+    )
 
     def is_complete(self):
         return self.members.count() == MAX_MEMBERS
@@ -37,8 +41,31 @@ class Team(UUIDModel, TimeStampedModel):
     def member_count(self):
         return self.members.count()
 
-def __str__(self):
-    return '%s' % self.name
+    def wins(self):
+        return self.won_matches.count()
+
+    def losses(self):
+        from apps.challenge.models import Match
+
+        return Match.objects.filter(
+            Q(team1=self) | Q(team2=self)
+        ).exclude(winner=self).exclude(winner=None).count()
+
+    def draws(self):
+        from apps.challenge.models import Match
+
+        not_draws = self.wins() + self.losses()
+        return Match.objects.filter(
+            Q(team1=self) | Q(team2=self)
+        ).count() - not_draws
+
+    def final_submission(self):
+        return self.submissions.filter(
+            is_final=True
+        ).last()
+
+    def __str__(self):
+        return '%s' % self.name
 
 
 class InvitationTypes:
@@ -148,7 +175,9 @@ class Submission(models.Model):
         self.save()
 
     def handle(self):
-        handle_submission.delay(self.id)
+        # handle_submission.delay(self.id)
+        # handle_submission(self.id)
+        pass
 
     def upload(self):
 
