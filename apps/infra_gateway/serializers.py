@@ -15,12 +15,12 @@ class InfraEventPushSerializer(serializers.ModelSerializer):
 
         if 100 <= status_code < 200:  # Code compile range
             if status_code == 100:
-                 Submission.update_submission(
+                Submission.update_submission(
                     infra_token=validated_data.get('token'),
                     status=SubmissionStatusTypes.COMPILED
                 )
             elif status_code == 102:
-                Match.update_match(
+                Submission.update_submission(
                     infra_token=validated_data.get('token'),
                     status=SubmissionStatusTypes.FAILED
                 )

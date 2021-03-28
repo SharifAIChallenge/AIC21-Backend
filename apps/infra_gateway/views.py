@@ -12,7 +12,6 @@ from apps.team.models import Submission
 from .serializers import InfraEventPush
 
 
-
 class InfraEventPushAPIView(GenericAPIView):
     serializer_class = InfraEventPush
     permission_classes = (IsInfra,)
