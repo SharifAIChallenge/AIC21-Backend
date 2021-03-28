@@ -2,7 +2,18 @@ from django.contrib import admin
 from django.contrib.admin import ModelAdmin
 
 # Register your models here.
-from apps.challenge.models import Tournament, LevelBasedTournament, Map, Scoreboard, ScoreboardRow
+from apps.challenge.models import Tournament, LevelBasedTournament, Map, \
+    Scoreboard, ScoreboardRow, Match, MatchInfo
+
+
+@admin.register(Match)
+class MatchAdmin(ModelAdmin):
+    pass
+
+
+@admin.register(MatchInfo)
+class MatchInfoAdmin(ModelAdmin):
+    pass
 
 
 @admin.register(Tournament)

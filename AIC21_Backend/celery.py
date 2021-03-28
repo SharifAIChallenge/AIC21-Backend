@@ -12,7 +12,7 @@ from celery.signals import setup_logging
 os.environ.setdefault('DJANGO_SETTINGS_MODULE',
                       'AIC21_Backend.settings.production')
 app = Celery(main='AIC21_Backend',
-             broker='amqp://aic:shitWasHereBe4me@rabbitmq:5672')
+             broker='amqp://aic:aic21challenge@rabbitmq:5672')
 app.config_from_object('django.conf:settings')
 
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
