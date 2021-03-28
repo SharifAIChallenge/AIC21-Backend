@@ -5,12 +5,13 @@ from rest_framework.generics import GenericAPIView, get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status
 
+from apps.challenge.models import Match
 from apps.infra_gateway.permissions import IsInfra
 from apps.infra_gateway.serializers import CompiledSubmissionSerializer
 from apps.team.models import Submission
 
 
-class UpdateSubmissionAPIView(GenericAPIView):
+class SubmissionCallbackAPIView(GenericAPIView):
     queryset = Submission.objects.all()
     serializer_class = CompiledSubmissionSerializer
     permission_classes = (IsInfra,)
@@ -29,3 +30,6 @@ class UpdateSubmissionAPIView(GenericAPIView):
             status=status.HTTP_200_OK
         )
 
+class MatchCallbackAPIView(GenericAPIView):
+    queryset = Match.objects.all()
+    # serializer_class = MatchSerializer

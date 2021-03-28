@@ -33,6 +33,8 @@ class Match(TimeStampedModel):
                                blank=True)
     log = models.FileField(upload_to=settings.UPLOAD_PATHS['MATCH_LOGS'],
                            null=True, blank=True)
+    log_file_token = models.CharField(max_length=256,null=True,blank=True)
+    match_token = models.CharField(max_length=256,null=True,blank=True)
     tournament = models.ForeignKey(to='challenge.Tournament',
                                    on_delete=models.CASCADE,
                                    related_name='matches')
