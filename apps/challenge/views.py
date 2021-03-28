@@ -8,7 +8,8 @@ from rest_framework import status
 
 from apps.challenge.models import LobbyQueue, RequestStatusTypes, \
     LevelBasedTournament, Match, Scoreboard, ScoreboardRow, Tournament
-from apps.challenge.serializers import LobbyQueueSerializer, ScoreboardSerializer, ScoreboardRowSerializer
+from apps.challenge.serializers import LobbyQueueSerializer, ScoreboardSerializer, ScoreboardRowSerializer, \
+    MatchSerializer
 from apps.challenge.services.lobby import LobbyService
 from apps.team.permissions import HasTeam, TeamHasFinalSubmission
 
@@ -19,6 +20,7 @@ from .serializers.level_based_tournament import \
     LevelBasedTournamentAddTeamsSerializer
 from .serializers.tournament import LevelBasedTournamentUpdateSerializer
 from ..paginations import ScoreboardRowPagination
+from django.db.models import Q
 
 
 class RequestAPIView(GenericAPIView):
@@ -216,3 +218,20 @@ class LevelBasedTournamentAddTeamsAPIView(GenericAPIView):
         serializer.save()
 
         return Response(data="OK", status=status.HTTP_200_OK)
+
+
+class MatchAPIView(GenericAPIView):
+    permission_classes = [IsAuthenticated, HasTeam]
+    serializer_class = MatchSerializer
+    queryset = Match.objects.all()
+
+    def get(self, request):
+        data = self.get_serializer(
+            instance=self.get_queryset().filter(Q(team1=request.user.team) | Q(team2=request.user.team)),
+            many=True
+        ).data
+
+        return Response(
+            data={'data': data},
+            status=status.HTTP_200_OK
+        )
