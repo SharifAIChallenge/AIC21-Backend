@@ -8,7 +8,8 @@ from rest_framework import status
 
 from apps.challenge.models import LobbyQueue, RequestStatusTypes, \
     LevelBasedTournament, Match, Scoreboard, ScoreboardRow, Tournament
-from apps.challenge.serializers import LobbyQueueSerializer, ScoreboardSerializer, ScoreboardRowSerializer, \
+from apps.challenge.serializers import LobbyQueueSerializer, \
+    ScoreboardSerializer, ScoreboardRowSerializer, \
     MatchSerializer
 from apps.challenge.services.lobby import LobbyService
 from apps.team.permissions import HasTeam, TeamHasFinalSubmission
@@ -114,21 +115,27 @@ class LobbyAPIView(GenericAPIView):
 
     def get(self, request):
         # Such a shit :| ... do this with serializer later
-        lobby_queues = self.get_queryset()
-        user_lobby_queues = request.user.team.lobby_queues.all()
-        result = []
-        for lobby_q in lobby_queues:
-            population = lobby_q.get_lobby_population()
-            result.append({
-                'type': lobby_q.game_type,
-                'population': population,
-                'remaining_space': max(0,
-                                       lobby_q.get_lobby_size() - population),
-                'is_joined': lobby_q in user_lobby_queues,
-            })
+        # lobby_queues = self.get_queryset()
+        # user_lobby_queues = request.user.team.lobby_queues.all()
+        # result = []
+        # for lobby_q in lobby_queues:
+        #     population = lobby_q.get_lobby_population()
+        #     result.append({
+        #         'type': lobby_q.game_type,
+        #         'population': population,
+        #         'remaining_space': max(0,
+        #                                lobby_q.get_lobby_size() - population),
+        #         'is_joined': lobby_q in user_lobby_queues,
+        #     })
+
+        lobby_queues = request.user.team.lobby_queues.all()
+        data = self.get_serializer(
+            instance=lobby_queues,
+            many=True
+        ).data
 
         return Response(data={
-            'data': result
+            'data': data
         }, status=status.HTTP_200_OK)
 
     def post(self, request):
@@ -148,7 +155,8 @@ class ScoreboardAPIView(GenericAPIView):
     queryset = ScoreboardRow.objects.all()
 
     def get(self, request, tournament_id):
-        scoreboard_rows = self.get_queryset().filter(scoreboard__tournament_id=tournament_id)
+        scoreboard_rows = self.get_queryset().filter(
+            scoreboard__tournament_id=tournament_id)
         page = self.paginate_queryset(scoreboard_rows)
         data = self.get_serializer(instance=page, many=True).data
 
@@ -159,7 +167,8 @@ class ScoreboardAPIView(GenericAPIView):
 
 class FriendlyScoreboardAPIView(GenericAPIView):
     def get(self, request):
-        return ScoreboardAPIView.as_view()(request._request, Tournament.get_friendly_tournament().id)
+        return ScoreboardAPIView.as_view()(request._request,
+                                           Tournament.get_friendly_tournament().id)
 
 
 class TournamentAPIView(GenericAPIView):
@@ -227,7 +236,8 @@ class MatchAPIView(GenericAPIView):
 
     def get(self, request):
         data = self.get_serializer(
-            instance=self.get_queryset().filter(Q(team1=request.user.team) | Q(team2=request.user.team)),
+            instance=self.get_queryset().filter(
+                Q(team1=request.user.team) | Q(team2=request.user.team)),
             many=True
         ).data
 
