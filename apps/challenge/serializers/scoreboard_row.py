@@ -9,4 +9,4 @@ class ScoreboardRowSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ScoreboardRow
-        fields = ('team', 'score', 'wins', 'losses', 'draws', 'team_name')
+        fields = ('team', 'score', 'wins', 'losses', 'draws')
