@@ -36,10 +36,10 @@ urlpatterns = [
          name="user_sent_invitation_list"),
     path('invitations/team_sent', view=TeamSentInvitationListAPIView.as_view(),
          name="team_sent_invitation_list"),
-    path('<str:team_id>', view=TeamInfoAPIView.as_view(), name="get_team"),
     path('submission', view=SubmissionAPIView.as_view(), name='submission'),
     path('submission/<int:submission_id>', view=SubmissionAPIView.as_view(),
          name='update_submission'),
+    path('<str:team_id>', view=TeamInfoAPIView.as_view(), name="get_team"),
     path('submissions', view=SubmissionsListAPIView.as_view(),
          name='submissions_list')
 ]
