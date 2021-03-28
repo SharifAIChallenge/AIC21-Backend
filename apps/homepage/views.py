@@ -2,9 +2,12 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.generics import GenericAPIView
 
+from apps.accounts.models import Profile
+from apps.challenge.models import Match
 from apps.homepage.serializers import SubscribeSerializer
 from apps.staff.models import Staff
 from apps.staff.serializers import StaffSerializer
+from apps.team.models import Submission, Team
 from .models import Intro, TimelineEvent, Prize, Stats, Sponsor, WhyThisEvent, \
     Quote, Motto, Media, SocialMedia, Rule, GoogleAddEventToCalender
 
@@ -92,7 +95,25 @@ class StatView(GenericAPIView):
 
     def get(self, request):
         data = {
-            'data': StatSerializer(Stats.objects.all(), many=True).data
+            'data': [{
+                'title': 'نبرد',
+                'icon': 'mdi-sword-cross',
+                'stat': Match.objects.count(),
+            }, {
+                'title': 'ارسال کد',
+                'icon': 'mdi-code-braces-box',
+                'stat': Submission.objects.count(),
+            }, {
+                'title': 'تیم',
+                'icon': 'mdi-account-group',
+                'stat': Team.objects.count(),
+            }, {
+                'title': 'شرکت‌کننده',
+                'icon': 'mdi-clipboard-account',
+                'stat': Profile.objects.count(),
+            },
+
+            ]
         }
         return Response(data)
 
