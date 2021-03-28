@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from apps.challenge.models import LobbyQueue, RequestStatusTypes, \
-    LevelBasedTournament, Match, Scoreboard, ScoreboardRow
+    LevelBasedTournament, Match, Scoreboard, ScoreboardRow, Tournament
 from apps.challenge.serializers import LobbyQueueSerializer, ScoreboardSerializer, ScoreboardRowSerializer
 from apps.challenge.services.lobby import LobbyService
 from apps.team.permissions import HasTeam, TeamHasFinalSubmission
@@ -153,6 +153,11 @@ class ScoreboardAPIView(GenericAPIView):
         return self.get_paginated_response(
             data={'data': data}
         )
+
+
+class FriendlyScoreboardAPIView(GenericAPIView):
+    def get(self, request):
+        return ScoreboardAPIView.as_view()(request._request, Tournament.get_friendly_tournament().id)
 
 
 class TournamentAPIView(GenericAPIView):
