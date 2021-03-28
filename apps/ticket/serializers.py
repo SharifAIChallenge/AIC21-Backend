@@ -39,6 +39,28 @@ class ReplySerializer(serializers.ModelSerializer):
         return Reply.objects.create(**validated_data)
 
 
+class LimitedTicketSerializer(serializers.ModelSerializer):
+    num_replies = serializers.SerializerMethodField(read_only=True)
+
+    @staticmethod
+    def get_num_replies(obj):
+        return obj.replies.count()
+
+    class Meta:
+        model = Ticket
+        fields = ('num_replies', 'created', 'tag', 'id',
+                  'title', 'status', 'is_public')
+        read_only_fields = ('created', 'replies', 'num_replies', 'author')
+
+    def to_representation(self, instance: Ticket):
+        data = super().to_representation(instance)
+        data['tag'] = TagSerializer(
+            instance=instance.tag
+        ).data
+
+        return data
+
+
 class TicketSerializer(serializers.ModelSerializer):
     replies = ReplySerializer(many=True, read_only=True)
     author = TicketUserSerializer(read_only=True)

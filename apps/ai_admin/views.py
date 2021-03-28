@@ -5,7 +5,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
 from apps.ticket.models import Ticket, TicketStatus
-from apps.ticket.serializers import TicketSerializer
+from apps.ticket.serializers import TicketSerializer, LimitedTicketSerializer
 
 
 class TicketAPIView(GenericAPIView):
@@ -15,7 +15,7 @@ class TicketAPIView(GenericAPIView):
     queryset = Ticket.objects.all()
 
     def get(self, request):
-        data = self.get_serializer(
+        data = LimitedTicketSerializer(
             instance=self.get_queryset(),
             many=True
         ).data

@@ -8,7 +8,7 @@ from apps.accounts.permissions import ProfileComplete
 from apps.core.utils import send_to_telegram
 from apps.ticket import paginations
 from apps.ticket.models import Tag
-from apps.ticket.serializers import TagSerializer
+from apps.ticket.serializers import TagSerializer, LimitedTicketSerializer
 
 from .models import Ticket, Reply
 from .serializers import TicketSerializer, ReplySerializer
@@ -64,7 +64,7 @@ class UserTicketsListAPIView(GenericAPIView):
         tickets = Ticket.objects.filter(
             author=request.user
         )
-        data = self.get_serializer(instance=tickets, many=True).data
+        data = LimitedTicketSerializer(instance=tickets, many=True).data
 
         return Response(
             data={'data': data},
@@ -77,7 +77,7 @@ class PublicTicketsListAPIView(GenericAPIView):
 
     def get(self, request):
         tickets = Ticket.objects.filter(is_public=True)
-        data = self.get_serializer(instance=tickets, many=True).data
+        data = LimitedTicketSerializer(instance=tickets, many=True).data
         return Response(
             data={'data': data},
             status=status.HTTP_200_OK
