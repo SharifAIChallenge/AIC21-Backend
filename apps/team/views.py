@@ -125,7 +125,7 @@ class IncompleteTeamInfoListAPIView(GenericAPIView):
     queryset = Team.objects.all()
     parser_classes = (MultiPartParser, FormParser)
 
-    def get(self, request):
+    def get(self, request, ):
         incomplete_teams_id = [team.id for team in
                                filter(lambda team: not team.is_complete(),
                                       self.get_queryset()
@@ -368,3 +368,28 @@ class TeamStatsAPIView(GenericAPIView):
                 'draws': team.draws()
             }
         )
+
+
+class ALlTeamsAPIView(GenericAPIView):
+    permission_classes = [IsAuthenticated, ]
+    serializer_class = TeamInfoSerializer
+    pagination_class = TeamPagination
+    queryset = Team.objects.all()
+    parser_classes = (MultiPartParser, FormParser)
+
+    def get(self, request):
+        page = self.paginate_queryset(self.get_queryset())
+        data = self.get_serializer(instance=page, many=True).data
+        return self.get_paginated_response(
+            data={'data': data}
+        )
+
+    def get_queryset(self):
+        name = self.request.query_params.get('name')
+
+        queryset = Team.objects.all()
+
+        if name:
+            queryset = queryset.filter(name__icontains=name)
+
+        return queryset

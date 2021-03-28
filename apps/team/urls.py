@@ -7,7 +7,7 @@ from apps.team.views import TeamAPIView, TeamSearchAPIView, TeamInfoAPIView, \
     , TeamSentInvitationListAPIView, UserAnswerInvitationAPIView, \
     UserSentInvitationListAPIView, TeamPendingInvitationListAPIView, \
     TeamAnswerInvitationAPIView, SubmissionAPIView, SubmissionsListAPIView, \
-    TeamStatsAPIView
+    TeamStatsAPIView, ALlTeamsAPIView
 
 app_name = 'team'
 
@@ -39,7 +39,8 @@ urlpatterns = [
     path('submission', view=SubmissionAPIView.as_view(), name='submission'),
     path('submission/<int:submission_id>', view=SubmissionAPIView.as_view(),
          name='update_submission'),
-    path('<str:team_id>', view=TeamInfoAPIView.as_view(), name="get_team"),
     path('submissions', view=SubmissionsListAPIView.as_view(),
-         name='submissions_list')
+         name='submissions_list'),
+    path('all-teams', view=ALlTeamsAPIView.as_view(), name='all_teams_list'),
+    path('<str:team_id>', view=TeamInfoAPIView.as_view(), name="get_team"),
 ]
