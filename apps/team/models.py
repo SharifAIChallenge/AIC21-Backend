@@ -7,6 +7,7 @@ from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
 from model_utils.models import UUIDModel, TimeStampedModel
+from rest_framework.generics import get_object_or_404
 
 from apps.infra_gateway import functions
 from .tasks import handle_submission
@@ -194,3 +195,12 @@ class Submission(models.Model):
         else:
             logger.error(result[0][self.infra_token]['errors'])
         self.save()
+
+    @classmethod
+    def update_submission(cls, infra_token, status):
+        submission = get_object_or_404(cls, infra_token=infra_token)
+
+        submission.status = status
+        submission.save()
+
+        return submission

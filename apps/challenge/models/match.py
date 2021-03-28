@@ -1,12 +1,14 @@
 from django.db import models
 from model_utils.models import TimeStampedModel
 from django.conf import settings
+from rest_framework.generics import get_object_or_404
 
 from apps.challenge.models.tournament import TournamentTypes
 
 
 class MatchStatusTypes:
     FREEZE = 'freeze'
+    PENDING = 'pending'
     FAILED = 'failed'
     SUCCESSFUL = 'successful'
     RUNNING = 'running'
@@ -14,7 +16,8 @@ class MatchStatusTypes:
         (FAILED, 'Failed'),
         (SUCCESSFUL, 'Successful'),
         (RUNNING, 'Running'),
-        (FREEZE, 'Freeze')
+        (FREEZE, 'Freeze'),
+        (PENDING, 'pending')
     )
 
 
@@ -26,18 +29,19 @@ class Match(TimeStampedModel):
     status = models.CharField(
         max_length=50,
         choices=MatchStatusTypes.TYPES,
-        default=MatchStatusTypes.RUNNING
+        default=MatchStatusTypes.PENDING
     )
     winner = models.ForeignKey(to='team.Team', on_delete=models.CASCADE,
                                related_name='won_matches', null=True,
                                blank=True)
     log = models.FileField(upload_to=settings.UPLOAD_PATHS['MATCH_LOGS'],
                            null=True, blank=True)
-    log_file_token = models.CharField(max_length=256,null=True,blank=True)
-    match_token = models.CharField(max_length=256,null=True,blank=True)
-    tournament = models.ForeignKey(to='challenge.Tournament',
-                                   on_delete=models.CASCADE,
-                                   related_name='matches')
+    log_file_token = models.CharField(max_length=256, null=True, blank=True)
+    tournament = models.ForeignKey(
+        to='challenge.Tournament',
+        on_delete=models.CASCADE,
+        related_name='matches'
+    )
 
     infra_token = models.CharField(
         max_length=256,
@@ -52,6 +56,16 @@ class Match(TimeStampedModel):
     @property
     def is_finished(self):
         return self.status == MatchStatusTypes.SUCCESSFUL
+
+    @classmethod
+    def update_match(cls, infra_token, status):
+        match = get_object_or_404(
+            cls, infra_token=infra_token
+        )
+        match.status = status
+        match.save()
+
+        return match
 
     def run_match(self):
         from apps.infra_gateway.functions import run_match

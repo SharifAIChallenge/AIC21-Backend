@@ -1,17 +1,46 @@
 from rest_framework import serializers
 
-from apps.challenge.models import Match
-from apps.team.models import Submission
+from apps.challenge.models import Match, MatchStatusTypes
+from apps.team.models import Submission, SubmissionStatusTypes
+from .models import InfraEventPush, EventStatusCodeTypes
 
 
-class CompiledSubmissionSerializer(serializers.ModelSerializer):
-
+class InfraEventPushSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Submission
-        fields = ['infra_compile_message', 'status','infra_compile_token']
+        model = InfraEventPush
+        fields = ('title', 'token', 'status_code', 'message_body')
 
-class MatchSerializer(serializers.ModelSerializer):
+    def create(self, validated_data):
+        status_code = validated_data.get('status_code')
 
-    class Meta:
-        model = Match
-        fields = ['status','log_file_token']
+        if 100 <= status_code < 200:  # Code compile range
+            if status_code == 100:
+                 Submission.update_submission(
+                    infra_token=validated_data.get('token'),
+                    status=SubmissionStatusTypes.COMPILED
+                )
+            elif status_code == 102:
+                Match.update_match(
+                    infra_token=validated_data.get('token'),
+                    status=SubmissionStatusTypes.FAILED
+                )
+
+        elif 400 <= status_code < 500:  # File transfer range
+            pass
+
+        elif 500 <= status_code < 600:  # Match status range
+            if status_code == 500:
+                Match.update_match(
+                    infra_token=validated_data.get('token'),
+                    status=MatchStatusTypes.RUNNING
+                )
+            elif status_code == 502:
+                Match.update_match(
+                    infra_token=validated_data.get('token'),
+                    status=MatchStatusTypes.FAILED
+                )
+            elif status_code == 504:
+                Match.update_match(
+                    infra_token=validated_data.get('token'),
+                    status=MatchStatusTypes.SUCCESSFUL
+                )

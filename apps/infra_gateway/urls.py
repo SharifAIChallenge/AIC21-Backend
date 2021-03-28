@@ -1,10 +1,14 @@
 from django.urls import path
 
-from apps.infra_gateway.views import SubmissionCallbackAPIView
+from apps.infra_gateway.views import InfraEventPushAPIView
 
-app_name = 'team'
+app_name = 'infra_gateway'
 
 urlpatterns = [
-    path('submission/<int:submission_id>', view=SubmissionCallbackAPIView.as_view(), name="update submission"),
+    path(
+        route='event/push',
+        view=InfraEventPushAPIView.as_view(),
+        name="update submission"
+    ),
 
 ]

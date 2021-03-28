@@ -7,29 +7,26 @@ from rest_framework import status
 
 from apps.challenge.models import Match
 from apps.infra_gateway.permissions import IsInfra
-from apps.infra_gateway.serializers import CompiledSubmissionSerializer
 from apps.team.models import Submission
 
+from .serializers import InfraEventPush
 
-class SubmissionCallbackAPIView(GenericAPIView):
-    queryset = Submission.objects.all()
-    serializer_class = CompiledSubmissionSerializer
+
+
+class InfraEventPushAPIView(GenericAPIView):
+    serializer_class = InfraEventPush
     permission_classes = (IsInfra,)
 
-    def put(self, request, submission_id):
-        submission = get_object_or_404(Submission, id=submission_id)
-        submission = self.get_serializer(data=request.data,
-                                   instance=submission)
-        submission.is_valid(raise_exception=True)
-        submission.save()
+    def post(self, request):
+        serializer = self.get_serializer(
+            data=request.data
+        )
+        serializer.is_valid(raise_exception=True)
+        event = serializer.save()
 
         return Response(
             data={
-                "data": submission.data
+                "data": serializer.data
             },
             status=status.HTTP_200_OK
         )
-
-class MatchCallbackAPIView(GenericAPIView):
-    queryset = Match.objects.all()
-    # serializer_class = MatchSerializer
