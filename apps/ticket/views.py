@@ -1,21 +1,23 @@
 from rest_framework.generics import GenericAPIView, get_object_or_404
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, \
-    IsAuthenticated
+    IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
-from apps.core.utils import send_to_telegram
 
+from apps.accounts.permissions import ProfileComplete
+from apps.core.utils import send_to_telegram
 from apps.ticket import paginations
 from apps.ticket.models import Tag
 from apps.ticket.serializers import TagSerializer
+
 from .models import Ticket, Reply
 from .serializers import TicketSerializer, ReplySerializer
-from .services import SendTicketToTelegramChannel
+from .services.telegram import TelegramInterface
 
 
 class TicketAPIView(GenericAPIView):
     serializer_class = TicketSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsAdminUser | ProfileComplete]
 
     def get(self, request, ticket_id):
         ticket = get_object_or_404(Ticket, id=ticket_id)
@@ -40,14 +42,18 @@ class TicketAPIView(GenericAPIView):
 
 class UserTicketsListAPIView(GenericAPIView):
     serializer_class = TicketSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, ProfileComplete | IsAdminUser]
 
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         ticket = serializer.save()
 
-        # send_to_telegram(serializer.data)
+        telegram = TelegramInterface(
+            ticket=ticket,
+            reply=None
+        )
+        telegram.send()
 
         return Response(
             data={"detail": "Your ticket has been submitted"},
@@ -82,7 +88,7 @@ class ReplyListAPIView(GenericAPIView):
     serializer_class = ReplySerializer
     queryset = Reply.objects.all().order_by('-created')
     pagination_class = paginations.ReplyPagination
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = [IsAuthenticated, IsAdminUser | ProfileComplete]
 
     def get(self, request, ticket_id):
         replies = self.get_queryset().filter(ticket__id=ticket_id)
@@ -92,7 +98,15 @@ class ReplyListAPIView(GenericAPIView):
     def post(self, request, ticket_id):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        reply = serializer.save()
+
+        telegram = TelegramInterface(
+            ticket=reply.ticket,
+            reply=reply
+        )
+
+        telegram.send()
+
         return Response({"detail": "Your Reply has been submitted"})
 
     def get_serializer_context(self):
@@ -104,7 +118,7 @@ class ReplyListAPIView(GenericAPIView):
 
 class ReplyAPIView(GenericAPIView):
     serializer_class = ReplySerializer
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = [IsAuthenticated, IsAdminUser | ProfileComplete]
 
     def get(self, request, ticket_id, reply_id):
         reply = get_object_or_404(Reply, id=reply_id)
@@ -128,7 +142,7 @@ class ReplyAPIView(GenericAPIView):
 
 
 class TagAPIView(GenericAPIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, ProfileComplete | IsAdminUser)
     serializer_class = TagSerializer
     queryset = Tag.objects.all()
 
