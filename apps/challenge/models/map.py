@@ -18,6 +18,14 @@ class Map(TimeStampedModel, UUIDModel):
         null=True
     )
 
+    def pre_save(self):
+        from apps.infra_gateway.functions import upload_map
+        self.infra_token = upload_map(self.file)
+
+    def save(self, *args, **kwargs):
+        self.pre_save()
+        super().save(*args, **kwargs)
+
     @staticmethod
     def get_random_map():
         game_map = Map.objects.filter(active=True).order_by('?').first()
@@ -25,3 +33,4 @@ class Map(TimeStampedModel, UUIDModel):
             raise Exception("There is no map available in the database")
 
         return game_map
+

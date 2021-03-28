@@ -1,9 +1,10 @@
-import datetime
 import random
 import string
-from typing import List
-
 import requests
+
+from django.conf import settings
+
+from apps.challenge.models import Match, Map
 
 
 def random_token():
@@ -11,13 +12,34 @@ def random_token():
     return ''.join((random.choice(chars)) for i in range(15))
 
 
-def upload_file(file):
+def upload_code(file):
     """
-    This function uploads a file to infrastructure synchronously
+    This function uploads a code file to infrastructure synchronously
     :param file: File field from TeamSubmission model
     :return: file token or raises error with error message
     """
-    pass
+
+    print("ommad upload kone", file.size)
+    response = requests.post(
+        settings.GATEWAY_HOST + "/upload/code",
+        files={'file': file},
+        headers={'Authorization': f'Token {settings.GATEWAY_AUTH_TOKEN}'}
+    )
+    print(response.status_code, response.json(), "==== Upload Code ====")
+
+    return response.json()['code_id']
+
+
+def upload_map(file):
+    print("ommad upload kone", file.size)
+    response = requests.post(
+        settings.GATEWAY_HOST + "/upload/map",
+        files={'file': file},
+        headers={'Authorization': f'Token {settings.GATEWAY_AUTH_TOKEN}'}
+    )
+    print(response.status_code, response.json(), "==== Upload Map ====")
+
+    return response.json()['map_id']
 
 
 def upload_file_with_url(file):
@@ -47,6 +69,23 @@ def compile_submissions(submissions):
     :return: list of dictionaries each have token, success[, errors] keys
     """
     pass
+
+
+def run_match(match: Match):
+    response = requests.post(
+        settings.GATEWAY_HOST + "/upload/map",
+        body={
+            'map_id': match.match_info.map.infra_token,
+            'player_ids': [
+                match.match_info.team1_code.infra_token,
+                match.match_info.team2_code.infra_token
+            ]
+        },
+        headers={'Authorization': f'Token {settings.GATEWAY_AUTH_TOKEN}'}
+    )
+    print(response.status_code, response.json(), "==== Upload Map ====")
+
+    return response.json()['game_id']
 
 
 def run_games(single_games, desired_map):

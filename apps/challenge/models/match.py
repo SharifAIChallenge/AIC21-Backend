@@ -46,7 +46,10 @@ class Match(TimeStampedModel):
         return self.status == MatchStatusTypes.SUCCESSFUL
 
     def run_match(self):
-        pass
+        from apps.infra_gateway.functions import run_match
+        run_match(
+            match=self
+        )
 
     @staticmethod
     def run_matches(matches):

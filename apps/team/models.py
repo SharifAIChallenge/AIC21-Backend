@@ -140,7 +140,7 @@ class Submission(models.Model):
                                 choices=SubmissionLanguagesTypes.TYPES,
                                 default=SubmissionLanguagesTypes.JAVA)
     file = models.FileField(
-        upload_to="teams/{team_name}/submissions".format(team_name=team.name),
+        upload_to="teams/submissions".format(team_name=team.name),
         null=True,
         blank=True)
     submit_time = models.DateTimeField(auto_now_add=True)
@@ -180,8 +180,9 @@ class Submission(models.Model):
         pass
 
     def upload(self):
+        from apps.infra_gateway.functions import upload_code
 
-        self.infra_token = functions.upload_file(self.file)
+        self.infra_token = upload_code(self.file)
         self.status = SubmissionStatusTypes.UPLOADED
         self.save()
 
