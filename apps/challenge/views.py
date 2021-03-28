@@ -22,7 +22,7 @@ from .serializers.tournament import LevelBasedTournamentUpdateSerializer
 
 class RequestAPIView(GenericAPIView):
     serializer_class = RequestSerializer
-    permission_classes = (IsAuthenticated, HasTeam)
+    permission_classes = (IsAuthenticated, HasTeam, TeamHasFinalSubmission)
     queryset = Request.objects.all()
 
     def get(self, request):
