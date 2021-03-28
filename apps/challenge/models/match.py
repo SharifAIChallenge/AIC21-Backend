@@ -145,10 +145,10 @@ class Match(TimeStampedModel):
     @property
     def game_log(self):
         from apps.infra_gateway.functions import download_log
-
-        return download_log(
-            match_infra_token=self.infra_token
-        )
+        return 'https://google.com'
+        # return download_log(
+        #     match_infra_token=self.infra_token
+        # )
 
     @property
     def team1_log(self):
