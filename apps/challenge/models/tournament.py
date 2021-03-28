@@ -25,6 +25,11 @@ class Tournament(TimeStampedModel):
     is_hidden = models.BooleanField(default=False)
 
     @staticmethod
+    def get_friendly_tournament():
+        return Tournament.objects.filter(
+            type=TournamentTypes.FRIENDLY).first()
+
+    @staticmethod
     def create_tournament(name, start_time, end_time, is_hidden,
                           is_friendly=False, team_list=None,
                           is_scoreboard_freeze=False):
