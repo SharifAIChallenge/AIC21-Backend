@@ -61,7 +61,7 @@ class TelegramInterface:
 
     def _send_message_bot(self, channel_id, message):
         with requests.Session() as session:
-            session.proxies.update(proxies)
+            # session.proxies.update(proxies)
             response = session.get(
                 f'{settings.TELEGRAM_HOST}/telegram/bot{self.bot_token}/'
                 f'sendMessage',
