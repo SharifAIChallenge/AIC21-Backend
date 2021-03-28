@@ -35,6 +35,9 @@ class Team(UUIDModel, TimeStampedModel):
     def is_complete(self):
         return self.members.count() == MAX_MEMBERS
 
+    def has_final_submission(self):
+        return self.submissions.filter(is_final=True).first() is not None
+
     def reject_all_pending_invitations(self):
         invitations = self.invitations.filter(status="pending")
         invitations.update(status="rejected")

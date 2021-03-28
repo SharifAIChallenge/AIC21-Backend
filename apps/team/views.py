@@ -389,6 +389,15 @@ class ALlTeamsAPIView(GenericAPIView):
 
         queryset = Team.objects.all()
 
+        teams_with_final_sublission_ids = [team.id for team in
+                               filter(lambda team: team.has_final_submission(),
+                                      queryset
+                                      )
+                               ]
+
+        queryset = queryset.filter(
+            id__in=teams_with_final_sublission_ids)
+
         if name:
             queryset = queryset.filter(name__icontains=name)
 
