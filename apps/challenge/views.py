@@ -111,7 +111,9 @@ class LobbyAPIView(GenericAPIView):
     queryset = LobbyQueue.objects.all()
 
     def get(self, request):
-        lobby_queues = request.user.team.lobby_queues.all()
+        # Such a shit :| ... do this with serializer later  
+        lobby_queues = self.get_queryset()
+        user_lobby_queues = request.user.team.lobby_queues.all()
         result = []
         for lobby_q in lobby_queues:
             population = lobby_q.get_lobby_population()
@@ -119,7 +121,8 @@ class LobbyAPIView(GenericAPIView):
                 'type': lobby_q.game_type,
                 'population': population,
                 'remaining_space': max(0,
-                                       lobby_q.get_lobby_size() - population)
+                                       lobby_q.get_lobby_size() - population),
+                'is_joined': lobby_q in user_lobby_queues,
             })
 
         return Response(data={
