@@ -25,3 +25,8 @@ class MatchSerializer(serializers.ModelSerializer):
         model = Match
         fields = ('team1', 'team2', 'status', 'winner', 'log', 'tournament')
 
+    def to_representation(self, instance: Match):
+        data = super().to_representation(instance)
+        data['log'] = instance.game_log
+
+        return data
