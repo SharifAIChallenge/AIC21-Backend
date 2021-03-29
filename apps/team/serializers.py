@@ -217,6 +217,7 @@ class SubmissionSerializer(serializers.ModelSerializer):
         if attrs['file'].size > Submission.FILE_SIZE_LIMIT:
             raise serializers.ValidationError('File size limit exceeded')
 
+
         return attrs
 
     def save(self, **kwargs):

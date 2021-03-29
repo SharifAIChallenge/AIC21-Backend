@@ -7,13 +7,14 @@ from rest_framework import status
 
 from apps.challenge.models import Match
 from apps.infra_gateway.permissions import IsInfra
+from apps.infra_gateway.serializers import InfraEventPushSerializer
 from apps.team.models import Submission
 
 from .serializers import InfraEventPush
 
 
 class InfraEventPushAPIView(GenericAPIView):
-    serializer_class = InfraEventPush
+    serializer_class = InfraEventPushSerializer
     permission_classes = (IsInfra,)
 
     def post(self, request):
