@@ -13,7 +13,7 @@ class ScoreboardRow(TimeStampedModel):
         on_delete=models.CASCADE,
         related_name='scoreboard_rows'
     )
-    score = models.PositiveIntegerField(default=0)
+    score = models.PositiveIntegerField(default=1000)
     wins = models.PositiveIntegerField(default=0)
     losses = models.PositiveIntegerField(default=0)
     draws = models.PositiveIntegerField(default=0)
