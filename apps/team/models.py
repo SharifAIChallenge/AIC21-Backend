@@ -176,8 +176,8 @@ class Submission(models.Model):
         self.save()
 
     def handle(self):
-        handle_submission.delay(self.id)
-        # handle_submission(self.id)
+        # handle_submission.delay(self.id)
+        handle_submission(self.id)
         pass
 
     def upload(self):
