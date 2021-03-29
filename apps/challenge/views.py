@@ -247,9 +247,8 @@ class MatchAPIView(GenericAPIView):
             many=True
         ).data
 
-        return Response(
+        return self.get_paginated_response(
             data={'data': data},
-            status=status.HTTP_200_OK
         )
 
     def get_queryset(self):

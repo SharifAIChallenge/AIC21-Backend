@@ -5,6 +5,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 
 from apps.accounts.serializer import ProfileSerializer
+from apps.challenge.models import Tournament
 from .exceptions import NoTeamException, TeamIsFullException, HasTeamException, \
     DuplicatePendingInviteException
 from .models import Team, Invitation, Submission
@@ -44,6 +45,11 @@ class TeamSerializer(serializers.ModelSerializer):
         data['creator'] = current_user
 
         team = Team.objects.create(**data)
+        friendly_tournament = Tournament.get_friendly_tournament()
+        friendly_tournament.scoreboard.add_scoreboard_row(
+            team=team
+        )
+
         current_user.team = team
         current_user.save()
         return team

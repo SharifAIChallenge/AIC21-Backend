@@ -10,7 +10,7 @@ class ScoreboardRow(TimeStampedModel):
     )
     team = models.ForeignKey(
         to='team.Team',
-        on_delete=models.RESTRICT,
+        on_delete=models.CASCADE,
         related_name='scoreboard_rows'
     )
     score = models.PositiveIntegerField(default=0)
