@@ -75,7 +75,7 @@ def compile_submissions(submissions):
 def run_match(match: Match):
     response = requests.post(
         settings.GATEWAY_HOST + "/upload/map",
-        body={
+        data={
             'map_id': match.match_info.map.infra_token,
             'player_ids': [
                 match.match_info.team1_code.infra_token,
