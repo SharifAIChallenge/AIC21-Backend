@@ -210,13 +210,23 @@ class SubmissionSerializer(serializers.ModelSerializer):
         )
 
     def validate(self, attrs):
+        from datetime import datetime, timedelta
+
         user = self.context['request'].user
 
         attrs['user'] = user
         attrs['team'] = user.team
         if attrs['file'].size > Submission.FILE_SIZE_LIMIT:
             raise serializers.ValidationError('File size limit exceeded')
-
+        submissions = user.team.submissions.all()
+        if submissions.exists() and datetime.now() - \
+                submissions.order_by('-submit_time')[
+                    0].submit_time < timedelta(
+            minutes=10):
+            raise serializers.ValidationError(
+                f"You have to wait at least "
+                f"{15} "
+                f"minute between each submission!")
 
         return attrs
 
