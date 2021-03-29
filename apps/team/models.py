@@ -143,10 +143,7 @@ class Submission(models.Model):
     language = models.CharField(max_length=50,
                                 choices=SubmissionLanguagesTypes.TYPES,
                                 default=SubmissionLanguagesTypes.JAVA)
-    file = models.FileField(
-        upload_to="teams/submissions".format(team_name=team.name),
-        null=True,
-        blank=True)
+    file = models.FileField(null=True, blank=True)
     submit_time = models.DateTimeField(auto_now_add=True)
     is_final = models.BooleanField(default=False)
     status = models.CharField(max_length=50,
