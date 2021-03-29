@@ -28,7 +28,6 @@ class InfraEventPushSerializer(serializers.ModelSerializer):
 
         elif 400 <= status_code < 500:  # File transfer range
             pass
-
         elif 500 <= status_code < 600:  # Match status range
             if status_code == 500:
                 Match.update_match(
