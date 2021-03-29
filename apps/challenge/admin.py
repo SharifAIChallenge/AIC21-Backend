@@ -3,11 +3,16 @@ from django.contrib.admin import ModelAdmin
 
 # Register your models here.
 from apps.challenge.models import Tournament, LevelBasedTournament, Map, \
-    Scoreboard, ScoreboardRow, Match, MatchInfo
+    Scoreboard, ScoreboardRow, Match, MatchInfo, LobbyQueue
 
 
 @admin.register(Match)
 class MatchAdmin(ModelAdmin):
+    pass
+
+
+@admin.register(LobbyQueue)
+class LobbyQueueAdmin(ModelAdmin):
     pass
 
 
