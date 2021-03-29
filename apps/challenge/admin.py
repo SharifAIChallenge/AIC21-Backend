@@ -23,7 +23,9 @@ class MatchInfoAdmin(ModelAdmin):
 
 @admin.register(Tournament)
 class TournamentAdmin(ModelAdmin):
-    pass
+    list_display = ('id', 'name', 'type', 'is_hidden')
+    list_filter = ('type', 'is_hidden')
+    search_fields = ('name',)
 
 
 @admin.register(LevelBasedTournament)
