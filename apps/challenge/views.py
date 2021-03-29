@@ -7,11 +7,13 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from apps.challenge.models import LobbyQueue, RequestStatusTypes, \
-    LevelBasedTournament, Match, Scoreboard, ScoreboardRow, Tournament
+    LevelBasedTournament, Match, Scoreboard, ScoreboardRow, Tournament, \
+    MatchStatusTypes
 from apps.challenge.serializers import LobbyQueueSerializer, \
     ScoreboardSerializer, ScoreboardRowSerializer, \
     MatchSerializer
 from apps.challenge.services.lobby import LobbyService
+from apps.paginations import MatchPagination
 from apps.team.permissions import HasTeam, TeamHasFinalSubmission
 
 from .models import Request, RequestTypes
@@ -234,10 +236,14 @@ class MatchAPIView(GenericAPIView):
     serializer_class = MatchSerializer
     queryset = Match.objects.all()
 
+    pagination_class = MatchPagination
+
     def get(self, request):
+        queryset = self.get_queryset()
+        page = self.paginate_queryset(queryset)
+
         data = self.get_serializer(
-            instance=self.get_queryset().filter(
-                Q(team1=request.user.team) | Q(team2=request.user.team)),
+            instance=page,
             many=True
         ).data
 
@@ -245,3 +251,19 @@ class MatchAPIView(GenericAPIView):
             data={'data': data},
             status=status.HTTP_200_OK
         )
+
+    def get_queryset(self):
+        match_status = self.request.query_params.get('status')
+        queryset = self.queryset
+
+        queryset = queryset.filter(
+            Q(team1=self.request.user.team) | Q(team2=self.request.user.team)
+        )
+
+        if match_status:
+            queryset = queryset.filter(
+                status=match_status
+
+            )
+
+        return queryset

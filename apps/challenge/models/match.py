@@ -29,7 +29,7 @@ class Match(TimeStampedModel):
     status = models.CharField(
         max_length=50,
         choices=MatchStatusTypes.TYPES,
-        default=MatchStatusTypes.PENDING
+        default=MatchStatusTypes.FREEZE
     )
     winner = models.ForeignKey(to='team.Team', on_delete=models.CASCADE,
                                related_name='won_matches', null=True,
@@ -54,7 +54,7 @@ class Match(TimeStampedModel):
         return self.status == MatchStatusTypes.FREEZE
 
     @property
-    def is_finished(self):
+    def is_successful(self):
         return self.status == MatchStatusTypes.SUCCESSFUL
 
     @classmethod
@@ -90,7 +90,7 @@ class Match(TimeStampedModel):
             match = Match.objects.create(
                 team1=team1,
                 team2=team2,
-                status=MatchStatusTypes.RUNNING
+                status=MatchStatusTypes.PENDING
                 if not is_freeze else MatchStatusTypes.FREEZE,
                 tournament=tournament
             )
