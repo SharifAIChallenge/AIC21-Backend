@@ -23,7 +23,7 @@ def upload_code(file):
     response = requests.post(
         settings.GATEWAY_HOST + "/upload/code",
         files={'file': file},
-        headers={'Authorization': f'Token {settings.GATEWAY_AUTH_TOKEN}'}
+        headers={'Authorization': f'{settings.GATEWAY_AUTH_TOKEN}'}
     )
     print(response.status_code, response.json(), "==== Upload Code ====")
 
@@ -35,7 +35,7 @@ def upload_map(file):
     response = requests.post(
         settings.GATEWAY_HOST + "/upload/map",
         files={'file': file},
-        headers={'Authorization': f'Token {settings.GATEWAY_AUTH_TOKEN}'}
+        headers={'Authorization': f'{settings.GATEWAY_AUTH_TOKEN}'}
     )
     print(response.status_code, response.json(), "==== Upload Map ====")
 
@@ -81,7 +81,7 @@ def run_match(match: Match):
                 match.match_info.team2_code.infra_token
             ]
         },
-        headers={'Authorization': f'Token {settings.GATEWAY_AUTH_TOKEN}'}
+        headers={'Authorization': f'{settings.GATEWAY_AUTH_TOKEN}'}
     )
     print(response.status_code, response.json(), "==== Run Game ====")
 
@@ -104,7 +104,7 @@ def download_code(file_infra_token):
         params={
             'code_id': file_infra_token
         },
-        headers={'Authorization': f'Token {settings.GATEWAY_AUTH_TOKEN}'}
+        headers={'Authorization': f'{settings.GATEWAY_AUTH_TOKEN}'}
     )
     print(response.status_code, response.json(), "==== Download File ====")
 
@@ -121,7 +121,7 @@ def download_log(match_infra_token, file_infra_token=None):
     response = requests.get(
         settings.GATEWAY_HOST + "/download/code",
         params=params,
-        headers={'Authorization': f'Token {settings.GATEWAY_AUTH_TOKEN}'}
+        headers={'Authorization': f'{settings.GATEWAY_AUTH_TOKEN}'}
     )
     print(response.status_code, response.json(), "==== Download File ====")
 
