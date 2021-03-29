@@ -211,6 +211,7 @@ class SubmissionSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         from datetime import datetime, timedelta
+        from django.utils import timezone
 
         user = self.context['request'].user
 
@@ -219,7 +220,7 @@ class SubmissionSerializer(serializers.ModelSerializer):
         if attrs['file'].size > Submission.FILE_SIZE_LIMIT:
             raise serializers.ValidationError('File size limit exceeded')
         submissions = user.team.submissions.all()
-        if submissions.exists() and datetime.now() - \
+        if submissions.exists() and timezone.now() - \
                 submissions.order_by('-submit_time')[
                     0].submit_time < timedelta(
             minutes=10):
