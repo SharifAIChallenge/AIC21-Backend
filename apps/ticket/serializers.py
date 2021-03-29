@@ -86,7 +86,8 @@ class TicketSerializer(serializers.ModelSerializer):
         replies = instance.replies.all().order_by('created')
         data['replies'] = ReplySerializer(
             instance=replies,
-            many=True
+            many=True,
+            context={'request': self.context['request']}
         ).data
 
         data['tag'] = TagSerializer(
