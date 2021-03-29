@@ -22,7 +22,7 @@ def upload_code(submission):
     print("ommad upload kone", submission.file.size)
     response = requests.post(
         settings.GATEWAY_HOST + "/upload/code",
-        body={'language': submission.languge},
+        body={'language': submission.language},
         files={'file': submission.file},
         headers={'Authorization': f'{settings.GATEWAY_AUTH_TOKEN}'}
     )
