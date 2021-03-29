@@ -71,7 +71,7 @@ class TicketSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ticket
-        fields = ('author' 'num_replies', 'created', 'tag', 'id',
+        fields = ('author', 'num_replies', 'created', 'tag', 'id',
                   'title', 'text', 'status', 'is_public')
         read_only_fields = ('created', 'num_replies', 'author')
 
@@ -88,6 +88,7 @@ class TicketSerializer(serializers.ModelSerializer):
             instance=replies,
             many=True
         ).data
+
         data['tag'] = TagSerializer(
             instance=instance.tag
         ).data
