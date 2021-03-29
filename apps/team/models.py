@@ -109,11 +109,13 @@ class SubmissionLanguagesTypes:
     CPP = 'cpp'
     JAVA = 'java'
     PYTHON3 = 'py3'
+    JAR = 'jar'
 
     TYPES = (
         (CPP, _('C++')),
         (JAVA, _('Java')),
         (PYTHON3, _('Python 3')),
+        (JAR, _('Jar'))
     )
 
 
