@@ -12,7 +12,6 @@ def handle_submission(submission_id):
     try:
         if not submission.infra_token:
             submission.upload()
-        submission.compile()
 
     except Exception as error:
         logger.error(error)
