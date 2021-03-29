@@ -226,7 +226,7 @@ class SubmissionSerializer(serializers.ModelSerializer):
             minutes=10):
             raise serializers.ValidationError(
                 f"You have to wait at least "
-                f"{15} "
+                f"{10} "
                 f"minute between each submission!")
 
         return attrs
