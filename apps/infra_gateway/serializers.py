@@ -11,6 +11,7 @@ class InfraEventPushSerializer(serializers.ModelSerializer):
         fields = ('title', 'token', 'status_code', 'message_body')
 
     def create(self, validated_data):
+        instance = super().create(validated_data)
         status_code = validated_data.get('status_code')
 
         if 100 <= status_code < 200:  # Code compile range
@@ -44,3 +45,4 @@ class InfraEventPushSerializer(serializers.ModelSerializer):
                     infra_token=validated_data.get('token'),
                     status=MatchStatusTypes.SUCCESSFUL
                 )
+        return instance
