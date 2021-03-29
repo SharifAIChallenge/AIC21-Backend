@@ -183,7 +183,7 @@ class Submission(models.Model):
     def upload(self):
         from apps.infra_gateway.functions import upload_code
 
-        self.infra_token = upload_code(self.file)
+        self.infra_token = upload_code(self)
         self.status = SubmissionStatusTypes.UPLOADED
         self.save()
 

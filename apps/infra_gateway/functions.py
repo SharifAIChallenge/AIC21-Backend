@@ -12,17 +12,18 @@ def random_token():
     return ''.join((random.choice(chars)) for i in range(15))
 
 
-def upload_code(file):
+def upload_code(submission):
     """
     This function uploads a code file to infrastructure synchronously
-    :param file: File field from TeamSubmission model
+    :param submission: File field from TeamSubmission model
     :return: file token or raises error with error message
     """
 
-    print("ommad upload kone", file.size)
+    print("ommad upload kone", submission.file.size)
     response = requests.post(
         settings.GATEWAY_HOST + "/upload/code",
-        files={'file': file},
+        body={'language': submission.languge},
+        files={'file': submission.file},
         headers={'Authorization': f'{settings.GATEWAY_AUTH_TOKEN}'}
     )
     print(response.status_code, response.json(), "==== Upload Code ====")
@@ -112,7 +113,6 @@ def download_code(file_infra_token):
 
 
 def download_log(match_infra_token, file_infra_token=None):
-
     params = {
         'game_id': match_infra_token
     }
