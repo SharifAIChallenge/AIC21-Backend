@@ -205,4 +205,7 @@ class Submission(models.Model):
         submission.status = status
         submission.save()
 
+        if status == SubmissionStatusTypes.COMPILED:
+            submission.set_final()
+
         return submission
