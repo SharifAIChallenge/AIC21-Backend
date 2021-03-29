@@ -74,7 +74,7 @@ def compile_submissions(submissions):
 
 def run_match(match: Match):
     response = requests.post(
-        settings.GATEWAY_HOST + "/upload/map",
+        settings.GATEWAY_HOST + "/game/register",
         data={
             'map_id': match.match_info.map.infra_token,
             'player_ids': [
@@ -119,7 +119,7 @@ def download_log(match_infra_token, file_infra_token=None):
     if file_infra_token:
         params['player_id'] = file_infra_token
     response = requests.get(
-        settings.GATEWAY_HOST + "/download/code",
+        settings.GATEWAY_HOST + "/download/log",
         params=params,
         headers={'Authorization': f'{settings.GATEWAY_AUTH_TOKEN}'}
     )
