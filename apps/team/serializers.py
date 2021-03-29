@@ -23,9 +23,21 @@ class TeamSerializer(serializers.ModelSerializer):
     members = MemberSerializer(many=True, read_only=True)
     creator = MemberSerializer(read_only=True)
 
+    image_url = serializers.SerializerMethodField('_image_url')
+
+    @staticmethod
+    def _image_url(obj: Team):
+        if not obj.image:
+            return ''
+        path = obj.image.url
+        if settings.DOMAIN not in path:
+            return settings.DOMAIN + path
+        return path
+
     class Meta:
         model = Team
-        fields = ['name', 'image', 'members', 'creator', 'level_one_payed']
+        fields = ['name', 'image', 'members', 'creator', 'level_one_payed',
+                  'image_url']
 
     def create(self, data):
         current_user = self.context['request'].user
