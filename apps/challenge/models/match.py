@@ -133,8 +133,7 @@ class Match(TimeStampedModel):
 
         if game_map is None:
             game_map = Map.get_random_map()
-        friendly_tournament = Tournament.objects.filter(
-            type=TournamentTypes.FRIENDLY).first()
+        friendly_tournament = Tournament.get_friendly_tournament()
 
         if friendly_tournament is None:
             raise Exception(
