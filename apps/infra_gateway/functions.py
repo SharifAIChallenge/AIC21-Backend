@@ -109,7 +109,7 @@ def download_code(file_infra_token):
     )
     print(response.status_code, response.json(), "==== Download File ====")
 
-    return response.json()['url']
+    return response.json()['code']
 
 
 def download_log(match_infra_token, file_infra_token=None):
@@ -125,4 +125,4 @@ def download_log(match_infra_token, file_infra_token=None):
     )
     print(response.status_code, response.json(), "==== Download File ====")
 
-    return response.json()['url']
+    return response.json()['log']
