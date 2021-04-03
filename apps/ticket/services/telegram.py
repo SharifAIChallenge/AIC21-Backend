@@ -45,7 +45,10 @@ class TelegramInterface:
                 'status': self.ticket.status,
                 'url': f'https://aichallenge.ir/dashboard/admin/ticket/'
                        f'{self.ticket.id}',
-                'ticket_created': self.ticket.created
+                'ticket_created': self.ticket.created,
+                'reply_id': '',
+                'user': '',
+                'reply_created': ''
             }
 
         if self.reply:
