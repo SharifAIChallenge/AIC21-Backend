@@ -63,8 +63,8 @@ class Stats(models.Model):
 
 
 class Sponsor(models.Model):
-    title_en = models.CharField(max_length=512, unique=True)
-    title_fa = models.CharField(max_length=512, unique=True)
+    title_en = models.CharField(max_length=512, unique=True, null=True)
+    title_fa = models.CharField(max_length=512, unique=True, null=True)
     url = models.CharField(max_length=500)
     grade = models.CharField(max_length=20, choices=SponsorGradeTypes.TYPES)
     description = models.TextField()
