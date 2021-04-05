@@ -63,8 +63,7 @@ class Stats(models.Model):
 
 
 class Sponsor(models.Model):
-    name_en = models.CharField(max_length=200)
-    name_fa = models.CharField(max_length=200)
+    title = models.CharField(max_length=512)
     url = models.CharField(max_length=500)
     grade = models.CharField(max_length=20, choices=SponsorGradeTypes.TYPES)
     description = models.TextField()
@@ -102,6 +101,24 @@ class SocialMedia(models.Model):
     name = models.CharField(max_length=64)
     url = models.URLField(max_length=256)
     icon = models.CharField(max_length=128)
+
+
+class SponsorSocialMedia(SocialMedia):
+    sponsor = models.ForeignKey(Sponsor,
+                                related_name='socials',
+                                on_delete=models.CASCADE)
+
+
+class SponsorJobOpportunity(models.Model):
+    job_url = models.URLField(
+        max_length=512,
+        help_text='Job opp url at sponsor website'
+    )
+    sponsor = models.ForeignKey(
+        Sponsor,
+        related_name='jobs',
+        on_delete=models.CASCADE
+    )
 
 
 class Rule(models.Model):

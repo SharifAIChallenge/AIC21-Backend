@@ -4,7 +4,20 @@ from rest_framework.serializers import ModelSerializer, Serializer
 from rest_framework import serializers
 
 from .models import Intro, TimelineEvent, Prize, Stats, Sponsor, WhyThisEvent, \
-    Quote, Motto, Media, SocialMedia, Rule, Subscribe
+    Quote, Motto, Media, SocialMedia, Rule, Subscribe, SponsorSocialMedia, \
+    SponsorJobOpportunity
+
+
+class SponsorSocialMediaSerializer(ModelSerializer):
+    class Meta:
+        model = SponsorSocialMedia
+        exclude = ('id', 'sponsor')
+
+
+class SponsorJobOpportunitySerializer(ModelSerializer):
+    class Meta:
+        model = SponsorJobOpportunity
+        exclude = ('id',)
 
 
 class IntroSerializer(ModelSerializer):
@@ -32,6 +45,9 @@ class StatSerializer(ModelSerializer):
 
 
 class SponsorSerializer(ModelSerializer):
+    jobs = SponsorJobOpportunitySerializer(many=True, read_only=True)
+    socials = SponsorSocialMediaSerializer(many=True, read_only=True)
+
     class Meta:
         model = Sponsor
         exclude = ['id']
