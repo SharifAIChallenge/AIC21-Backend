@@ -4,7 +4,7 @@ from django.urls import include, path
 urlpatterns = [
     path('timeline', TimelineView.as_view()),
     path('prizes', PrizesView.as_view()),
-    path('Sponsers', SponsorsView.as_view()),
+    path('sponsors/<str:sponsor_title>', SponsorsView.as_view()),
     path('why', WhyView.as_view()),
     path('staffs', StaffsView.as_view()),
     path('stat', StatView.as_view()),

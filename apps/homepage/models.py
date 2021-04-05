@@ -63,7 +63,7 @@ class Stats(models.Model):
 
 
 class Sponsor(models.Model):
-    title = models.CharField(max_length=512)
+    title = models.CharField(max_length=512, unique=True)
     url = models.CharField(max_length=500)
     grade = models.CharField(max_length=20, choices=SponsorGradeTypes.TYPES)
     description = models.TextField()
@@ -72,6 +72,9 @@ class Sponsor(models.Model):
         return f'sponsor/{self.grade}/{self.name_en}/{filename}'
 
     image = models.FileField(upload_to=upload_path)
+
+    def __str__(self):
+        return f'{self.title}'
 
 
 class WhyThisEvent(models.Model):

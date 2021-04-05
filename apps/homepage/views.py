@@ -45,11 +45,15 @@ class PrizesView(GenericAPIView):
 
 class SponsorsView(GenericAPIView):
 
-    def get(self, request):
+    def get(self, request, sponsor_title):
+        queryset = Sponsor.objects.all()
         data = {
-            'data': SponsorSerializer(Sponsor.objects.all(),
-                                      many=True).data
+            'data': SponsorSerializer(queryset, many=True).data
         }
+        if sponsor_title != 'all':
+            queryset = queryset.filter(title=sponsor_title).last()
+            data['data'] = SponsorSerializer(queryset).data
+
         return Response(data)
 
 

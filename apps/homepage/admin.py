@@ -6,8 +6,17 @@ from martor.widgets import AdminMartorWidget
 from import_export.admin import ImportExportModelAdmin
 
 from apps.homepage.models import Subscribe
-from .models import Intro, TimelineEvent, Prize, Stats, Sponsor, WhyThisEvent, \
-    Quote, Motto, Media, SocialMedia, Rule, GoogleAddEventToCalender
+from .models import Intro, TimelineEvent, Prize, Stats, Sponsor, \
+    WhyThisEvent, Quote, Motto, Media, SocialMedia, Rule, \
+    GoogleAddEventToCalender, SponsorSocialMedia, SponsorJobOpportunity
+
+
+class SponsorSocialMediaInline(admin.StackedInline):
+    model = SponsorSocialMedia
+
+
+class SponsorJobOpportunityInline(admin.StackedInline):
+    model = SponsorJobOpportunity
 
 
 @admin.register(Intro)
@@ -38,11 +47,22 @@ class StatsAdmin(ModelAdmin):
     }
 
 
+@admin.register(SponsorJobOpportunity)
+class SponsorJobOpportunityAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(SponsorSocialMedia)
+class SponsorSocialMediaAdmin(admin.ModelAdmin):
+    pass
+
+
 @admin.register(Sponsor)
 class SponsorAdmin(ModelAdmin):
     formfield_overrides = {
         models.TextField: {'widget': AdminMartorWidget},
     }
+    inlines = (SponsorJobOpportunityInline, SponsorSocialMediaInline)
 
 
 @admin.register(WhyThisEvent)
