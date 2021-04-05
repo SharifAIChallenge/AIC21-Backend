@@ -124,6 +124,8 @@ class SponsorJobOpportunity(models.Model):
         on_delete=models.CASCADE
     )
 
+    title = models.CharField(max_length=512)
+
 
 class Rule(models.Model):
     title_en = models.CharField(max_length=50, blank=True)
