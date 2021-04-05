@@ -69,9 +69,10 @@ class Sponsor(models.Model):
     description = models.TextField()
 
     def upload_path(self, filename):
-        return f'sponsor/{self.grade}/{self.name_en}/{filename}'
+        return f'sponsor/{self.grade}/{self.title}/'
 
-    image = models.FileField(upload_to=upload_path)
+    image = models.FileField(upload_to=upload_path, null=True, blank=True)
+    video = models.FileField(upload_to=upload_path, null=True, blank=True)
 
     def __str__(self):
         return f'{self.title}'
