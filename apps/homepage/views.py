@@ -51,7 +51,7 @@ class SponsorsView(GenericAPIView):
             'data': SponsorSerializer(queryset, many=True).data
         }
         if sponsor_title != 'all':
-            queryset = queryset.filter(title=sponsor_title).last()
+            queryset = queryset.filter(title_en=sponsor_title).last()
             data['data'] = SponsorSerializer(queryset).data
 
         return Response(data)
