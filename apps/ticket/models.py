@@ -41,7 +41,6 @@ class Ticket(UUIDModel, TimeStampedModel):
         max_length=50
     )
     text = models.TextField(
-        max_length=10000
     )
 
     is_public = models.BooleanField(
