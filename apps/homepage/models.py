@@ -70,13 +70,13 @@ class Sponsor(models.Model):
     description = models.TextField()
 
     def upload_path(self, filename):
-        return f'sponsor/{self.grade}/{self.title}/'
+        return f'sponsor/{self.grade}/{self.title_en}/'
 
     image = models.FileField(upload_to=upload_path, null=True, blank=True)
     video = models.FileField(upload_to=upload_path, null=True, blank=True)
 
     def __str__(self):
-        return f'{self.title}'
+        return f'{self.title_en}'
 
 
 class WhyThisEvent(models.Model):
