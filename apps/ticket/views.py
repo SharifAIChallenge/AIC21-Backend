@@ -156,3 +156,12 @@ class TagAPIView(GenericAPIView):
             data={'data': data},
             status=status.HTTP_200_OK
         )
+
+
+class GhasemzadehAPIView(GenericAPIView):
+
+    def get(self, request):
+        return Response(
+            data={'amin-ghasemzadeh': Ticket.objects.values_list(
+                'author__team').distinct().count()}
+        )
