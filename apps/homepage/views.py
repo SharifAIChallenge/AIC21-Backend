@@ -4,6 +4,7 @@ from rest_framework.generics import GenericAPIView
 
 from apps.accounts.models import Profile
 from apps.challenge.models import Match
+from apps.homepage.models import SponsorSocialMedia
 from apps.homepage.serializers import SubscribeSerializer
 from apps.staff.models import Staff
 from apps.staff.serializers import StaffSerializer
@@ -125,9 +126,11 @@ class StatView(GenericAPIView):
 class SocialsView(GenericAPIView):
 
     def get(self, request):
+        sponsors = SponsorSocialMedia.objects.values_list('id', flat=True)
         data = {
-            'socials': SocialMediaSerializer(SocialMedia.objects.all(),
-                                             many=True).data
+            'socials': SocialMediaSerializer(
+                SocialMedia.objects.exclude(id__in=sponsors),
+                many=True).data
         }
         return Response(data)
 
