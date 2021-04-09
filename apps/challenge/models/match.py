@@ -208,15 +208,17 @@ class Match(TimeStampedModel):
         if self.tournament.scoreboard.freeze:
             return
         winner_number = self.winner_number
+
         team1_row = self.tournament.scoreboard.get_team_row(team=self.team1)
         team2_row = self.tournament.scoreboard.get_team_row(team=self.team2)
+
         p1 = (1.0 / (1.0 + math.pow(
             10,
-            (team1_row.score - team2_row.score) / 400
+            (team2_row.score - team1_row.score) / 400
         )))
         p2 = (1.0 / (1.0 + math.pow(
             10,
-            (team2_row.score - team1_row.score) / 400
+            (team1_row.score - team2_row.score) / 400
         )))
 
         team1_row.score = team1_row.score + k * (2 - winner_number - p1)

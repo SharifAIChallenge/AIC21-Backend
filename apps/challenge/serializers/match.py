@@ -28,5 +28,6 @@ class MatchSerializer(serializers.ModelSerializer):
     def to_representation(self, instance: Match):
         data = super().to_representation(instance)
         data['log'] = instance.game_log
+        data['server_log'] = instance.server_log
 
         return data
