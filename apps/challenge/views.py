@@ -158,7 +158,7 @@ class ScoreboardAPIView(GenericAPIView):
 
     def get(self, request, tournament_id):
         scoreboard_rows = self.get_queryset().filter(
-            scoreboard__tournament_id=tournament_id)
+            scoreboard__tournament_id=tournament_id).order_by('-score')
         page = self.paginate_queryset(scoreboard_rows)
         data = self.get_serializer(instance=page, many=True).data
 
