@@ -1,3 +1,5 @@
+import math
+
 from django.db import models
 from model_utils.models import TimeStampedModel
 from django.conf import settings
@@ -58,10 +60,23 @@ class Match(TimeStampedModel):
         return self.status == MatchStatusTypes.SUCCESSFUL
 
     @classmethod
-    def update_match(cls, infra_token, status):
-        match = get_object_or_404(
+    def update_match(cls, infra_token, status, message=None, stats=None):
+        match: 'Match' = get_object_or_404(
             cls, infra_token=infra_token
         )
+
+        if message:
+            match.message = message
+
+        if status == MatchStatusTypes.SUCCESSFUL and stats:
+            winner = stats.get('winner', 0)
+            if winner == 0:
+                match.winner = match.team1
+            elif winner == 1:
+                match.winner = match.team2
+
+            match.update_score()
+
         match.status = status
         match.save()
 
@@ -145,9 +160,24 @@ class Match(TimeStampedModel):
     def game_log(self):
         from apps.infra_gateway.functions import download_log
 
-        return download_log(
-            match_infra_token=self.infra_token
-        )
+        if self.status == MatchStatusTypes.SUCCESSFUL:
+            return download_log(
+                match_infra_token=self.infra_token
+            )
+
+        return ''
+
+    @property
+    def server_log(self):
+        from apps.infra_gateway.functions import download_log
+
+        if self.status not in [MatchStatusTypes.FREEZE,
+                               MatchStatusTypes.PENDING]:
+            return download_log(
+                match_infra_token=self.infra_token,
+                file_infra_token=f'{self.infra_token}.out'
+            )
+        return ''
 
     @property
     def team1_log(self):
@@ -166,3 +196,38 @@ class Match(TimeStampedModel):
             match_infra_token=self.infra_token,
             file_infra_token=self.match_info.team2_code
         )
+
+    @property
+    def winner_number(self):
+        if self.winner == self.team1:
+            return 1
+        if self.winner == self.team2:
+            return 2
+
+    def update_score(self, k=30):
+        if self.tournament.scoreboard.freeze:
+            return
+        winner_number = self.winner_number
+        team1_row = self.tournament.scoreboard.get_team_row(team=self.team1)
+        team2_row = self.tournament.scoreboard.get_team_row(team=self.team2)
+        p1 = (1.0 / (1.0 + math.pow(
+            10,
+            (team1_row.score - team2_row.score) / 400
+        )))
+        p2 = (1.0 / (1.0 + math.pow(
+            10,
+            (team2_row.score - team1_row.score) / 400
+        )))
+
+        team1_row.score = team1_row.score + k * (2 - winner_number - p1)
+        team2_row.score = team2_row.score + k * (winner_number - 1 - p2)
+
+        if winner_number == 1:
+            team1_row.wins += 1
+            team2_row.losses += 1
+        elif winner_number == 2:
+            team2_row.wins += 1
+            team1_row.losses += 1
+
+        team1_row.save()
+        team2_row.save()

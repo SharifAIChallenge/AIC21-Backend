@@ -21,3 +21,6 @@ class Scoreboard(TimeStampedModel):
             )
             return row
         return None
+
+    def get_team_row(self, team):
+        return self.rows.get(team=team)

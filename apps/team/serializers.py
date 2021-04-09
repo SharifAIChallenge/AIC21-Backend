@@ -203,10 +203,10 @@ class SubmissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Submission
         fields = ['id', 'language', 'file', 'is_final', 'submit_time',
-                  'download_link', 'status']
+                  'download_link', 'status', 'infra_compile_message']
         read_only_fields = (
             'id', 'is_final', 'submit_time',
-            'user', 'download_link', 'status'
+            'user', 'download_link', 'status', 'infra_compile_message'
         )
 
     def validate(self, attrs):

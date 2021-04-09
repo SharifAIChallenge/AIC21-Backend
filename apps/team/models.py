@@ -199,10 +199,11 @@ class Submission(models.Model):
         self.save()
 
     @classmethod
-    def update_submission(cls, infra_token, status):
+    def update_submission(cls, infra_token, status, infra_message=''):
         submission = get_object_or_404(cls, infra_token=infra_token)
 
         submission.status = status
+        submission.infra_compile_message = infra_message
         submission.save()
 
         if status == SubmissionStatusTypes.COMPILED:
