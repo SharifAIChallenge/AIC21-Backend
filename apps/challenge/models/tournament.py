@@ -58,12 +58,16 @@ class Tournament(TimeStampedModel):
         return tournament
 
     def reset_scoreboard(self):
+        from apps.challenge.models import MatchStatusTypes
+
         self.scoreboard.rows.update(score=1000)
         self.scoreboard.rows.update(wins=0)
         self.scoreboard.rows.update(losses=0)
         self.scoreboard.rows.update(draws=0)
 
-        for match in self.matches.all():
+        matches = self.matches.filter(status=MatchStatusTypes.SUCCESSFUL)
+
+        for match in matches:
             match.update_score()
 
     def __str__(self):
