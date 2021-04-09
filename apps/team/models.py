@@ -1,5 +1,6 @@
 import os
 import logging
+import uuid
 
 from django.contrib.auth import get_user_model
 from django.db import models
@@ -135,6 +136,11 @@ class SubmissionStatusTypes:
     )
 
 
+def get_submission_file_directory(instance, filename):
+    return os.path.join(instance.team.name, str(instance.user.id),
+                        filename + uuid.uuid4().__str__() + '.zip')
+
+
 class Submission(models.Model):
     FILE_SIZE_LIMIT = 20 * 1024 * 1024
 
@@ -145,7 +151,7 @@ class Submission(models.Model):
     language = models.CharField(max_length=50,
                                 choices=SubmissionLanguagesTypes.TYPES,
                                 default=SubmissionLanguagesTypes.JAVA)
-    file = models.FileField(null=True, blank=True)
+    file = models.FileField(upload_to=get_submission_file_directory, null=True, blank=True)
     submit_time = models.DateTimeField(auto_now_add=True)
     is_final = models.BooleanField(default=False)
     status = models.CharField(max_length=50,
