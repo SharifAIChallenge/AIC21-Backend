@@ -26,7 +26,7 @@ class PaymentRequest(TimeStampedModel, UUIDModel, SoftDeletableModel):
     ref_id = models.CharField(max_length=64, blank=True, null=True)
 
     def get_team(self):
-        return Team.objects.filter(name=self.team_name).last()
+        return Team.humans.filter(name=self.team_name).last()
 
 
 class PaymentConfig(TimeStampedModel, UUIDModel):

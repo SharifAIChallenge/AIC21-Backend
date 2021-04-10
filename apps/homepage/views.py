@@ -111,7 +111,7 @@ class StatView(GenericAPIView):
             }, {
                 'title': 'تیم',
                 'icon': 'mdi-account-group',
-                'stat': Team.objects.count(),
+                'stat': Team.humans.count(),
             }, {
                 'title': 'شرکت‌کننده',
                 'icon': 'mdi-clipboard-account',

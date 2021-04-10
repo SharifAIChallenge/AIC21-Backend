@@ -25,7 +25,7 @@ class TeamAPIView(LoggingErrorsMixin, GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = TeamSerializer
     parser_classes = [MultiPartParser, FormParser, JSONParser]
-    queryset = Team.objects.all()
+    queryset = Team.humans.all()
 
     def get(self, request):
         team = request.user.team
@@ -84,7 +84,7 @@ class TeamSearchAPIView(GenericAPIView):
     permission_classes = [IsAuthenticated, ]
     serializer_class = TeamSerializer
     pagination_class = TeamPagination
-    queryset = Team.objects.all()
+    queryset = Team.humans.all()
 
     def get(self, request):
         term = request.GET.get('s')
@@ -106,7 +106,7 @@ class TeamSearchAPIView(GenericAPIView):
 class TeamInfoAPIView(GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = TeamInfoSerializer
-    queryset = Team.objects.all()
+    queryset = Team.humans.all()
     parser_classes = (MultiPartParser, FormParser)
 
     def get(self, req, team_id):
@@ -122,7 +122,7 @@ class IncompleteTeamInfoListAPIView(GenericAPIView):
     permission_classes = [IsAuthenticated, ]
     serializer_class = TeamInfoSerializer
     pagination_class = TeamPagination
-    queryset = Team.objects.all()
+    queryset = Team.humans.all()
     parser_classes = (MultiPartParser, FormParser)
 
     def get(self, request, ):
@@ -142,7 +142,7 @@ class IncompleteTeamInfoListAPIView(GenericAPIView):
     def get_queryset(self):
         name = self.request.query_params.get('name')
 
-        queryset = Team.objects.all()
+        queryset = Team.humans.all()
 
         if name:
             queryset = queryset.filter(name__icontains=name)
@@ -374,7 +374,7 @@ class ALlTeamsAPIView(GenericAPIView):
     permission_classes = [IsAuthenticated, ]
     serializer_class = TeamInfoSerializer
     pagination_class = TeamPagination
-    queryset = Team.objects.all()
+    queryset = Team.humans.all()
     parser_classes = (MultiPartParser, FormParser)
 
     def get(self, request):
@@ -387,7 +387,7 @@ class ALlTeamsAPIView(GenericAPIView):
     def get_queryset(self):
         name = self.request.query_params.get('name')
 
-        queryset = Team.objects.all()
+        queryset = Team.humans.all()
 
         teams_with_final_sublission_ids = [team.id for team in
                                filter(lambda team: team.has_final_submission(),

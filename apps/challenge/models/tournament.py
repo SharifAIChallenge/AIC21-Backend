@@ -65,7 +65,9 @@ class Tournament(TimeStampedModel):
         self.scoreboard.rows.update(losses=0)
         self.scoreboard.rows.update(draws=0)
 
-        matches = self.matches.filter(status=MatchStatusTypes.SUCCESSFUL)
+        matches = self.matches.filter(
+            status=MatchStatusTypes.SUCCESSFUL).order_by(
+            'id')
 
         for match in matches:
             match.update_score()

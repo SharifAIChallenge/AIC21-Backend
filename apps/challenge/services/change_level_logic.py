@@ -16,7 +16,7 @@ class ChangeLevelLogic:
             'match__winner',
             flat=True
         )
-        winner_teams = Team.objects.filter(id__in=winner_teams)
+        winner_teams = Team.humans.filter(id__in=winner_teams)
 
         matches = Match.create_match_from_list(
             teams=winner_teams,

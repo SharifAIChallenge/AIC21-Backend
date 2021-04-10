@@ -20,8 +20,15 @@ User = get_user_model()
 logger = logging.getLogger(__name__)
 
 
+class NotBotQueryManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(is_bot=False)
+
+
 class Team(UUIDModel, TimeStampedModel):
     IMAGE_MAX_SIZE = 1024 * 1024
+
+    humans = NotBotQueryManager()
 
     name = models.CharField(max_length=128, unique=True)
     image = models.ImageField(upload_to="teams/images/", null=True,
@@ -30,6 +37,10 @@ class Team(UUIDModel, TimeStampedModel):
                                 on_delete=models.RESTRICT,
                                 related_name='created_teams')
     level_one_payed = models.BooleanField(
+        default=False
+    )
+
+    is_bot = models.BooleanField(
         default=False
     )
 
@@ -151,7 +162,8 @@ class Submission(models.Model):
     language = models.CharField(max_length=50,
                                 choices=SubmissionLanguagesTypes.TYPES,
                                 default=SubmissionLanguagesTypes.JAVA)
-    file = models.FileField(upload_to=get_submission_file_directory, null=True, blank=True)
+    file = models.FileField(upload_to=get_submission_file_directory, null=True,
+                            blank=True)
     submit_time = models.DateTimeField(auto_now_add=True)
     is_final = models.BooleanField(default=False)
     status = models.CharField(max_length=50,

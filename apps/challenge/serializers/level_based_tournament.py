@@ -49,7 +49,7 @@ class LevelBasedTournamentAddTeamsSerializer(serializers.Serializer):
         if len(attrs['teams']) % 2 == 1:
             raise Exception('Teams list size must be even not odd!')
 
-        teams_list = Team.objects.filter(id__in=attrs['teams'])
+        teams_list = Team.humans.filter(id__in=attrs['teams'])
         if len(teams_list) != len(attrs['teams']):
             team_list_id = [team.id for team in teams_list]
             invalid_team_list = set(attrs['teams']) - set(team_list_id)
@@ -63,7 +63,7 @@ class LevelBasedTournamentAddTeamsSerializer(serializers.Serializer):
         level_based_tournament = get_object_or_404(LevelBasedTournament.objects.all(), pk=validated_data.id)
 
         preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(validated_data.teams)])
-        teams = Team.objects.filter(id__in=validated_data.teams).order_by(preserved)
+        teams = Team.humans.filter(id__in=validated_data.teams).order_by(preserved)
         # TODO : Check the order is the same ...
 
         random_map = Map.get_random_map()
