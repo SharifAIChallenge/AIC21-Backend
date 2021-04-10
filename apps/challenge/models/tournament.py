@@ -3,13 +3,15 @@ from model_utils.models import TimeStampedModel
 
 
 class TournamentTypes:
-    NORMAL = 'successful'
+    NORMAL = 'normal'
     FRIENDLY = 'friendly'
     CLANWAR = 'clanwar'
+    BOT = 'bot'
     TYPES = (
         (NORMAL, 'Normal'),
         (FRIENDLY, 'Friendly'),
-        (CLANWAR, 'Clanwar')
+        (CLANWAR, 'Clanwar'),
+        (BOT, 'Bot')
     )
 
 
@@ -28,6 +30,12 @@ class Tournament(TimeStampedModel):
     def get_friendly_tournament():
         return Tournament.objects.filter(
             type=TournamentTypes.FRIENDLY).first()
+
+    @staticmethod
+    def get_bot_tournament():
+        return Tournament.objects.filter(
+            type=TournamentTypes.BOT
+        ).first()
 
     @staticmethod
     def create_tournament(name, start_time, end_time, is_hidden,

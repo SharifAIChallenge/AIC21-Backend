@@ -154,7 +154,22 @@ class Match(TimeStampedModel):
             raise Exception(
                 "Admin should initialize a friendly tournament first ...")
 
-        Match.create_match(team1, team2, friendly_tournament, game_map)
+        return Match.create_match(team1, team2, friendly_tournament, game_map)
+
+    @staticmethod
+    def create_bot_match(bot, team, game_map=None):
+        from apps.challenge.models import Map, Tournament
+
+        if game_map is None:
+            game_map = Map.get_random_map()
+        bot_tournament = Tournament.get_bot_tournament()
+
+        if bot_tournament is None:
+            raise Exception(
+                "Admin should initialize a bot tournament first ..."
+            )
+
+        return Match.create_match(bot, team, bot_tournament, game_map)
 
     @property
     def game_log(self):

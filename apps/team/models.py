@@ -25,10 +25,17 @@ class NotBotQueryManager(models.Manager):
         return super().get_queryset().filter(is_bot=False)
 
 
+class BotQueryManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(is_bot=True)
+
+
 class Team(UUIDModel, TimeStampedModel):
     IMAGE_MAX_SIZE = 1024 * 1024
+    MAX_BOT_NUMBER = 5
 
     humans = NotBotQueryManager()
+    bots = BotQueryManager()
 
     name = models.CharField(max_length=128, unique=True)
     image = models.ImageField(upload_to="teams/images/", null=True,
@@ -43,6 +50,11 @@ class Team(UUIDModel, TimeStampedModel):
     is_bot = models.BooleanField(
         default=False
     )
+    bot_number = models.PositiveSmallIntegerField(
+        unique=True,
+        blank=True,
+        null=True
+    )
 
     def is_complete(self):
         return self.members.count() == MAX_MEMBERS
@@ -53,6 +65,32 @@ class Team(UUIDModel, TimeStampedModel):
     def reject_all_pending_invitations(self):
         invitations = self.invitations.filter(status="pending")
         invitations.update(status="rejected")
+
+    def rival_teams_wins(self):
+        as_second_teams = self.matches_first.exclude(winner=self).values_list(
+            'team2_id', flat=True
+        )
+        as_first_teams = self.matches_second.exclude(winner=self).values_list(
+            'team1_id', flat=True
+        )
+        return list(as_first_teams) + list(as_second_teams)
+
+    def has_won_me(self, team):
+        as_second_teams = self.matches_first.filter(winner=team).exists()
+        as_first_teams = self.matches_second.filter(winner=team).exists()
+
+        return as_second_teams or as_first_teams
+
+    @staticmethod
+    def get_next_level_bot(team):
+        bots = Team.bots.all().order_by('bot_number')
+        next_bot = None
+        for bot in bots:
+            if not bot.has_won_me(team):
+                next_bot = bot
+                break
+
+        return next_bot
 
     def member_count(self):
         return self.members.count()

@@ -14,6 +14,7 @@ from apps.challenge.serializers import LobbyQueueSerializer, \
     MatchSerializer
 from apps.challenge.services.lobby import LobbyService
 from apps.paginations import MatchPagination
+from apps.team.models import Team
 from apps.team.permissions import HasTeam, TeamHasFinalSubmission
 
 from .models import Request, RequestTypes
@@ -266,3 +267,25 @@ class MatchAPIView(GenericAPIView):
             )
 
         return queryset
+
+
+class BotAPIView(GenericAPIView):
+    permission_classes = (IsAuthenticated, HasTeam)
+
+    def get(self, request):
+        next_bot = Team.get_next_level_bot(request.user.team)
+
+        return Response(
+            data={'data': next_bot.bot_number if next_bot else 0},
+            status=status.HTTP_200_OK
+        )
+
+    def post(self, request):
+        next_bot = Team.get_next_level_bot(request.user.team)
+
+        if next_bot:
+            Match.create_bot_match(next_bot, request.user.team)
+
+        return Response(
+            status=status.HTTP_200_OK
+        )
