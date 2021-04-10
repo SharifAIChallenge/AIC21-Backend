@@ -2,9 +2,10 @@ from django.conf.urls import url
 from django.urls import path
 from apps.challenge.views import LobbyAPIView, ScoreboardAPIView, \
     TournamentAPIView, ClanAPIView, LevelBasedTournamentAPIView, LevelBasedTournamentAddTeamsAPIView, RequestAPIView, \
-    FriendlyScoreboardAPIView, MatchAPIView
+    FriendlyScoreboardAPIView, MatchAPIView, BotAPIView
 
 urlpatterns = [
+    path('bot', view=BotAPIView.as_view(), name='bot'),
     path('request', view=RequestAPIView.as_view(), name='request'),
     path('request/<int:request_id>', view=RequestAPIView.as_view(), name='request_update'),
     path('lobby', view=LobbyAPIView.as_view(), name='lobby'),
