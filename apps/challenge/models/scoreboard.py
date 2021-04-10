@@ -23,4 +23,10 @@ class Scoreboard(TimeStampedModel):
         return None
 
     def get_team_row(self, team):
-        return self.rows.get(team=team)
+        from apps.challenge.models import ScoreboardRow
+
+        row = self.rows.filter(team=team).last()
+        if not row:
+            row = ScoreboardRow.objects.create(scoreboard=self, team=team)
+
+        return row
