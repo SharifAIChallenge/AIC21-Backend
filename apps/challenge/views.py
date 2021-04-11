@@ -274,9 +274,13 @@ class BotAPIView(GenericAPIView):
 
     def get(self, request):
         next_bot = Team.get_next_level_bot(request.user.team)
+        opened_bots = Team.bots.filter(bot_number__lte=next_bot.bot_number)
+
+        data = [{'number': bot.bot_number, 'name': bot.name} for bot in
+                opened_bots]
 
         return Response(
-            data={'data': next_bot.bot_number if next_bot else 0},
+            data={'data': data},
             status=status.HTTP_200_OK
         )
 
