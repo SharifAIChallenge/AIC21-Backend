@@ -187,7 +187,8 @@ class Match(TimeStampedModel):
         from apps.infra_gateway.functions import download_log
 
         if self.status not in [MatchStatusTypes.FREEZE,
-                               MatchStatusTypes.PENDING]:
+                               MatchStatusTypes.PENDING,
+                               MatchStatusTypes.RUNNING]:
             return download_log(
                 match_infra_token=self.infra_token,
                 file_infra_token=f'{self.infra_token}.out'
