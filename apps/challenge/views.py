@@ -287,7 +287,7 @@ class BotAPIView(GenericAPIView):
 
         bot = Team.bots.get(bot_number=bot_number)
 
-        Match.create_bot_match(next_bot, request.user.team)
+        Match.create_bot_match(bot, request.user.team)
 
         return Response(
             status=status.HTTP_200_OK
