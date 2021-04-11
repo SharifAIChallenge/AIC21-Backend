@@ -35,14 +35,24 @@ class LevelBasedTournamentAdmin(ModelAdmin):
 
 @admin.register(Map)
 class MapAdmin(ModelAdmin):
-    pass
+    list_display = ('id', 'name', 'file', 'active', 'infra_token')
+    list_display_links = ('id', 'name')
+    list_editable = ('file', 'active')
+    list_filter = ('active',)
+    search_fields = ('name', 'infra_token')
 
 
 @admin.register(Scoreboard)
 class Scoreboard(ModelAdmin):
-    pass
+    list_display = ('id', 'tournament', 'freeze')
+    list_display_links = ('id',)
+    list_editable = ('freeze', 'tournament')
 
 
 @admin.register(ScoreboardRow)
 class ScoreboardRow(ModelAdmin):
-    pass
+    list_display = ('id', 'scoreboard', 'team', 'score',
+                    'wins', 'losses', 'draws')
+    list_display_links = ('id',)
+
+    sortable_by = ('wins', 'losses', 'draws', 'score')

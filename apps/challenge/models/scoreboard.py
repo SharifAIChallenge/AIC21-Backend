@@ -30,3 +30,6 @@ class Scoreboard(TimeStampedModel):
             row = ScoreboardRow.objects.create(scoreboard=self, team=team)
 
         return row
+
+    def __str__(self):
+        return f'{self.tournament.name}'
