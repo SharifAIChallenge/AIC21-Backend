@@ -288,6 +288,8 @@ class BotAPIView(GenericAPIView):
 
     def post(self, request, bot_number):
         next_bot = Team.get_next_level_bot(request.user.team)
+        if next_bot is None:
+            next_bot = Team.bots.all().order_by('bot_number').last()
         if bot_number < 1 or bot_number > next_bot.bot_number:
             return Response(status=status.HTTP_403_FORBIDDEN)
 
