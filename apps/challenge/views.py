@@ -274,6 +274,8 @@ class BotAPIView(GenericAPIView):
 
     def get(self, request):
         next_bot = Team.get_next_level_bot(request.user.team)
+        if next_bot is None:
+            next_bot = Team.bots.all().order_by('bot_number').last()
         opened_bots = Team.bots.filter(bot_number__lte=next_bot.bot_number)
 
         data = [{'number': bot.bot_number, 'name': bot.name} for bot in
