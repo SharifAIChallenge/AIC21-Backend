@@ -34,6 +34,7 @@ class Team(UUIDModel, TimeStampedModel):
     IMAGE_MAX_SIZE = 1024 * 1024
     MAX_BOT_NUMBER = 5
 
+    objects = models.Manager()
     humans = NotBotQueryManager()
     bots = BotQueryManager()
 
@@ -192,7 +193,6 @@ def get_submission_file_directory(instance, filename):
 
 class Submission(models.Model):
     FILE_SIZE_LIMIT = 20 * 1024 * 1024
-
     team = models.ForeignKey(Team, related_name='submissions',
                              on_delete=models.CASCADE)
     user = models.ForeignKey(User, related_name='submissions',
