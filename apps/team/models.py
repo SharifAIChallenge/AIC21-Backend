@@ -215,6 +215,14 @@ class Submission(models.Model):
                                            blank=True, unique=True)
     download_link = models.URLField(max_length=512, null=True, blank=True)
 
+    def pre_save(self):
+        if not self.infra_token:
+            self.handle()
+
+    def save(self, *args, **kwargs):
+        self.pre_save()
+        super(Submission, self).save(*args, **kwargs)
+
     def __str__(self):
         return "id: " + str(
             self.id) + ' team: ' + self.team.name + " user: " + \

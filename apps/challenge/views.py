@@ -266,7 +266,7 @@ class MatchAPIView(GenericAPIView):
 
             )
 
-        return queryset
+        return queryset.order_by('-id')
 
 
 class BotAPIView(GenericAPIView):
