@@ -68,7 +68,7 @@ class Match(TimeStampedModel):
         if message:
             match.message = message
 
-        if status == MatchStatusTypes.SUCCESSFUL and stats:
+        if status == MatchStatusTypes.SUCCESSFUL and stats and not match.winner:
             winner = stats.get('winner', 0)
             if winner == 0:
                 match.winner = match.team1

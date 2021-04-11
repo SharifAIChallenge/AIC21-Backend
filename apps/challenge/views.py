@@ -280,11 +280,14 @@ class BotAPIView(GenericAPIView):
             status=status.HTTP_200_OK
         )
 
-    def post(self, request):
+    def post(self, request, bot_number):
         next_bot = Team.get_next_level_bot(request.user.team)
+        if bot_number < 1 or bot_number > next_bot.bot_number:
+            return Response(status=status.HTTP_403_FORBIDDEN)
 
-        if next_bot:
-            Match.create_bot_match(next_bot, request.user.team)
+        bot = Team.bots.get(bot_number=bot_number)
+
+        Match.create_bot_match(next_bot, request.user.team)
 
         return Response(
             status=status.HTTP_200_OK
