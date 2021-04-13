@@ -7,13 +7,15 @@ from apps.team.views import TeamAPIView, TeamSearchAPIView, TeamInfoAPIView, \
     , TeamSentInvitationListAPIView, UserAnswerInvitationAPIView, \
     UserSentInvitationListAPIView, TeamPendingInvitationListAPIView, \
     TeamAnswerInvitationAPIView, SubmissionAPIView, SubmissionsListAPIView, \
-    TeamStatsAPIView, ALlTeamsAPIView
+    TeamStatsAPIView, ALlTeamsAPIView, UniqueTeamsHaveSubmissions
 
 app_name = 'team'
 
 urlpatterns = [
     path('', view=TeamAPIView.as_view(), name="team_operations"),
     path('stats', view=TeamStatsAPIView.as_view(), name='team_stats'),
+    path('unique-team-submission', view=UniqueTeamsHaveSubmissions.as_view(),
+         name='unique_team_submissions'),
     path('search', view=TeamSearchAPIView.as_view(), name="team_search"),
     path('incomplete', view=IncompleteTeamInfoListAPIView.as_view(),
          name="get_incomplete_teams"),

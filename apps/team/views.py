@@ -390,10 +390,11 @@ class ALlTeamsAPIView(GenericAPIView):
         queryset = Team.humans.all()
 
         teams_with_final_sublission_ids = [team.id for team in
-                               filter(lambda team: team.has_final_submission(),
-                                      queryset
-                                      )
-                               ]
+                                           filter(lambda
+                                                      team: team.has_final_submission(),
+                                                  queryset
+                                                  )
+                                           ]
 
         queryset = queryset.filter(
             id__in=teams_with_final_sublission_ids)
@@ -402,3 +403,17 @@ class ALlTeamsAPIView(GenericAPIView):
             queryset = queryset.filter(name__icontains=name)
 
         return queryset
+
+
+class UniqueTeamsHaveSubmissions(GenericAPIView):
+    queryset = Submission.objects.all()
+
+    def get(self, request):
+        team_names = self.get_queryset().values_list('team__name',
+                                                     flat=True).distinct()
+        team_names = list(team_names)
+        return Response(
+            data={
+                'data': {'teams': team_names, 'count': len(team_names)}},
+            status=status.HTTP_200_OK
+        )
