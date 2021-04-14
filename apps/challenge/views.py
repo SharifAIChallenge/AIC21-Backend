@@ -158,14 +158,24 @@ class ScoreboardAPIView(GenericAPIView):
     queryset = ScoreboardRow.objects.all()
 
     def get(self, request, tournament_id):
-        scoreboard_rows = self.get_queryset().filter(
-            scoreboard__tournament_id=tournament_id).order_by('-score')
+        scoreboard_rows = self.get_queryset()
         page = self.paginate_queryset(scoreboard_rows)
         data = self.get_serializer(instance=page, many=True).data
 
         return self.get_paginated_response(
             data={'data': data}
         )
+
+    def get_queryset(self):
+        no_match_teams = ScoreboardRow.objects.filter(
+            wins=0
+        ).filter(losses=0).filter(draws=0).values_list('id', flat=True)
+
+        has_match_teams = ScoreboardRow.objects.exclude(
+            id__in=no_match_teams).order_by('-score')
+        no_match_teams = ScoreboardRow.objects.filter(id__in=no_match_teams)
+
+        return list(has_match_teams) + list(no_match_teams)
 
 
 class FriendlyScoreboardAPIView(GenericAPIView):

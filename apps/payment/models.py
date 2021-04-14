@@ -13,7 +13,7 @@ class PaymentRequest(TimeStampedModel, UUIDModel, SoftDeletableModel):
     description = models.TextField(
         default='پرداخت مرحله اول ای آی چلنج ۲۱'
     )
-    get_user_model()
+
     user = models.ForeignKey(User, related_name='payment_requests',
                              on_delete=models.DO_NOTHING)
     callback_url = models.URLField(
