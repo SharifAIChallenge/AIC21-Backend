@@ -174,7 +174,8 @@ class ScoreboardAPIView(GenericAPIView):
         ).filter(losses=0).filter(draws=0).values_list('id', flat=True)
 
         has_match_teams = ScoreboardRow.objects.exclude(
-            id__in=no_match_teams).order_by('-score')
+            id__in=no_match_teams).filter(
+            scoreboard__tournament_id=tournament_id).order_by('-score')
         no_match_teams = ScoreboardRow.objects.filter(id__in=no_match_teams)
 
         return list(has_match_teams) + list(no_match_teams)
