@@ -167,7 +167,9 @@ class ScoreboardAPIView(GenericAPIView):
         )
 
     def get_queryset(self):
+        tournament_id = self.kwargs.get('tournament_id')
         no_match_teams = ScoreboardRow.objects.filter(
+            scoreboard__tournament_id=tournament_id).filter(
             wins=0
         ).filter(losses=0).filter(draws=0).values_list('id', flat=True)
 
