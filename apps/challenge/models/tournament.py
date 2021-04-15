@@ -65,6 +65,12 @@ class Tournament(TimeStampedModel):
 
         return tournament
 
+    def teams(self):
+        from apps.team.models import Team
+        team_ids = self.scoreboard.rows.values_list('team_id', flat=True)
+
+        return Team.objects.filter(id__in=team_ids)
+
     def reset_scoreboard(self):
         from apps.challenge.models import MatchStatusTypes
 
@@ -79,6 +85,30 @@ class Tournament(TimeStampedModel):
 
         for match in matches:
             match.update_score()
+
+    def make_league_for_tournament(self, match_map):
+        from itertools import combinations
+
+        from apps.challenge.models import Match
+
+        teams = self.teams()
+        binaries = list(combinations(list(teams), 2))
+
+        for team1, team2 in binaries:
+            Match.create_match(
+                team1=team1,
+                team2=team2,
+                tournament=self,
+                match_map=match_map
+            )
+
+        for team2, team1 in binaries:
+            Match.create_match(
+                team1=team1,
+                team2=team2,
+                tournament=self,
+                match_map=match_map
+            )
 
     def __str__(self):
         return f'{self.name}'

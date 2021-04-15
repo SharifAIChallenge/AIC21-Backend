@@ -12,3 +12,4 @@ from .lobby import LobbyQueue
 from .level_based_tournament import LevelBasedTournament
 from .level import Level
 from .level_match import LevelMatch
+from .league import League
