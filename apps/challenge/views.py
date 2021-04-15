@@ -208,6 +208,25 @@ class TournamentAPIView(GenericAPIView):
         )
 
 
+class NextTournamentAPIView(GenericAPIView):
+    permission_classes = (IsAuthenticated, HasTeam)
+    serializer_class = TournamentSerializer
+
+    def get(self, request):
+        curr_time = timezone.now()
+        tournament = Tournament.objects.filter(
+            type=TournamentTypes.NORMAL
+        ).exclude(start_time=None).filter(
+            start_time__gt=curr_time
+        ).order_by('start_time').first()
+
+        data = self.get_serializer(tournament).data
+
+        return Response(
+            data={'data': data},
+            status=status.HTTP_200_OK
+        )
+
 
 class ClanAPIView(GenericAPIView):
     def get(self, request):
