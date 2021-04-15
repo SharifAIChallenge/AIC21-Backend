@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.utils import timezone
 
 from rest_framework.generics import GenericAPIView, get_object_or_404
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -9,9 +10,10 @@ from rest_framework import status
 from apps.challenge.models import LobbyQueue, RequestStatusTypes, \
     LevelBasedTournament, Match, Scoreboard, ScoreboardRow, Tournament, \
     MatchStatusTypes
+from apps.challenge.models.tournament import TournamentTypes
 from apps.challenge.serializers import LobbyQueueSerializer, \
     ScoreboardSerializer, ScoreboardRowSerializer, \
-    MatchSerializer
+    MatchSerializer, TournamentSerializer
 from apps.challenge.services.lobby import LobbyService
 from apps.paginations import MatchPagination
 from apps.team.models import Team
@@ -187,8 +189,24 @@ class FriendlyScoreboardAPIView(GenericAPIView):
 
 
 class TournamentAPIView(GenericAPIView):
+    permission_classes = (IsAuthenticated, HasTeam)
+    serializer_class = TournamentSerializer
+    queryset = Tournament.objects.filter(type=TournamentTypes.NORMAL).exclude(
+        start_time=None
+    )
+
     def get(self, request):
-        pass
+        curr_time = timezone.now()
+        queryset = self.get_queryset().filter(
+            start_time__lt=curr_time
+        )
+        data = self.get_serializer(queryset, many=True).data
+
+        return Response(
+            data={'data': data},
+            status=status.HTTP_200_OK
+        )
+
 
 
 class ClanAPIView(GenericAPIView):
