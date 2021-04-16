@@ -237,8 +237,14 @@ class Match(TimeStampedModel):
             (team1_row.score - team2_row.score) / 400
         )))
 
-        team1_row.score = team1_row.score + k * (2 - winner_number - p1)
-        team2_row.score = team2_row.score + k * (winner_number - 1 - p2)
+        if self.tournament.type != TournamentTypes.NORMAL:
+            team1_row.score = team1_row.score + k * (2 - winner_number - p1)
+            team2_row.score = team2_row.score + k * (winner_number - 1 - p2)
+        else:
+            if winner_number == 1:
+                team1_row.score += 15
+            elif winner_number == 2:
+                team2_row.score += 15
 
         if winner_number == 1:
             team1_row.wins += 1
