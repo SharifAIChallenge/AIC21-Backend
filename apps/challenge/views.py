@@ -303,7 +303,18 @@ class MatchAPIView(GenericAPIView):
 
     def get_queryset(self):
         match_status = self.request.query_params.get('status')
-        queryset = self.queryset
+        friendly_tournament_id = Tournament.get_friendly_tournament().id
+
+        tournament_id = self.request.query_params.get(
+            'tournament_id',
+            friendly_tournament_id
+        )
+        try:
+            tournament_id = int(tournament_id)
+        except ValueError:
+            tournament_id = friendly_tournament_id
+
+        queryset = self.queryset.filter(tournament_id=tournament_id)
 
         queryset = queryset.filter(
             Q(team1=self.request.user.team) | Q(team2=self.request.user.team)
