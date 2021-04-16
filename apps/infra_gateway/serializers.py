@@ -37,7 +37,7 @@ class InfraEventPushSerializer(serializers.ModelSerializer):
                     infra_token=validated_data.get('token'),
                     status=MatchStatusTypes.RUNNING
                 )
-            elif status_code == 502:
+            elif status_code == 502 or status_code == 506:
                 Match.update_match(
                     infra_token=validated_data.get('token'),
                     status=MatchStatusTypes.FAILED,

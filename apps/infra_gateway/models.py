@@ -15,6 +15,7 @@ class EventStatusCodeTypes:
     MATCH_STARTED = 500
     MATCH_FAILED = 502
     MATCH_SUCCESS = 504
+    MATCH_TIMEOUT = 506
 
     Types = (
         (COMPILE_SUCCESS, COMPILE_SUCCESS),
@@ -24,6 +25,7 @@ class EventStatusCodeTypes:
         (MATCH_STARTED, MATCH_STARTED),
         (MATCH_FAILED, MATCH_FAILED),
         (MATCH_SUCCESS, MATCH_SUCCESS),
+        (MATCH_TIMEOUT, MATCH_TIMEOUT)
     )
 
 
