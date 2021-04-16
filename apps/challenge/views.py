@@ -309,7 +309,7 @@ class MatchAPIView(GenericAPIView):
         )
         try:
             tournament_id = int(tournament_id)
-        except ValueError:
+        except TypeError:
             tournament_id = None
 
         if not tournament_id:
