@@ -360,3 +360,22 @@ class BotAPIView(GenericAPIView):
         return Response(
             status=status.HTTP_200_OK
         )
+
+
+class TeamsWonBotAPIView(GenericAPIView):
+
+    def get(self, request):
+        bots = Team.bots.all()
+        data = {}
+
+        for bot in bots:
+            team_ids = bot.rival_teams_wins()
+            teams = Team.humans.filter(
+                id__in=team_ids).values_list('name', flat=True)
+
+            data[bot.name] = list(teams)
+
+        return Response(
+            data={'data': data},
+            status=status.HTTP_200_OK
+        )

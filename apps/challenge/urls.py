@@ -3,7 +3,8 @@ from django.urls import path
 from apps.challenge.views import LobbyAPIView, ScoreboardAPIView, \
     TournamentAPIView, ClanAPIView, LevelBasedTournamentAPIView, \
     LevelBasedTournamentAddTeamsAPIView, RequestAPIView, \
-    FriendlyScoreboardAPIView, MatchAPIView, BotAPIView, NextTournamentAPIView
+    FriendlyScoreboardAPIView, MatchAPIView, BotAPIView, NextTournamentAPIView, \
+    TeamsWonBotAPIView
 
 urlpatterns = [
     path('bot', view=BotAPIView.as_view(), name='bot'),
@@ -19,6 +20,8 @@ urlpatterns = [
     path('tournament', view=TournamentAPIView.as_view(), name='tournament'),
     path('tournament/next', view=NextTournamentAPIView.as_view(),
          name='next_tournament'),
+    path('teams-won-bot', view=TeamsWonBotAPIView.as_view(),
+         name='teams_won_bot'),
     path('clan', view=ClanAPIView.as_view(), name='clan'),
     path('match', view=MatchAPIView.as_view(), name='matches'),
 
