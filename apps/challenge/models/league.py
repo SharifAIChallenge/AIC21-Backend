@@ -6,6 +6,7 @@ class League(models.Model):
     start_time = models.DateTimeField()
     match_map = models.ForeignKey('challenge.Map', related_name='leagues',
                                   on_delete=models.DO_NOTHING)
+    total_matches = models.PositiveIntegerField(default=0)
 
     def pre_save(self):
         from apps.challenge.models import Tournament
@@ -26,7 +27,8 @@ class League(models.Model):
             team_list=teams
         )
 
-        tournament.make_league_for_tournament(match_map=self.match_map)
+        self.total_matches = \
+            tournament.make_league_for_tournament(match_map=self.match_map)
 
     def save(self, *args, **kwargs):
         self.pre_save()

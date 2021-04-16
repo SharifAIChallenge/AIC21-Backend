@@ -110,5 +110,7 @@ class Tournament(TimeStampedModel):
                 match_map=match_map
             )
 
+        return 2 * len(binaries)
+
     def __str__(self):
         return f'{self.name}'
