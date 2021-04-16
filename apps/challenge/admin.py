@@ -3,7 +3,15 @@ from django.contrib.admin import ModelAdmin
 
 # Register your models here.
 from apps.challenge.models import Tournament, LevelBasedTournament, Map, \
-    Scoreboard, ScoreboardRow, Match, MatchInfo, LobbyQueue
+    Scoreboard, ScoreboardRow, Match, MatchInfo, LobbyQueue, League
+
+
+@admin.register(League)
+class LeagueAdmin(ModelAdmin):
+    list_display = (
+        'id', 'tournament_name', 'start_time', 'match_map', 'total_matches')
+
+    list_display_links = ('id',)
 
 
 @admin.register(Match)
