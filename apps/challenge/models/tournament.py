@@ -16,7 +16,7 @@ class TournamentTypes:
 
 
 class Tournament(TimeStampedModel):
-    name = models.CharField(max_length=512)
+    name = models.CharField(max_length=512, unique=True)
     type = models.CharField(
         max_length=50,
         choices=TournamentTypes.TYPES,

@@ -9,7 +9,8 @@ from apps.challenge.models import Tournament, LevelBasedTournament, Map, \
 @admin.register(League)
 class LeagueAdmin(ModelAdmin):
     list_display = (
-        'id', 'tournament_name', 'start_time', 'match_map', 'total_matches')
+        'id', 'tournament_name', 'start_time', 'match_map', 'total_matches',
+        'run')
 
     list_display_links = ('id',)
 
