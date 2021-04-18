@@ -41,13 +41,14 @@ class InfraEventPushSerializer(serializers.ModelSerializer):
                 Match.update_match(
                     infra_token=validated_data.get('token'),
                     status=MatchStatusTypes.SUCCESSFUL,
-                    message=eval(message_body)
+                    message=message_body,
+                    stats=eval(message_body)
                 )
             else:
                 Match.update_match(
                     infra_token=validated_data.get('token'),
                     status=MatchStatusTypes.FAILED,
-                    stats=message_body
+                    message=message_body
                 )
 
         return instance
