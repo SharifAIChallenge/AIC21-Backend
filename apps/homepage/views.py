@@ -9,6 +9,7 @@ from apps.homepage.serializers import SubscribeSerializer
 from apps.staff.models import Staff
 from apps.staff.serializers import StaffSerializer
 from apps.team.models import Submission, Team
+from apps.ticket.models import Ticket, Reply
 from .models import Intro, TimelineEvent, Prize, Stats, Sponsor, WhyThisEvent, \
     Quote, Motto, Media, SocialMedia, Rule, GoogleAddEventToCalender
 
@@ -116,7 +117,11 @@ class StatView(GenericAPIView):
                 'title': 'شرکت‌کننده',
                 'icon': 'mdi-clipboard-account',
                 'stat': Profile.objects.count(),
-            },
+            }, {
+                'title': 'تیکت‌ها',
+                'icon': 'mdi-filmstrip-box-multiple',
+                'stat': Ticket.objects.count() + Reply.objects.count()
+            }
 
             ]
         }
