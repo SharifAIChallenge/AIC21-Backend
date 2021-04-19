@@ -9,6 +9,7 @@ class League(models.Model):
                                   on_delete=models.DO_NOTHING)
     total_matches = models.PositiveIntegerField(default=0)
     run = models.BooleanField(default=False)
+    two_way = models.BooleanField(default=False)
 
     def pre_save(self):
         from apps.challenge.models import Tournament
@@ -33,7 +34,10 @@ class League(models.Model):
         if self.run:
             tournament = Tournament.objects.get(name=self.tournament_name)
             self.total_matches = \
-                tournament.make_league_for_tournament(match_map=self.match_map)
+                tournament.make_league_for_tournament(
+                    match_map=self.match_map,
+                    two_way=self.two_way
+                )
 
     def save(self, *args, **kwargs):
         self.pre_save()

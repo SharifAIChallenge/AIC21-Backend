@@ -86,7 +86,7 @@ class Tournament(TimeStampedModel):
         for match in matches:
             match.update_score()
 
-    def make_league_for_tournament(self, match_map):
+    def make_league_for_tournament(self, match_map, two_way=False):
         from itertools import combinations
 
         from apps.challenge.models import Match
@@ -102,13 +102,14 @@ class Tournament(TimeStampedModel):
                 match_map=match_map
             )
 
-        for team2, team1 in binaries:
-            Match.create_match(
-                team1=team1,
-                team2=team2,
-                tournament=self,
-                match_map=match_map
-            )
+        if two_way:
+            for team2, team1 in binaries:
+                Match.create_match(
+                    team1=team1,
+                    team2=team2,
+                    tournament=self,
+                    match_map=match_map
+                )
 
         return 2 * len(binaries)
 
