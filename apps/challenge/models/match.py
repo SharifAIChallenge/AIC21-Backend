@@ -82,20 +82,22 @@ class Match(TimeStampedModel):
 
         return match
 
-    def run_match(self):
+    def run_match(self, priority=0):
         from apps.infra_gateway.functions import run_match
         self.infra_token = run_match(
-            match=self
+            match=self,
+            priority=priority
         )
         self.save()
 
     @staticmethod
-    def run_matches(matches):
+    def run_matches(matches, priority=0):
         for match in matches:
-            match.run_match()
+            match.run_match(priority=priority)
 
     @staticmethod
-    def create_match(team1, team2, tournament, match_map, is_freeze=False):
+    def create_match(team1, team2, tournament, match_map, is_freeze=False,
+                     priority=0):
         from apps.challenge.models import MatchInfo
 
         team1_final_submission = team1.final_submission()
@@ -117,7 +119,7 @@ class Match(TimeStampedModel):
             )
 
             if not is_freeze:
-                match.run_match()
+                match.run_match(priority=priority)
 
             return match
         return None
@@ -154,7 +156,8 @@ class Match(TimeStampedModel):
             raise Exception(
                 "Admin should initialize a friendly tournament first ...")
 
-        return Match.create_match(team1, team2, friendly_tournament, game_map)
+        return Match.create_match(team1, team2, friendly_tournament, game_map,
+                                  priority=1)
 
     @staticmethod
     def create_bot_match(bot, team, game_map=None):
@@ -169,7 +172,8 @@ class Match(TimeStampedModel):
                 "Admin should initialize a bot tournament first ..."
             )
 
-        return Match.create_match(bot, team, bot_tournament, game_map)
+        return Match.create_match(bot, team, bot_tournament, game_map,
+                                  priority=1)
 
     @property
     def game_log(self):

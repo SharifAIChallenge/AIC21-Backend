@@ -72,7 +72,7 @@ def compile_submissions(submissions):
     pass
 
 
-def run_match(match: Match):
+def run_match(match: Match, priority=0):
     response = requests.post(
         settings.GATEWAY_HOST + "/game/register",
         data={
@@ -82,6 +82,7 @@ def run_match(match: Match):
                 match.match_info.team2_code.infra_token  # in game id: 1
             ]
         },
+        params={'priority': priority},
         headers={'Authorization': f'{settings.GATEWAY_AUTH_TOKEN}'}
     )
     print(response.status_code, response.json(), "==== Run Game ====")
