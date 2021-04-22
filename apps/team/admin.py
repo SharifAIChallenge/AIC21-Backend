@@ -16,6 +16,7 @@ class TeamAdmin(ModelAdmin):
         models.TextField: {'widget': AdminMartorWidget},
     }
     list_display = ('id', 'name', 'image', 'creator', 'level_one_payed')
+    search_fields = ('name',)
     inlines = (SubmissionInline,)
 
 
@@ -29,4 +30,9 @@ class InvitationAdmin(ModelAdmin):
 
 @admin.register(Submission)
 class SubmissionAdmin(ModelAdmin):
-    pass
+    list_display = ('id', 'team', 'user', 'file', 'submit_time', 'is_final',
+                    'status', 'infra_token')
+    list_display_links = ('id',)
+
+    list_filter = ('is_final', 'status', 'submit_time')
+    search_fields = ('infra_token',)

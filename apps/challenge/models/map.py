@@ -34,3 +34,5 @@ class Map(TimeStampedModel, UUIDModel):
 
         return game_map
 
+    def __str__(self):
+        return f'{self.name}'

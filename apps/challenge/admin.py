@@ -17,7 +17,11 @@ class LeagueAdmin(ModelAdmin):
 
 @admin.register(Match)
 class MatchAdmin(ModelAdmin):
-    pass
+    list_display = ('id', 'team1', 'team2', 'status', 'winner', 'tournament',
+                    'infra_token')
+    list_display_links = ('id',)
+    list_filter = ('tournament', 'status')
+    search_fields = ('infra_token',)
 
 
 @admin.register(LobbyQueue)
