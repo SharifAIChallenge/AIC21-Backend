@@ -68,10 +68,12 @@ class Team(UUIDModel, TimeStampedModel):
         invitations.update(status="rejected")
 
     def rival_teams_wins(self):
-        as_second_teams = self.matches_first.exclude(winner=self).values_list(
+        as_second_teams = self.matches_first.exclude(winner=None).exclude(
+            winner=self).values_list(
             'team2_id', flat=True
         )
-        as_first_teams = self.matches_second.exclude(winner=self).values_list(
+        as_first_teams = self.matches_second.exclude(winner=None).exclude(
+            winner=self).values_list(
             'team1_id', flat=True
         )
         return list(as_first_teams) + list(as_second_teams)
