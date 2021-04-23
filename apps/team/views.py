@@ -406,7 +406,7 @@ class ALlTeamsAPIView(GenericAPIView):
 
 
 class UniqueTeamsHaveSubmissions(GenericAPIView):
-    queryset = Submission.objects.all()
+    queryset = Submission.objects.all().order_by('submit_time')
 
     def get(self, request):
         team_names = self.get_queryset().values_list('team__name',
