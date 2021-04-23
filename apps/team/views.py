@@ -409,9 +409,8 @@ class UniqueTeamsHaveSubmissions(GenericAPIView):
     queryset = Submission.objects.all().order_by('submit_time')
 
     def get(self, request):
-        team_names = self.get_queryset().values_list('team__name',
-                                                     flat=True).distinct()
-        team_names = list(team_names)
+        team_names = self.get_queryset().values_list('team__name', flat=True)
+        team_names = set(list(team_names))
         return Response(
             data={
                 'data': {'teams': team_names, 'count': len(team_names)}},
