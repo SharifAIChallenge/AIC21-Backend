@@ -46,6 +46,7 @@ class TournamentAdmin(ModelAdmin):
     list_display = ('id', 'name', 'type', 'is_hidden')
     list_filter = ('type', 'is_hidden')
     search_fields = ('name',)
+    list_editable = ('type', 'is_hidden', )
 
 
 @admin.register(LevelBasedTournament)
