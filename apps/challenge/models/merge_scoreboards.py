@@ -13,6 +13,14 @@ class MergeScoreboards(models.Model):
         on_delete=models.CASCADE
     )
 
+    coef = models.FloatField(
+        default=1.0
+    )
+
+    cost = models.IntegerField(
+        default=1000
+    )
+
     def pre_save(self):
         from apps.challenge.models import Scoreboard
         Scoreboard.merge_scoreboards(

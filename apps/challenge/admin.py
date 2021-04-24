@@ -9,7 +9,7 @@ from apps.challenge.models import Tournament, LevelBasedTournament, Map, \
 
 @admin.register(MergeScoreboards)
 class MergeScoreboardsAdmin(ModelAdmin):
-    list_display = ('id', 'src', 'dest')
+    list_display = ('id', 'src', 'dest', 'coef', 'cost')
     list_display_links = ('id',)
 
 
