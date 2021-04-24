@@ -3,7 +3,14 @@ from django.contrib.admin import ModelAdmin
 
 # Register your models here.
 from apps.challenge.models import Tournament, LevelBasedTournament, Map, \
-    Scoreboard, ScoreboardRow, Match, MatchInfo, LobbyQueue, League
+    Scoreboard, ScoreboardRow, Match, MatchInfo, LobbyQueue, League, \
+    MergeScoreboards
+
+
+@admin.register(MergeScoreboards)
+class MergeScoreboardsAdmin(ModelAdmin):
+    list_display = ('id', 'src', 'dest')
+    list_display_links = ('id',)
 
 
 @admin.register(League)

@@ -13,3 +13,4 @@ from .level_based_tournament import LevelBasedTournament
 from .level import Level
 from .level_match import LevelMatch
 from .league import League
+from .merge_scoreboards import MergeScoreboards
