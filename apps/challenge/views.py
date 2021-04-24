@@ -194,7 +194,7 @@ class TournamentAPIView(GenericAPIView):
     queryset = Tournament.objects.filter(
         type__in=[TournamentTypes.NORMAL, TournamentTypes.FINAL]).exclude(
         start_time=None
-    )
+    ).filter(is_hidden=False)
 
     def get(self, request):
         curr_time = timezone.now()
