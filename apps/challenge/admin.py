@@ -43,10 +43,11 @@ class MatchInfoAdmin(ModelAdmin):
 
 @admin.register(Tournament)
 class TournamentAdmin(ModelAdmin):
-    list_display = ('id', 'name', 'type', 'is_hidden')
+    list_display = ('id', 'name', 'type', 'is_hidden', 'start_time',
+                    'end_time')
     list_filter = ('type', 'is_hidden')
     search_fields = ('name',)
-    list_editable = ('type', 'is_hidden', )
+    list_editable = ('type', 'is_hidden', 'start_time', 'end_time')
 
 
 @admin.register(LevelBasedTournament)
