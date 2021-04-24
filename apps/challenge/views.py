@@ -198,9 +198,7 @@ class TournamentAPIView(GenericAPIView):
 
     def get(self, request):
         curr_time = timezone.now()
-        queryset = self.get_queryset().filter(
-            start_time__lt=curr_time
-        )
+        queryset = self.get_queryset()
         data = self.get_serializer(queryset, many=True).data
 
         return Response(
