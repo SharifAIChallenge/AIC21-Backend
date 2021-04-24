@@ -112,8 +112,20 @@ class Tournament(TimeStampedModel):
                     tournament=self,
                     match_map=match_map
                 )
+        if two_way:
+            return 2 * len(binaries)
 
-        return 2 * len(binaries)
+        return len(binaries)
+
+    def make_league_multi_maps(self, match_maps, two_way=False):
+        total_matches = 0
+
+        for match_map in match_maps:
+            total_matches += self.make_league_for_tournament(
+                match_map=match_map,
+                two_way=two_way
+            )
+        return total_matches
 
     def __str__(self):
         return f'{self.name}'
