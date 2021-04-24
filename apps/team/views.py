@@ -332,6 +332,7 @@ class SubmissionAPIView(LoggingErrorsMixin, GenericAPIView):
         return Response(data={'submissions': data}, status=status.HTTP_200_OK)
 
     def post(self, request):
+        return Response(status=status.HTTP_403_FORBIDDEN)
         submission = self.get_serializer(data=request.data,
                                          context={'request': request})
         if submission.is_valid(raise_exception=True):
