@@ -7,11 +7,13 @@ class TournamentTypes:
     FRIENDLY = 'friendly'
     CLANWAR = 'clanwar'
     BOT = 'bot'
+    FINAL = 'final'
     TYPES = (
         (NORMAL, 'Normal'),
         (FRIENDLY, 'Friendly'),
         (CLANWAR, 'Clanwar'),
-        (BOT, 'Bot')
+        (BOT, 'Bot'),
+        (FINAL, 'Final')
     )
 
 
