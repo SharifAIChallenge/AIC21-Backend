@@ -48,6 +48,10 @@ class Team(UUIDModel, TimeStampedModel):
         default=False
     )
 
+    final_payed = models.BooleanField(
+        default=False
+    )
+
     is_bot = models.BooleanField(
         default=False
     )
@@ -55,6 +59,10 @@ class Team(UUIDModel, TimeStampedModel):
         unique=True,
         blank=True,
         null=True
+    )
+
+    is_finalist = models.BooleanField(
+        default=False
     )
 
     def is_complete(self):

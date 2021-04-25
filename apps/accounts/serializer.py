@@ -51,10 +51,15 @@ class ProfileSerializer(serializers.ModelSerializer):
     resume_link = serializers.SerializerMethodField('_get_resume_link')
     image_link = serializers.SerializerMethodField('_get_image_link')
     has_team = serializers.SerializerMethodField('_has_team')
+    is_finalist = serializers.SerializerMethodField('_is_finalist')
 
     @staticmethod
     def _has_team(obj: Profile):
         return obj.user.team is not None
+
+    @staticmethod
+    def _is_finalist(obj: Profile):
+        return obj.user.team.is_finalist
 
     @staticmethod
     def _is_complete(obj: Profile):
