@@ -15,8 +15,11 @@ class TeamAdmin(ModelAdmin):
     formfield_overrides = {
         models.TextField: {'widget': AdminMartorWidget},
     }
-    list_display = ('id', 'name', 'image', 'creator', 'level_one_payed')
-    search_fields = ('name',)
+    list_display = (
+        'id', 'name', 'image', 'creator', 'level_one_payed', 'final_payed',
+        'is_finalist')
+    search_fields = ('name', )
+    list_editable = ('name', 'image', 'is_finalist')
     inlines = (SubmissionInline,)
 
 
