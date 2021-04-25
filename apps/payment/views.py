@@ -28,6 +28,10 @@ class PaymentRequestAPIView(LoggingErrorsMixin, GenericAPIView):
 
         amount = PaymentConfig.objects.last().amount
 
+        if self.request.user.team.is_finalist and \
+                self.request.user.team.level_one_payed:
+            amount -= 160000
+
         payment_request = PaymentRequest.objects.create(
             user=request.user,
             amount=amount,
