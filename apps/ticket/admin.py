@@ -20,6 +20,7 @@ class TicketAdmin(ModelAdmin):
     list_display = ('id', 'author', 'tag', 'title', 'status')
 
     list_filter = ('tag', 'status')
+    search_fields = ('id',)
 
     inlines = (ReplyInline,)
 
@@ -32,6 +33,7 @@ class ReplyAdmin(ModelAdmin):
 
     list_display = ('id', 'user', 'status')
     list_filter = ('status',)
+    search_fields = ('id',)
 
 
 @admin.register(Tag)
