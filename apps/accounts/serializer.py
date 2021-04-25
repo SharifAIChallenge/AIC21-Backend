@@ -59,7 +59,9 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def _is_finalist(obj: Profile):
-        return obj.user.team.is_finalist
+        if obj.user.team:
+            return obj.user.team.is_finalist
+        return False
 
     @staticmethod
     def _is_complete(obj: Profile):
