@@ -18,8 +18,9 @@ class TeamAdmin(ModelAdmin):
     list_display = (
         'id', 'name', 'image', 'creator', 'level_one_payed', 'final_payed',
         'is_finalist')
-    search_fields = ('name', )
+    search_fields = ('name',)
     list_editable = ('name', 'image', 'is_finalist')
+    list_filter = ('is_finalist', 'level_one_payed', 'final_payed')
     inlines = (SubmissionInline,)
 
 
