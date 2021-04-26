@@ -117,6 +117,9 @@ class PaymentConfigAPIView(LoggingErrorsMixin, GenericAPIView):
         config = PaymentConfig.objects.all().last()
 
         amount = config.amount
+        if self.request.user.team.is_finalist and \
+                self.request.user.team.level_one_payed:
+            amount -= 160000
 
         return Response(
             data={'config': {
