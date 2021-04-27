@@ -327,8 +327,16 @@ class SubmissionAPIView(LoggingErrorsMixin, GenericAPIView):
     permission_classes = (IsAuthenticated, HasTeam, IsFinalist)
 
     def get(self, request):
+        is_mini = self.request.query_params.get('is_mini', False)
+        try:
+            is_mini = bool(int(is_mini))
+        except ValueError:
+            is_mini = False
+
         data = self.get_serializer(
-            self.get_queryset().filter(team=request.user.team),
+            self.get_queryset().filter(team=request.user.team).filter(
+                is_mini_game=is_mini
+            ),
             many=True).data
         return Response(data={'submissions': data}, status=status.HTTP_200_OK)
 
