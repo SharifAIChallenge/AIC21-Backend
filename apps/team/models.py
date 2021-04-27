@@ -255,18 +255,23 @@ class Submission(models.Model):
         if self.status != 'compiled':
             raise ValueError(_('This submission is not compiled yet.'))
 
-        Submission.objects.filter(
-            is_final=True,
-            team=self.team,
-            is_mini_game=self.is_mini_game
-        ).update(
-            is_final=False
-        )
-
         if self.is_mini_game:
+            Submission.objects.filter(
+                is_mini_game_final=True,
+                team=self.team
+            ).update(
+                is_mini_game_final=False
+            )
             self.is_mini_game_final = True
         else:
+            Submission.objects.filter(
+                is_final=True,
+                team=self.team,
+            ).update(
+                is_final=False
+            )
             self.is_final = True
+
         self.save()
 
     def handle(self):
