@@ -124,7 +124,12 @@ class Team(UUIDModel, TimeStampedModel):
             Q(team1=self) | Q(team2=self)
         ).count() - not_draws
 
-    def final_submission(self):
+    def final_submission(self, is_mini=False):
+        if is_mini:
+            return self.submissions.filter(
+                is_mini_game=True,
+                is_mini_game_final=True
+            )
         return self.submissions.filter(
             is_final=True
         ).last()

@@ -17,7 +17,7 @@ from apps.challenge.serializers import LobbyQueueSerializer, \
 from apps.challenge.services.lobby import LobbyService
 from apps.paginations import MatchPagination
 from apps.team.models import Team
-from apps.team.permissions import HasTeam, TeamHasFinalSubmission
+from apps.team.permissions import HasTeam, TeamHasFinalSubmission, IsFinalist
 
 from .models import Request, RequestTypes
 from .serializers import RequestSerializer
@@ -31,7 +31,8 @@ from django.db.models import Q
 
 class RequestAPIView(GenericAPIView):
     serializer_class = RequestSerializer
-    permission_classes = (IsAuthenticated, HasTeam, TeamHasFinalSubmission)
+    permission_classes = (IsAuthenticated, HasTeam, TeamHasFinalSubmission,
+                          IsFinalist)
     queryset = Request.objects.all()
 
     def get(self, request):
@@ -114,7 +115,8 @@ class RequestAPIView(GenericAPIView):
 
 
 class LobbyAPIView(GenericAPIView):
-    permission_classes = [IsAuthenticated, HasTeam, TeamHasFinalSubmission]
+    permission_classes = [IsAuthenticated, HasTeam, TeamHasFinalSubmission,
+                          IsFinalist]
     serializer_class = LobbyQueueSerializer
     queryset = LobbyQueue.objects.all()
 
