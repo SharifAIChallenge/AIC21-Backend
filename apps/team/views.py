@@ -11,6 +11,7 @@ from rest_framework_tracking.mixins import LoggingErrorsMixin
 
 from apps.accounts.permissions import ProfileComplete
 from apps.team.paginations import TeamPagination
+from apps.team.permissions import IsFinalist
 from .models import Team, Invitation, Submission
 from .permissions import HasTeam, NoTeam
 from .serializers import (TeamSerializer, TeamInfoSerializer,
@@ -323,7 +324,7 @@ class SubmissionsListAPIView(GenericAPIView):
 class SubmissionAPIView(LoggingErrorsMixin, GenericAPIView):
     queryset = Submission.objects.all()
     serializer_class = SubmissionSerializer
-    permission_classes = (IsAuthenticated, HasTeam)
+    permission_classes = (IsAuthenticated, HasTeam, IsFinalist)
 
     def get(self, request):
         data = self.get_serializer(
@@ -332,7 +333,6 @@ class SubmissionAPIView(LoggingErrorsMixin, GenericAPIView):
         return Response(data={'submissions': data}, status=status.HTTP_200_OK)
 
     def post(self, request):
-        return Response(status=status.HTTP_403_FORBIDDEN)
         submission = self.get_serializer(data=request.data,
                                          context={'request': request})
         if submission.is_valid(raise_exception=True):

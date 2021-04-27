@@ -35,8 +35,10 @@ class InvitationAdmin(ModelAdmin):
 @admin.register(Submission)
 class SubmissionAdmin(ModelAdmin):
     list_display = ('id', 'team', 'user', 'file', 'submit_time', 'is_final',
-                    'status', 'infra_token')
+                    'status', 'infra_token', 'is_mini_game',
+                    'is_mini_game_final')
     list_display_links = ('id',)
 
-    list_filter = ('is_final', 'status', 'submit_time')
+    list_filter = ('is_final', 'status', 'submit_time', 'is_mini_game',
+                   'is_mini_game_final')
     search_fields = ('infra_token',)

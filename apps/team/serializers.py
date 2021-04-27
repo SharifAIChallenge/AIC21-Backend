@@ -203,14 +203,16 @@ class SubmissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Submission
         fields = ['id', 'language', 'file', 'is_final', 'submit_time',
-                  'download_link', 'status', 'infra_compile_message']
+                  'download_link', 'status', 'infra_compile_message',
+                  'is_mini_game', 'is_mini_game_final']
         read_only_fields = (
             'id', 'is_final', 'submit_time',
-            'user', 'download_link', 'status', 'infra_compile_message'
+            'user', 'download_link', 'status', 'infra_compile_message',
+            'is_mini_game_final'
         )
 
     def validate(self, attrs):
-        from datetime import datetime, timedelta
+        from datetime import timedelta
         from django.utils import timezone
 
         user = self.context['request'].user
@@ -223,7 +225,7 @@ class SubmissionSerializer(serializers.ModelSerializer):
         if submissions.exists() and timezone.now() - \
                 submissions.order_by('-submit_time')[
                     0].submit_time < timedelta(
-            minutes=10):
+            minutes=5):
             raise serializers.ValidationError(
                 f"You have to wait at least "
                 f"{10} "

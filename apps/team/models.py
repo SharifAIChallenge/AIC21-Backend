@@ -225,6 +225,9 @@ class Submission(models.Model):
                                            blank=True, unique=True)
     download_link = models.URLField(max_length=512, null=True, blank=True)
 
+    is_mini_game = models.BooleanField(default=False)
+    is_mini_game_final = models.BooleanField(default=False)
+
     def post_save(self):
         if not self.infra_token:
             self.handle()
@@ -246,9 +249,19 @@ class Submission(models.Model):
         """
         if self.status != 'compiled':
             raise ValueError(_('This submission is not compiled yet.'))
-        Submission.objects.filter(is_final=True, team=self.team).update(
-            is_final=False)
-        self.is_final = True
+
+        Submission.objects.filter(
+            is_final=True,
+            team=self.team,
+            is_mini_game=self.is_mini_game
+        ).update(
+            is_final=False
+        )
+
+        if self.is_mini_game:
+            self.is_mini_game_final = True
+        else:
+            self.is_final = True
         self.save()
 
     def handle(self):

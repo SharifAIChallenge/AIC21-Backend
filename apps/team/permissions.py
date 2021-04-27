@@ -20,4 +20,12 @@ class TeamHasFinalSubmission(BasePermission):
     message = "your team doesn't have a final submission"
 
     def has_permission(self, request, view):
-        return request.user.team.submissions.filter(is_final=True).first() is not None
+        return request.user.team.submissions.filter(
+            is_final=True).first() is not None
+
+
+class IsFinalist(BasePermission):
+    message = "you are not a finalist"
+
+    def has_permission(self, request, view):
+        return request.user.team.is_finalist
