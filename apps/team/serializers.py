@@ -4,7 +4,8 @@ from django.conf import settings
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 
-from apps.accounts.serializer import ProfileSerializer
+from apps.accounts.serializer import ProfileSerializer, \
+    LimitedProfileSerializer
 from apps.challenge.models import Tournament
 from .exceptions import NoTeamException, TeamIsFullException, HasTeamException, \
     DuplicatePendingInviteException
@@ -13,7 +14,7 @@ from ..accounts.models import User
 
 
 class MemberSerializer(serializers.ModelSerializer):
-    profile = ProfileSerializer(read_only=True, context={'limited': True})
+    profile = LimitedProfileSerializer(read_only=True, context={'limited': True})
 
     class Meta:
         model = User
