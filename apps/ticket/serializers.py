@@ -2,7 +2,8 @@ from rest_framework import serializers
 from django.conf import settings
 
 from apps.accounts.models import User
-from apps.accounts.serializer import ProfileSerializer
+from apps.accounts.serializer import ProfileSerializer, \
+    LimitedProfileSerializer
 from apps.ticket.models import Ticket, Reply, Tag
 
 
@@ -13,7 +14,7 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class TicketUserSerializer(serializers.ModelSerializer):
-    profile = ProfileSerializer(read_only=True, context={'limited': True})
+    profile = LimitedProfileSerializer(read_only=True, context={'limited': True})
 
     class Meta:
         model = User

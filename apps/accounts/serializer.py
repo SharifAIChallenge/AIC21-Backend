@@ -284,7 +284,7 @@ class EmailSerializer(serializers.Serializer):
 
 
 class UserViewSerializer(serializers.ModelSerializer):
-    profile = ProfileSerializer(context={'limited': True})
+    profile = LimitedProfileSerializer(context={'limited': True})
 
     class Meta:
         model = User
