@@ -20,7 +20,9 @@ class League(models.Model):
 
             teams = [
                 team for team in
-                filter(lambda team: team.has_final_submission(), queryset)
+                filter(lambda
+                           team: team.has_final_submission() and team.is_finalist,
+                       queryset)
             ]
 
             tournament = Tournament.create_tournament(
