@@ -193,7 +193,7 @@ class LimitedProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         exclude = ('id', 'user', 'phone_number', 'hide_profile_info',
-                   'can_sponsors_see', 'province')
+                   'can_sponsors_see', 'province', 'resume')
 
 
 class UserSerializer(serializers.ModelSerializer):
