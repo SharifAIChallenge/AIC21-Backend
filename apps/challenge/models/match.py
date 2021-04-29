@@ -179,7 +179,7 @@ class Match(TimeStampedModel):
     def game_log(self):
         from apps.infra_gateway.functions import download_log
 
-        if self.status == MatchStatusTypes.SUCCESSFUL:
+        if self.winner:
             return download_log(
                 match_infra_token=self.infra_token
             )

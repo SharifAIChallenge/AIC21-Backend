@@ -80,7 +80,7 @@ def run_match(match: Match, priority=0):
             'player_ids': [
                 match.match_info.team1_code.infra_token,  # in game id: 0
                 match.match_info.team2_code.infra_token  # in game id: 1
-            ]
+            ],
         },
         params={'priority': priority},
         headers={'Authorization': f'{settings.GATEWAY_AUTH_TOKEN}'}

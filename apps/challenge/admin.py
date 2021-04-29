@@ -1,10 +1,12 @@
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin
 
-# Register your models here.
+from import_export.admin import ImportExportModelAdmin
+
 from apps.challenge.models import Tournament, LevelBasedTournament, Map, \
     Scoreboard, ScoreboardRow, Match, MatchInfo, LobbyQueue, League, \
     MergeScoreboards
+from .resources import MatchResource
 
 
 @admin.register(MergeScoreboards)
@@ -23,12 +25,13 @@ class LeagueAdmin(ModelAdmin):
 
 
 @admin.register(Match)
-class MatchAdmin(ModelAdmin):
+class MatchAdmin(ImportExportModelAdmin):
     list_display = ('id', 'team1', 'team2', 'status', 'winner', 'tournament',
                     'infra_token')
     list_display_links = ('id',)
     list_filter = ('tournament', 'status')
     search_fields = ('infra_token',)
+    resource_class = MatchResource
 
 
 @admin.register(LobbyQueue)
