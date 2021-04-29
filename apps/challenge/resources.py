@@ -28,4 +28,4 @@ class MatchResource(resources.ModelResource):
         return obj.server_log
 
     def dehydrate_visualizer_url(self, obj: Match):
-        return f'{settings.VISUALIZER_URL}{self.game_log}'
+        return f'{settings.VISUALIZER_URL}{obj.game_log}'
