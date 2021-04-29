@@ -148,8 +148,6 @@ class LimitedProfileSerializer(serializers.ModelSerializer):
     jobs_list = StringListField(write_only=True, allow_null=True,
                                 allow_empty=True)
     is_complete = serializers.SerializerMethodField('_is_complete')
-    email = serializers.SerializerMethodField('_email')
-    resume_link = serializers.SerializerMethodField('_get_resume_link')
     image_link = serializers.SerializerMethodField('_get_image_link')
     has_team = serializers.SerializerMethodField('_has_team')
     is_finalist = serializers.SerializerMethodField('_is_finalist')
@@ -167,19 +165,6 @@ class LimitedProfileSerializer(serializers.ModelSerializer):
     @staticmethod
     def _is_complete(obj: Profile):
         return obj.is_complete
-
-    @staticmethod
-    def _email(obj: Profile):
-        return obj.user.email
-
-    @staticmethod
-    def _get_resume_link(obj: Profile):
-        if not obj.resume:
-            return ''
-        url = obj.resume.url
-        if settings.DOMAIN not in url:
-            return settings.DOMAIN + url
-        return url
 
     @staticmethod
     def _get_image_link(obj: Profile):
