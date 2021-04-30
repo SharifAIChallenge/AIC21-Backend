@@ -241,8 +241,7 @@ class Match(TimeStampedModel):
             (team1_row.score - team2_row.score) / 400
         )))
 
-        if self.tournament.type not in [TournamentTypes.NORMAL,
-                                        TournamentTypes.FINAL]:
+        if self.tournament.type not in [TournamentTypes.NORMAL]:
             team1_row.score = team1_row.score + k * (2 - winner_number - p1)
             team2_row.score = team2_row.score + k * (winner_number - 1 - p2)
         else:
