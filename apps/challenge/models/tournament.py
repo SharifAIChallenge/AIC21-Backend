@@ -162,6 +162,28 @@ class Tournament(TimeStampedModel):
 
                     break
 
+    @staticmethod  # Use with caution!!
+    def final_final_final(name, start_time, end_time, is_hidden=False):
+        from apps.team.models import Team
+
+        t = Tournament.get_friendly_tournament()
+        team_ids = t.scoreboard.rows.values_list('team_id', flat=True)
+        teams = Team.objects.filter(id__in=team_ids)
+        if teams.count() != 48:
+            print(
+                f"Bakhti, bayad 48ta bashe vali alan {teams.count()} test :("
+            )
+            return
+
+        return Tournament.create_tournament(
+            name=name,
+            start_time=start_time,
+            end_time=end_time,
+            is_hidden=is_hidden,
+            team_list=teams,
+            tournament_type='final',
+        )
+
     def init_swiss_league(self, src_tournament: 'Tournament', game_maps):
         self.__run_swiss_round(src_tournament.scoreboard, game_maps)
 
