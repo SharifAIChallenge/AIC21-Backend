@@ -147,7 +147,8 @@ class Tournament(TimeStampedModel):
         for i, team1 in enumerate(teams):
             if not bits[i]:
                 continue
-            for j, team2 in enumerate(teams[i + 1:]):
+            bits[i] = 0
+            for j, team2 in enumerate(teams):
                 if bits[j] and not team1.has_match_with_me(team2, self):
                     for map_ in game_maps:
                         Match.create_match(
