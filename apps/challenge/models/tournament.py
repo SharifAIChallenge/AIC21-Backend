@@ -45,7 +45,8 @@ class Tournament(TimeStampedModel):
     @staticmethod
     def create_tournament(name, start_time, end_time, is_hidden,
                           is_friendly=False, team_list=None,
-                          is_scoreboard_freeze=False):
+                          is_scoreboard_freeze=False,
+                          tournament_type=TournamentTypes.NORMAL):
         from apps.challenge.models import Scoreboard
 
         if team_list is None:
@@ -56,8 +57,7 @@ class Tournament(TimeStampedModel):
             start_time=start_time,
             end_time=end_time,
             is_hidden=is_hidden,
-            type=TournamentTypes.NORMAL
-            if not is_friendly else TournamentTypes.FRIENDLY
+            type=tournament_type
         )
         scoreboard = Scoreboard.objects.create(
             tournament=tournament,
@@ -145,12 +145,12 @@ class Tournament(TimeStampedModel):
 
         for team1 in teams:
             for team2 in teams:
-                if not team1.has_match_with_me(team2, scoreboard.tournament):
+                if not team1.has_match_with_me(team2, self):
                     for map_ in game_maps:
                         Match.create_match(
                             team1=team1,
                             team2=team2,
-                            tournament=scoreboard.tournament,
+                            tournament=self,
                             match_map=map_,
                             priority=self.priority
                         )
