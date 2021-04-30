@@ -350,6 +350,9 @@ class SubmissionAPIView(LoggingErrorsMixin, GenericAPIView):
                         status=status.HTTP_406_NOT_ACCEPTABLE)
 
     def put(self, request, submission_id):
+        return Response(
+            status=status.HTTP_403_FORBIDDEN
+        )
         submission = get_object_or_404(Submission, id=submission_id)
         try:
             submission.set_final()
