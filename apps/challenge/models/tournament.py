@@ -143,9 +143,13 @@ class Tournament(TimeStampedModel):
 
         teams: List[Team] = list(Team.objects.filter(id__in=team_ids))
 
-        for team1 in teams:
-            for team2 in teams:
-                if not team1.has_match_with_me(team2, self):
+        bits = [1 for _ in range(0, len(teams))]
+
+        for i, team1 in enumerate(teams):
+            if not bits[i]:
+                continue
+            for j, team2 in enumerate(teams[i + 1:]):
+                if bits[j] and not team1.has_match_with_me(team2, self):
                     for map_ in game_maps:
                         Match.create_match(
                             team1=team1,
@@ -154,6 +158,8 @@ class Tournament(TimeStampedModel):
                             match_map=map_,
                             priority=self.priority
                         )
+                    bits[i], bits[j] = 0, 0
+
                     break
 
     def init_swiss_league(self, src_tournament: 'Tournament', game_maps):
