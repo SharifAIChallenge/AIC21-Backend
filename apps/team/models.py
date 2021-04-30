@@ -92,6 +92,18 @@ class Team(UUIDModel, TimeStampedModel):
 
         return as_second_teams or as_first_teams
 
+    def has_match_with_me(self, team, tournament):
+        as_second_teams = self.matches_first.filter(
+            team2=team,
+            tournament=tournament
+        ).exists()
+        as_first_teams = self.matches_second.filter(
+            team1=team,
+            tournament=tournament
+        ).exists()
+
+        return as_second_teams or as_first_teams
+
     @staticmethod
     def get_next_level_bot(team):
         bots = Team.bots.all().order_by('bot_number')

@@ -1,3 +1,5 @@
+from typing import List
+
 from django.db import models
 from model_utils.models import TimeStampedModel
 
@@ -27,6 +29,7 @@ class Tournament(TimeStampedModel):
     start_time = models.DateTimeField(blank=True, null=True)
     end_time = models.DateTimeField(blank=True, null=True)
     is_hidden = models.BooleanField(default=False)
+    priority = models.IntegerField(default=0)
 
     @staticmethod
     def get_friendly_tournament():
@@ -126,6 +129,34 @@ class Tournament(TimeStampedModel):
                 two_way=two_way
             )
         return total_matches
+
+    def run_next_swiss_round(self, game_maps):
+        self.__run_swiss_round(self.scoreboard, game_maps)
+
+    def __run_swiss_round(self, scoreboard, game_maps):
+        from apps.team.models import Team
+        from apps.challenge.models import Match
+
+        team_ids = self.scoreboard.rows.order_by('-score')
+        team_ids = scoreboard.rows.order_by(
+            '-score').values_list('team_id', flat=True)
+
+        teams: List[Team] = list(Team.objects.filter(id__in=team_ids))
+
+        for team1 in teams:
+            for team2 in teams:
+                if not team1.has_match_with_me(team2, scoreboard.tournament):
+                    for map_ in game_maps:
+                        Match.create_match(
+                            team1=team1,
+                            team2=team2,
+                            tournament=scoreboard.tournament,
+                            match_map=map_,
+                            priority=self.priority
+                        )
+
+    def init_swiss_league(self, src_tournament: 'Tournament', game_maps):
+        self.__run_swiss_round(src_tournament.scoreboard, game_maps)
 
     def __str__(self):
         return f'{self.name}'
