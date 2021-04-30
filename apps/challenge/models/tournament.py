@@ -154,6 +154,7 @@ class Tournament(TimeStampedModel):
                             match_map=map_,
                             priority=self.priority
                         )
+                    break
 
     def init_swiss_league(self, src_tournament: 'Tournament', game_maps):
         self.__run_swiss_round(src_tournament.scoreboard, game_maps)
