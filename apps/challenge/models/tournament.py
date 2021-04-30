@@ -137,11 +137,10 @@ class Tournament(TimeStampedModel):
         from apps.team.models import Team
         from apps.challenge.models import Match
 
-        team_ids = self.scoreboard.rows.order_by('-score')
-        team_ids = scoreboard.rows.order_by(
-            '-score').values_list('team_id', flat=True)
-
-        teams: List[Team] = list(Team.objects.filter(id__in=team_ids))
+        teams: List[Team] = []
+        rows = scoreboard.rows.order_by('-score')
+        for row in rows:
+            teams.append(row.team)
 
         bits = [1 for _ in range(0, len(teams))]
 
