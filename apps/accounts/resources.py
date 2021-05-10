@@ -52,7 +52,7 @@ class ProfileResource(resources.ModelResource):
 
     def dehydrate_is_finalist(self, obj: Profile):
         if not obj.user.team:
-            return None
+            return 0
         return obj.user.team.is_finalist
 
     def dehydrate_skills(self, obj: Profile):
