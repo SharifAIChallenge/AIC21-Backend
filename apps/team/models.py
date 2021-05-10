@@ -141,7 +141,7 @@ class Team(UUIDModel, TimeStampedModel):
             return self.submissions.filter(
                 is_mini_game=True,
                 is_mini_game_final=True
-            )
+            ).last()
         return self.submissions.filter(
             is_final=True
         ).last()

@@ -10,6 +10,9 @@ class ProfileResource(resources.ModelResource):
     email = fields.Field(attribute='user__email',
                          column_name='email')
     team_size = fields.Field()
+    last_bot_won = fields.Field()
+    total_submissions = fields.Field()
+    is_finalist = fields.Field()
 
     class Meta:
         model = Profile
@@ -18,9 +21,28 @@ class ProfileResource(resources.ModelResource):
                   'major', 'university_term', 'university_degree',
                   'linkedin', 'github', 'programming_language', 'position',
                   'image', 'can_sponsors_see', 'sponsor_permission', 'team',
-                  'team_size')
+                  'team_size', 'last_bot_won', 'total_submissions',
+                  'is_finalist')
 
     def dehydrate_team_size(self, obj: Profile):
         if hasattr(obj.user, 'participant'):
             return obj.user.team.member_count()
         return ''
+
+    def dehydrate_last_bot_won(self, obj: Profile):
+        from apps.team.models import Team
+
+        bots = Team.bots.all().order_by('bot_number')
+        last_bot = None
+        for bot in bots:
+            if bot.has_won_me(obj.user.team):
+                last_bot = bot
+
+        return last_bot.bot_number
+
+    def dehydrate_total_submissions(self, obj: Profile):
+
+        return obj.user.team.submissions.all().count()
+
+    def dehydrate_is_finalist(self, obj: Profile):
+        return obj.user.team.is_finalist
