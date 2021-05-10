@@ -13,6 +13,8 @@ class ProfileResource(resources.ModelResource):
     last_bot_won = fields.Field()
     total_submissions = fields.Field()
     is_finalist = fields.Field()
+    skills = fields.Field()
+    job_experiences = fields.Field()
 
     class Meta:
         model = Profile
@@ -22,7 +24,7 @@ class ProfileResource(resources.ModelResource):
                   'linkedin', 'github', 'programming_language', 'position',
                   'image', 'can_sponsors_see', 'sponsor_permission', 'team',
                   'team_size', 'last_bot_won', 'total_submissions',
-                  'is_finalist')
+                  'is_finalist', 'skills', 'job_experiences')
 
     def dehydrate_team_size(self, obj: Profile):
         if hasattr(obj.user, 'participant'):
@@ -46,3 +48,18 @@ class ProfileResource(resources.ModelResource):
 
     def dehydrate_is_finalist(self, obj: Profile):
         return obj.user.team.is_finalist
+
+    def dehydrate_skills(self, obj: Profile):
+        result = ', '.join(obj.skills.values_list('skill', flat=True))
+
+        return result
+
+    def dehydrate_job_experiences(self, obj: Profile):
+        results = []
+
+        for job in obj.jobs.all():
+            current = f'company: {job.company}, position: {job.position}, ' \
+                      f'description: {job.description}'
+            results.append(current)
+
+        return '\n------------------\n'.join(results)
