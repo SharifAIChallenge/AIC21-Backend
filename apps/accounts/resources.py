@@ -47,7 +47,7 @@ class ProfileResource(resources.ModelResource):
 
     def dehydrate_total_submissions(self, obj: Profile):
         if not obj.user.team:
-            return None
+            return 0
         return obj.user.team.submissions.all().count()
 
     def dehydrate_is_finalist(self, obj: Profile):
