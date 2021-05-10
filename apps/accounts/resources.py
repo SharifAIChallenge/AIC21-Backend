@@ -27,12 +27,15 @@ class ProfileResource(resources.ModelResource):
                   'is_finalist', 'skills', 'job_experiences')
 
     def dehydrate_team_size(self, obj: Profile):
-        if hasattr(obj.user, 'participant'):
+        if obj.user.team:
             return obj.user.team.member_count()
         return ''
 
     def dehydrate_last_bot_won(self, obj: Profile):
         from apps.team.models import Team
+
+        if not obj.user.team:
+            return None
 
         bots = Team.bots.all().order_by('bot_number')
         last_bot = None
@@ -40,13 +43,16 @@ class ProfileResource(resources.ModelResource):
             if bot.has_won_me(obj.user.team):
                 last_bot = bot
 
-        return last_bot.bot_number
+        return last_bot.bot_number if last_bot else None
 
     def dehydrate_total_submissions(self, obj: Profile):
-
+        if not obj.user.team:
+            return None
         return obj.user.team.submissions.all().count()
 
     def dehydrate_is_finalist(self, obj: Profile):
+        if not obj.user.team:
+            return None
         return obj.user.team.is_finalist
 
     def dehydrate_skills(self, obj: Profile):
