@@ -105,7 +105,7 @@ class PaymentVerifyAPIView(LoggingErrorsMixin, GenericAPIView):
 
         return redirect(
             f'https://aichallenge.ir/dashboard/payment'
-            f'?status=-1&desc=تراکنش ناوفق بود و یا توسط کاربر لغو شد'
+            f'?status=-1&desc=تراکنش ناموفق بود و یا توسط کاربر لغو شد'
         )
 
 
